@@ -1,0 +1,7 @@
+node_modules/
+.cache/
+*.map
+.idea
+.eslintrc
+package-lock.json
+src/tests/
