@@ -15,7 +15,7 @@ export default class RulesBlockModel {
 
 	commonFields = {
 //		"Name": "TextField",
-//		"Type": "ComboBox",
+//		"Type": "Combobox",
 		"parent": "internal",
 		"parentId": "internal",
 		"elId": "internal"
@@ -81,7 +81,7 @@ export default class RulesBlockModel {
 						"Width": "TextField",
 						"RowStartIndex": "TextField",
 						"UseCache": "Checkbox",
-						"HeaderTypes": "ComboBox",
+						"HeaderTypes": "Combobox",
 						"HeaderTypesValues": ["All", "Headers", "No Headers", "Columns Headers", "Rows Headers"]
 					}
 				}

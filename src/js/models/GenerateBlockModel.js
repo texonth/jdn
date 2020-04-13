@@ -574,12 +574,13 @@ export const getLocationCallBack = ({ mainModel }, r, err) => {
 		generateBlockModel.page.url = r.pathname;
 		generateBlockModel.page.id = hashCode(r.pathname);
 		generateBlockModel.siteInfo.hostName = r.hostname;
-		generateBlockModel.page.package = r.host ? r.host.split('.').reverse().join('.') : '';
+		let sitePackage = r.host ? r.host.split('.').reverse().map(e => e.replace(/[^a-zA-Z0-9]+/g, '')).join('.') : '';
+		generateBlockModel.page.package = sitePackage;
 		generateBlockModel.siteInfo.siteTitle = camelCase(r.hostname.substring(0, r.hostname.lastIndexOf(".")));
 		generateBlockModel.siteInfo.origin = r.origin;
 		generateBlockModel.currentPageId = hashCode(r.pathname);
 		generateBlockModel.siteInfo.domainName = r.host;
-		generateBlockModel.siteInfo.pack = r.host.split('.').reverse().join('.');
+		generateBlockModel.siteInfo.pack = sitePackage;
 	}
 };
 
