@@ -1,5 +1,5 @@
 const rulesJson = {
-	"ListOfSearchAttributes": ['id'],
+	"ListOfSearchAttributes": ['id', 'class'],
 	"SimpleRules":
 		{
 			"Button":
@@ -8,7 +8,7 @@ const rulesJson = {
 				[{ "Locator": "input[type=checkbox]", "id": 0, "uniqueness": "name" }],
 			"Image":
 				[{ "Locator": "img", "id": 0, "uniqueness": "id" }],
-			"Label":
+			"Title":
 				[{ "Locator": "h1", "id": 0, "uniqueness": "name" },
 					{ "Locator": "h2", "id": 1, "uniqueness": "name" },
 					{ "Locator": "h3", "id": 2, "uniqueness": "name" }
@@ -35,6 +35,8 @@ const rulesJson = {
 				[{ "Locator": "", "id": 0, "uniqueness": "" }],
 			"Tabs":
 				[{ "Locator": "", "id": 0, "uniqueness": "" }],
+			"MultiDropdown":
+				[{ "Locator": "[ui=droplist]", "id": 0, "uniqueness": "id" }],
 			"Menu":
 				[{ "Locator": ".sidebar-menu", "id": 0, "uniqueness": "class" }],
 			"Dropdown":
@@ -42,7 +44,7 @@ const rulesJson = {
 		} ,
 	"ComplexRules":
 		{
-			"Combobox":
+			"ComboBox":
 				[{
 					"Root": "div[ui=combobox]",
 					"uniqueness": "id",
