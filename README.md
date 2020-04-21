@@ -1,19 +1,11 @@
-# Chrome Extension Create elements locators for JDI UI tests
+# React-TypeScript
 
-## How to import into browser
-* Download repo
-* Open Chrome Settings -> choose option 'More tools' -> choose option Extensions -> Click 'Load unpacked'
-* Select src folder inside of this project
-* Open Chrome developer tools -> JDN tab should be added
+Minimal boilerplate for a single-page app using MobX, React and TypeScript with TSX.
 
-## Preconditions to get page objects
-* Open webpage which page object you want to generate
-* Open Chrome developer tools, select JDN tab
+Initial run:
 
-## Generate page object for ONE page
-* Click "Generate"
-* Download page object by clicking button "Download page ..."
+* Install Node.js
+* `npm install`
+* `npm start`
 
-## Generate page objects for several pages of one site
-* Click "Generate"
-* Download page objects by clicking button "Download site ..."
+For simplicity sake Webpack Hot Module Reloading is disabled. If you want to use HMR, see the [Reactive2015 demo](https://github.com/mobxjs/mobx-reactive2015-demo) to see a valid setup.
