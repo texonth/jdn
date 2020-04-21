@@ -18,7 +18,7 @@ export default class SettingsModel {
 		this.log = new Log();
 		this.downloadAfterGeneration = settingsStorage.getItem('DownloadAfterGeneration') === 'true';
 		this.extension = settingsStorage.getItem('DefaultLanguage') || '.java';
-		this.framework = settingsStorage.getItem('DefaultFramework') || 'jdiLight';
+		this.framework = settingsStorage.getItem('DefaultFramework') || 'jdiUI';
 
 		this.setTemplate();
 	}

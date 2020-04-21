@@ -40,8 +40,5 @@
     "file-saver": "^2.0.0",
     "jest": "^23.6.0",
     "react-test-renderer": "^16.7.0"
-  },
-  "resolutions": {
-    "deasync": "0.1.16"
   }
 }
