@@ -19,12 +19,11 @@
     "mobx",
     "starter-kit"
   ],
-  "author": "anisa",
+  "author": "JDI team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mobxjs/mobx/issues"
+    "url": "https://github.com/jdi-testing/jdn"
   },
-  "homepage": "http://mobxjs.github.com/mobx",
   "dependencies": {
     "classnames": "^2.2.6",
     "mobx": "^5.15.4",

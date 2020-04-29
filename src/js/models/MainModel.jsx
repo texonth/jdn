@@ -1,6 +1,8 @@
 import { observable, action } from 'mobx';
 import GenerateBlockModel from './GenerateBlockModel';
 import RulesBlockModel from './RulesBlockModel';
+import ManageBlockWrapper from '../blocks/manage/left/ManageBlock';
+import ManageSettingsWrapper from '../blocks/manage/left/ManageSettings';
 import GenerateBlockWrapper from '../blocks/generate/left/GenerateBlock';
 import GenerateSettingsWrapper from '../blocks/generate/left/GenerateSettings';
 import GenerateResultsWrapper from '../blocks/generate/right/GenerateResults'
@@ -49,7 +51,16 @@ export default class MainModel {
 				},
 				initialLeft: 'RulesBlockWrapper'
 			});
-		this.ApplicationMap.set(0, { componentsLeft: {}, tabName: 'Manage', componentsRight: {} });
+		this.ApplicationMap.set(0,
+			{
+        componentsLeft: { ManageBlockWrapper, ManageSettingsWrapper },
+				tabName: 'Manage',
+        componentsRight: {
+          GeneralSettingsWrapper,
+          GenerateResultsWrapper,
+        },
+        initialLeft: 'ManageBlockWrapper',
+			});
 	}
 
 	@action

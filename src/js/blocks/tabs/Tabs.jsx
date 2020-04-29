@@ -1,6 +1,6 @@
 import React from 'react';
 import injectSheet from 'react-jss';
-// import MediaQuery from 'react-responsive';
+import MediaQuery from 'react-responsive';
 import { inject, observer } from 'mobx-react';
 import cn from 'classnames';
 import PropTypes from 'prop-types';
@@ -87,16 +87,16 @@ class TabsBlock extends React.Component {
 
 		return (
 			<div>
-				{/*<MediaQuery minWidth={ScreenSizes.tablet}>*/}
-					{/*<div className={classes.rotateBlockDesktop}>*/}
-						{/*<Nav/>*/}
-					{/*</div>*/}
-				{/*</MediaQuery>*/}
-				{/*<MediaQuery maxWidth={ScreenSizes.tablet}>*/}
+				<MediaQuery minWidth={ScreenSizes.tablet}>
+					<div className={classes.rotateBlockDesktop}>
+						<Nav/>
+					</div>
+				</MediaQuery>
+				<MediaQuery maxWidth={ScreenSizes.tablet}>
 					<div className={classes.blockTablet}>
 						<Nav direction={'right'}/>
 					</div>
-				{/*</MediaQuery>*/}
+				</MediaQuery>
 			</div>
 		)
 	}
