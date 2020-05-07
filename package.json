@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node server.js",
     "webpack": "webpack",
-    "build": "webpack"
+    "build": "webpack",
+    "prettier": "prettier"
   },
   "main": "src/js/main.js",
   "repository": {
@@ -61,6 +62,7 @@
     "file-saver": "^2.0.2",
     "jest": "^25.4.0",
     "json-loader": "^0.5.7",
+    "prettier": "2.0.5",
     "react-test-renderer": "^16.13.1",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",

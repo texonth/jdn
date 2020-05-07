@@ -1,9 +1,9 @@
 const JavaJDILightTemplate = {
-  "package" : "",
-  "siteName" : "",
-  "nameCase" : "camelCase",
-  "typeCase" : "PascalCase",
-  "site" : `package {{package}};
+  package: "",
+  siteName: "",
+  nameCase: "camelCase",
+  typeCase: "PascalCase",
+  site: `package {{package}};
 	
 import com.epam.jdi.light.elements.pageobjects.annotations.*;
 import {{package}}.pages.*;
@@ -13,9 +13,9 @@ public class {{siteName}} {
 {{pages}} 	
 }`,
 
-  "siteElement" : `    @Url("{{url}}") @Title("{{title}}") 
+  siteElement: `    @Url("{{url}}") @Title("{{title}}") 
     public static {{type}} {{name}};`,
-  "page" : `package {{package}}.pages;
+  page: `package {{package}}.pages;
 
 import com.epam.jdi.light.elements.pageobjects.annotations.locators.*;
 import com.epam.jdi.light.elements.composite.*;
@@ -30,13 +30,13 @@ import {{package}}.sections.*;
 public class {{type}} extends WebPage {
 {{elements}}	
 }`,
-  "pageElementCss" : `    @UI("{{locator}}") public {{type}} {{name}};`,
-  "pageElementXPath" : `    @UI("{{locator}}") public {{type}} {{name}};`,
-  "pageElementComplex" : `    @JDropdown({{locators}}) 
+  pageElementCss: `    @UI("{{locator}}") public {{type}} {{name}};`,
+  pageElementXPath: `    @UI("{{locator}}") public {{type}} {{name}};`,
+  pageElementComplex: `    @JDropdown({{locators}}) 
 	public {{type}} {{name}};`,
-  "locatorCss" : `{{type}} = "{{locator}}",`,
-  "locatorXPath" : `{{type}} = "{{locator}}",`,
-  "section" : `package {{package}}.sections;
+  locatorCss: `{{type}} = "{{locator}}",`,
+  locatorXPath: `{{type}} = "{{locator}}",`,
+  section: `package {{package}}.sections;
 
 import com.epam.jdi.light.elements.pageobjects.annotations.locators.*;
 import com.epam.jdi.light.elements.composite.*;
@@ -51,7 +51,7 @@ public class {{type}} extends Section {
 {{elements}}	
 }`,
 
-  "form" : `package {{package}}.sections;
+  form: `package {{package}}.sections;
 
 import com.epam.jdi.light.elements.pageobjects.annotations.locators.*;
 import com.epam.jdi.light.elements.composite.*;
@@ -66,14 +66,14 @@ import {{package}}.entities.*;
 public class {{type}} extends Form<{{data}}> {
 {{elements}}	
 }`,
-  "data" : `package {{package}}.entities;
+  data: `package {{package}}.entities;
 
 import com.epam.jdi.tools.DataClass;
 
 public class {{type}} extends DataClass<{{type}}> {
 {{elements}}
 }`,
-  "dataElement" : `    public String {{name}};`
+  dataElement: `    public String {{name}};`,
 };
 
 export { JavaJDILightTemplate };

@@ -1,115 +1,135 @@
-import { observable, action } from 'mobx';
-import { JavaJDIUITemplate } from '../json/JavaJDIUITemplate';
-import { JavaJDILightTemplate } from '../json/JavaJDILightTemplate';
+import { observable, action } from "mobx";
+import { JavaJDIUITemplate } from "../json/JavaJDIUITemplate";
+import { JavaJDILightTemplate } from "../json/JavaJDILightTemplate";
 import { saveAs } from "file-saver";
 import Log from "./Log";
 
 export default class SettingsModel {
   @observable downloadAfterGeneration = false;
   // @observable jdi = true;
-  @observable extension = '';
-  @observable framework = '';
+  @observable extension = "";
+  @observable framework = "";
   @observable template;
   @observable log = {};
 
-  constructor () {
+  constructor() {
     const settingsStorage = window.localStorage;
 
     this.log = new Log();
-    this.downloadAfterGeneration = settingsStorage.getItem('DownloadAfterGeneration') === 'true';
-    this.extension = settingsStorage.getItem('DefaultLanguage') || '.java';
-    this.framework = settingsStorage.getItem('DefaultFramework') || 'jdiLight';
+    this.downloadAfterGeneration =
+      settingsStorage.getItem("DownloadAfterGeneration") === "true";
+    this.extension = settingsStorage.getItem("DefaultLanguage") || ".java";
+    this.framework = settingsStorage.getItem("DefaultFramework") || "jdiLight";
 
     this.setTemplate();
   }
 
-  updateSiteImportSettings (name) {
+  updateSiteImportSettings(name) {
     const rulesStorage = window.localStorage;
     rulesStorage.setItem(name, this.customSiteImports);
   }
 
   @action
-  clearSiteStorage (nameToRemove, defaultSettings) {
+  clearSiteStorage(nameToRemove, defaultSettings) {
     const settingsStorage = window.localStorage;
     settingsStorage.removeItem(nameToRemove);
     settingsStorage.setItem(name, defaultSettings);
   }
 
   @action
-  triggerDownloadAfterGen () {
+  triggerDownloadAfterGen() {
     this.downloadAfterGeneration = !this.downloadAfterGeneration;
-    window.localStorage.setItem('DownloadAfterGeneration', this.downloadAfterGeneration.toString());
+    window.localStorage.setItem(
+      "DownloadAfterGeneration",
+      this.downloadAfterGeneration.toString()
+    );
   }
 
   @action
-  changeLanguage (lang) {
+  changeLanguage(lang) {
     this.extension = lang;
 
-    window.localStorage.setItem('DefaultLanguage', this.extension);
+    window.localStorage.setItem("DefaultLanguage", this.extension);
     this.setTemplate();
   }
 
   @action
-  changeFramework (frame) {
+  changeFramework(frame) {
     this.framework = frame;
 
-    window.localStorage.setItem('DefaultFramework', this.framework);
+    window.localStorage.setItem("DefaultFramework", this.framework);
     this.setTemplate();
   }
 
   @action
-  setTemplate () {
+  setTemplate() {
     const settingsStorage = window.localStorage;
 
-    if (this.extension === '.java' && this.framework === 'jdiUI') {
-      const defaultTemplate = settingsStorage.getItem('DefaultTemplateJdiUI');
+    if (this.extension === ".java" && this.framework === "jdiUI") {
+      const defaultTemplate = settingsStorage.getItem("DefaultTemplateJdiUI");
       if (defaultTemplate) {
         this.template = JSON.parse(defaultTemplate);
       } else {
         this.template = JavaJDIUITemplate;
-        settingsStorage.setItem('DefaultTemplateJdiUI', JSON.stringify(JavaJDIUITemplate));
+        settingsStorage.setItem(
+          "DefaultTemplateJdiUI",
+          JSON.stringify(JavaJDIUITemplate)
+        );
       }
     }
 
-    if (this.extension === '.java' && this.framework === 'jdiLight') {
-      const defaultTemplate = settingsStorage.getItem('DefaultTemplateJdiLight');
+    if (this.extension === ".java" && this.framework === "jdiLight") {
+      const defaultTemplate = settingsStorage.getItem(
+        "DefaultTemplateJdiLight"
+      );
       if (defaultTemplate) {
         this.template = JSON.parse(defaultTemplate);
       } else {
         this.template = JavaJDILightTemplate;
-        settingsStorage.setItem('DefaultTemplateJdiLight', JSON.stringify(JavaJDILightTemplate));
+        settingsStorage.setItem(
+          "DefaultTemplateJdiLight",
+          JSON.stringify(JavaJDILightTemplate)
+        );
       }
     }
   }
 
   @action
-  updateTemplate () {
+  updateTemplate() {
     const settingsStorage = window.localStorage;
 
-    if (this.extension === '.java' && this.framework === 'jdiUI') {
-      settingsStorage.setItem('DefaultTemplateJdiUI', JSON.stringify(this.template));
+    if (this.extension === ".java" && this.framework === "jdiUI") {
+      settingsStorage.setItem(
+        "DefaultTemplateJdiUI",
+        JSON.stringify(this.template)
+      );
     }
 
-    if (this.extension === '.java' && this.framework === 'jdiLight') {
-      settingsStorage.setItem('DefaultTemplateJdiLight', JSON.stringify(this.template));
+    if (this.extension === ".java" && this.framework === "jdiLight") {
+      settingsStorage.setItem(
+        "DefaultTemplateJdiLight",
+        JSON.stringify(this.template)
+      );
     }
   }
 
-  downloadCurrentTemplate () {
+  downloadCurrentTemplate() {
     let objToSave = {
-      content: JSON.stringify(this.template, null, '\t'),
+      content: JSON.stringify(this.template, null, "\t"),
       //content: JSON.stringify(this.template, null, '\t').replace(/\\n|\\t/g, "\n"),
-      name: `${this.framework}Template.json`
+      name: `${this.framework}Template.json`,
       // name: `${this.framework}Template.js`
     };
     if (objToSave.content && objToSave.name) {
-      let blob = new Blob([objToSave.content], { type: "text/plain;charset=utf-8" });
+      let blob = new Blob([objToSave.content], {
+        type: "text/plain;charset=utf-8",
+      });
       saveAs(blob, objToSave.name);
     }
   }
 
   @action
-  importNewTemplate (file, mainModel) {
+  importNewTemplate(file, mainModel) {
     this.log.clearLog();
 
     function FieldException(field) {
@@ -134,14 +154,17 @@ export default class SettingsModel {
 
             for (let field in this.template) {
               try {
-                if (!(['siteName', 'package'].includes(field)) && !newTemplate[field]) {
+                if (
+                  !["siteName", "package"].includes(field) &&
+                  !newTemplate[field]
+                ) {
                   isErrorContent = true;
                   throw new FieldException(field);
                 }
               } catch (e) {
                 this.log.addToLog({
                   message: `${e.name} ${e.message}`,
-                  type: 'error'
+                  type: "error",
                 });
                 mainModel.fillLog(this.log.log);
               }
@@ -152,30 +175,31 @@ export default class SettingsModel {
               this.updateTemplate();
               this.log.addToLog({
                 message: `Success! New template uploaded`,
-                type: 'success'
+                type: "success",
               });
               mainModel.fillLog(this.log.log);
             }
           } catch (e) {
             this.log.addToLog({
               message: `Error occurs parsing json file: ${e}. JSON is invalid. Check JSON.`,
-              type: 'error'
+              type: "error",
             });
             mainModel.fillLog(this.log.log);
           }
         };
-        reader.readAsText(f)
+        reader.readAsText(f);
       } catch (e) {
         this.log.addToLog({
           message: `Error occurs reading file ${e}.`,
-          type: 'error'
+          type: "error",
         });
         mainModel.fillLog(this.log.log);
       }
     } else {
       this.log.addToLog({
-        message: 'Warning! The File APIs are not fully supported in this browser.',
-        type: 'warning'
+        message:
+          "Warning! The File APIs are not fully supported in this browser.",
+        type: "warning",
       });
       mainModel.fillLog(this.log.log);
     }

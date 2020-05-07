@@ -1,52 +1,52 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import injectSheet from 'react-jss';
-import Select from 'react-select';
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import Select from "react-select";
 
 const styles = {
-	selectContainer: {
-		display: 'flex',
-		alignItems: 'center',
-	},
-	selectElement: {
-		width: '200px',
-	},
-	label: {
-		marginRight: '10px',
-	}
+  selectContainer: {
+    display: "flex",
+    alignItems: "center",
+  },
+  selectElement: {
+    width: "200px",
+  },
+  label: {
+    marginRight: "10px",
+  },
 };
 
 class CustomSelect extends React.Component {
-	state = {
-		selectedOption: this.props.defaultValue,
-	};
+  state = {
+    selectedOption: this.props.defaultValue,
+  };
 
-	handleChange = (selectedOption) => {
-		const { change } = this.props;
+  handleChange = (selectedOption) => {
+    const { change } = this.props;
 
-		this.setState({ selectedOption });
-		if (change) {
-			change(selectedOption)
-		}
-	};
+    this.setState({ selectedOption });
+    if (change) {
+      change(selectedOption);
+    }
+  };
 
-	render () {
-		const { label, classes, options = [] } = this.props;
-		const { selectedOption } = this.state;
+  render() {
+    const { label, classes, options = [] } = this.props;
+    const { selectedOption } = this.state;
 
-		return (
-			<div className={classes.selectContainer}>
-				{label && <span className={classes.label}>{label}</span>}
-				<div className={classes.selectElement}>
-					<Select
-						value={selectedOption}
-						onChange={this.handleChange}
-						options={options}
-					/>
-				</div>
-			</div>
-		)
-	}
+    return (
+      <div className={classes.selectContainer}>
+        {label && <span className={classes.label}>{label}</span>}
+        <div className={classes.selectElement}>
+          <Select
+            value={selectedOption}
+            onChange={this.handleChange}
+            options={options}
+          />
+        </div>
+      </div>
+    );
+  }
 }
 
 CustomSelect.propTypes = {};

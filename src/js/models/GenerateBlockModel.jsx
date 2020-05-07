@@ -1,48 +1,57 @@
 import { genRand, cssToXPath } from "../utils/helpers";
-import { observable, action } from 'mobx';
+import { observable, action } from "mobx";
 import Log from "./Log";
-import { SiteUrls } from '../json/siteUrls';
+import { SiteUrls } from "../json/siteUrls";
 import { saveAs } from "file-saver";
 
 const getElements = ({ log }, dom, locatorType) => {
   let elements = [];
   try {
-    elements = locatorType.xpath ? getElementsByXpath(dom, locatorType.locator) : dom.querySelectorAll(locatorType.locator);
+    elements = locatorType.xpath
+      ? getElementsByXpath(dom, locatorType.locator)
+      : dom.querySelectorAll(locatorType.locator);
   } catch (e) {
     log.addToLog({
       message: `Error!: cannot get elements by ${locatorType.locator}`,
-      type: 'error',
+      type: "error",
     });
     // objCopy.warningLog = [...objCopy.warningLog, getLog()];
-    document.querySelector('#refresh').click();
+    document.querySelector("#refresh").click();
   }
   return {
     elements: elements,
-    locatorType: locatorType
+    locatorType: locatorType,
   };
 };
 
-function generateLocator (xpath, locator) {
+function generateLocator(xpath, locator) {
   return xpath === isXpath(locator) ? locator : cssToXPath(locator);
 }
 
-function getCorrectLocator (dom, locator, uniqueness) {
+function getCorrectLocator(dom, locator, uniqueness) {
   let results = {
-    xpath: isXpath(locator) || isXpath(uniqueness.locator) || uniqueness.value === "text",
-    locator: ""
+    xpath:
+      isXpath(locator) ||
+      isXpath(uniqueness.locator) ||
+      uniqueness.value === "text",
+    locator: "",
   };
   results.locator = generateLocator(results.xpath, locator);
-  results.locator = results.locator.indexOf('//') === 0 ? '.' + results.locator : results.locator;
-  if (uniqueness.locator) results.locator += generateLocator(results.xpath, uniqueness.locator);
+  results.locator =
+    results.locator.indexOf("//") === 0
+      ? "." + results.locator
+      : results.locator;
+  if (uniqueness.locator)
+    results.locator += generateLocator(results.xpath, uniqueness.locator);
   return results;
 }
 
-function searchByWithoutValue ({ log }, dom, locator, uniqueness) {
+function searchByWithoutValue({ log }, dom, locator, uniqueness) {
   let locatorType = getCorrectLocator(dom, locator, uniqueness);
   return getElements({ log }, dom, locatorType);
 }
 
-function camelCase (n) {
+function camelCase(n) {
   let name = "";
   if (n) {
     let arrayName = n.split(/[^a-zA-Zа-яёА-ЯЁ0-9]/);
@@ -55,15 +64,17 @@ function camelCase (n) {
   return name;
 }
 
-function nameElement (locator, uniqueness, value, content) {
+function nameElement(locator, uniqueness, value, content) {
   if (uniqueness === "text" || uniqueness.includes("#text")) {
-    return camelCase(value || (content.innerText || content.textContent).trim());
+    return camelCase(
+      value || (content.innerText || content.textContent).trim()
+    );
   }
-  if (uniqueness.includes('tag')) {
+  if (uniqueness.includes("tag")) {
     return camelCase(content.tagName.toLowerCase());
   }
-  if (uniqueness.indexOf('[') === 0) {
-    return camelCase(locator.replace(/[\.\/\*\[\]@]/g, ''));
+  if (uniqueness.indexOf("[") === 0) {
+    return camelCase(locator.replace(/[\.\/\*\[\]@]/g, ""));
   }
   if (uniqueness === "class") {
     return camelCase(content.classList.value);
@@ -71,26 +82,34 @@ function nameElement (locator, uniqueness, value, content) {
   return camelCase(content.getAttribute(uniqueness));
 }
 
-function createCorrectXpath (originalLocator, uniqueness, value, locator) {
-  let result = uniqueness === "text" ? `contains(.,'${value/*.split(/\n/)[0]*/}')` : `@${uniqueness}='${value}')`;
+function createCorrectXpath(originalLocator, uniqueness, value, locator) {
+  let result =
+    uniqueness === "text"
+      ? `contains(.,'${value /*.split(/\n/)[0]*/}')`
+      : `@${uniqueness}='${value}')`;
   if (locator) {
-    return `${originalLocator}${locator}${result}`
+    return `${originalLocator}${locator}${result}`;
   }
   if (originalLocator) {
-    if (originalLocator.indexOf(']') === originalLocator.length - 1) {
-      return `${originalLocator.slice(0, -1)} and ${result}]`
+    if (originalLocator.indexOf("]") === originalLocator.length - 1) {
+      return `${originalLocator.slice(0, -1)} and ${result}]`;
     } else {
-      return `${originalLocator}[${result}]`
+      return `${originalLocator}[${result}]`;
     }
   } else {
-    return `.//*[${result}]`
+    return `.//*[${result}]`;
   }
 }
 
-function valueToXpath (originalLocator, uniqueness, value) {
+function valueToXpath(originalLocator, uniqueness, value) {
   if (!!value) {
     if (!!uniqueness.locator) {
-      return createCorrectXpath(originalLocator, uniqueness, value, uniqueness.locator);
+      return createCorrectXpath(
+        originalLocator,
+        uniqueness,
+        value,
+        uniqueness.locator
+      );
     }
     if (isXpath(uniqueness.value)) {
       return createCorrectXpath(originalLocator, uniqueness, value);
@@ -101,18 +120,18 @@ function valueToXpath (originalLocator, uniqueness, value) {
   return originalLocator;
 }
 
-function valueToCss (uniqueness, value) {
+function valueToCss(uniqueness, value) {
   if (!!value) {
     switch (uniqueness.value) {
       case "class":
-        return `.${value.replace(/\s/g, '.')}`;
+        return `.${value.replace(/\s/g, ".")}`;
       case "id":
         return `#${value}`;
       default:
-        return `[${uniqueness.value}='${value}']`
+        return `[${uniqueness.value}='${value}']`;
     }
   }
-  return '';
+  return "";
 }
 
 const checkIfItIsUnique = ({ sections }, element) => {
@@ -125,24 +144,26 @@ const checkIfItIsUnique = ({ sections }, element) => {
         if (loc === locator) {
           check = false;
         }
-      })
-    })
+      });
+    });
   }
   return check;
 };
 
-function hashCode (str) {
-  let hash = 0, i, chr;
+function hashCode(str) {
+  let hash = 0,
+    i,
+    chr;
 
   if (str === 0) return hash;
 
   for (i = 0; i < str.length; i++) {
     chr = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + chr;
+    hash = (hash << 5) - hash + chr;
     hash |= 0; // Convert to 32bit integer
   }
   return hash;
-};
+}
 
 const findInParent = ({ sections, page }, element, parent) => {
   let loc = element.Locator ? "Locator" : "Root";
@@ -184,11 +205,15 @@ const applyFoundResult = ({ mainModel }, e, parent, ruleId) => {
     Type: e.Type,
     parent: e.parent || null,
     parentId: e.parentId,
-    elId: e.elId
+    elId: e.elId,
   };
   if (simple.indexOf(e.Type) > -1) {
     element.Locator = e.Locator;
-    findInParent({ sections: generateBlockModel.sections, page: generateBlockModel.page }, element, parent);
+    findInParent(
+      { sections: generateBlockModel.sections, page: generateBlockModel.page },
+      element,
+      parent
+    );
     return;
   }
   if (complex.indexOf(e.Type) > -1) {
@@ -199,7 +224,11 @@ const applyFoundResult = ({ mainModel }, e, parent, ruleId) => {
         element[f] = fields[f];
       }
     }
-    findInParent({ sections: generateBlockModel.sections, page: generateBlockModel.page }, element, parent);
+    findInParent(
+      { sections: generateBlockModel.sections, page: generateBlockModel.page },
+      element,
+      parent
+    );
     return;
   }
   let fields = ruleBlockModel.elementFields[e.Type];
@@ -225,7 +254,7 @@ const applyFoundResult = ({ mainModel }, e, parent, ruleId) => {
   }
 };
 
-function fillEl ({ results, mainModel }, element, type, parent, ruleId) {
+function fillEl({ results, mainModel }, element, type, parent, ruleId) {
   const { ruleBlockModel, generateBlockModel } = mainModel;
   const rulesObj = ruleBlockModel.rules;
   const composites = Object.keys(rulesObj.CompositeRules);
@@ -236,30 +265,33 @@ function fillEl ({ results, mainModel }, element, type, parent, ruleId) {
     result.elId = hashCode(element.Locator + type);
     results.push(result);
   } else {
-    console.log(element)
+    console.log(element);
     result.parentId = parent.elId;
     result.parent = parent.Name;
-    result.elId = genRand('El');
+    result.elId = genRand("El");
     if (checkIfItIsUnique({ sections: generateBlockModel.sections }, result)) {
       applyFoundResult({ mainModel }, result, parent, ruleId);
     }
   }
 }
 
-function getValue (content, uniqueness) {
+function getValue(content, uniqueness) {
   switch (uniqueness.value) {
     case "text":
       return (content.innerText || content.textContent).trim().split(/\n/)[0];
     default:
-      return content.attributes[uniqueness.value] ? content.attributes[uniqueness.value].value : undefined;
+      return content.attributes[uniqueness.value]
+        ? content.attributes[uniqueness.value].value
+        : undefined;
   }
 }
 
 const showEmptyLocator = (mainModel, uniq) => {
   const { settingsModel, ruleBlockModel } = mainModel;
 
-  if (settingsModel.framework === 'jdiLight') {
-    const ListOfSearchAttributes = ruleBlockModel.rules.ListOfSearchAttributes || [];
+  if (settingsModel.framework === "jdiLight") {
+    const ListOfSearchAttributes =
+      ruleBlockModel.rules.ListOfSearchAttributes || [];
     if (ListOfSearchAttributes.includes(uniq)) {
       return true;
     }
@@ -274,14 +306,27 @@ const isSimpleRule = (type, uniq, mainModel) => {
   return simples.includes(type) && showEmptyLocator(mainModel, uniq);
 };
 
-const defineElements = ({ results, mainModel }, dom, Locator, uniq, t, ruleId, parent) => {
+const defineElements = (
+  { results, mainModel },
+  dom,
+  Locator,
+  uniq,
+  t,
+  ruleId,
+  parent
+) => {
   const { generateBlockModel } = mainModel;
   let splituniqueness = uniq.split("#");
   let uniqueness = {
     locator: splituniqueness.length == 2 ? splituniqueness[0] : "",
-    value: splituniqueness.length == 2 ? splituniqueness[1] : uniq
+    value: splituniqueness.length == 2 ? splituniqueness[1] : uniq,
   };
-  let firstSearch = searchByWithoutValue({ log: generateBlockModel.log }, dom, Locator, uniqueness);
+  let firstSearch = searchByWithoutValue(
+    { log: generateBlockModel.log },
+    dom,
+    Locator,
+    uniqueness
+  );
   let xpath = firstSearch.locatorType.xpath;
   let elements = firstSearch.elements;
   if (elements.length === 0) {
@@ -294,20 +339,25 @@ const defineElements = ({ results, mainModel }, dom, Locator, uniq, t, ruleId, p
         : firstSearch.locatorType.locator,
       // Locator: firstSearch.locatorType.locator,
       content: elements[0],
-      Name: nameElement(firstSearch.locatorType.locator, uniq, '', elements[0]).slice(0, 20),
+      Name: nameElement(
+        firstSearch.locatorType.locator,
+        uniq,
+        "",
+        elements[0]
+      ).slice(0, 20),
     };
     fillEl({ results, mainModel }, e, t, parent, ruleId);
     return;
   }
   generateBlockModel.log.addToLog({
     message: `Warning! Too much elements found(${elements.length} for ${uniqueness.value}. Locator (${firstSearch.locatorType.locator}))`,
-    type: 'warning'
+    type: "warning",
   });
   if (elements.length > 1) {
-    if (uniqueness.value === "tag" || uniqueness.value === '[') {
+    if (uniqueness.value === "tag" || uniqueness.value === "[") {
       generateBlockModel.log.addToLog({
         message: `Warning! Too much elements found by locator ${firstSearch.locatorType.locator}; uniqueness ${uniqueness.value}; ${elements.length} elements`,
-        type: 'warning',
+        type: "warning",
       });
       // document.querySelector('#refresh').click();
     }
@@ -316,7 +366,10 @@ const defineElements = ({ results, mainModel }, dom, Locator, uniq, t, ruleId, p
       let finalLocator = xpath
         ? valueToXpath(firstSearch.locatorType.locator, uniqueness, val)
         : firstSearch.locatorType.locator + valueToCss(uniqueness, val);
-      let s2 = getElements({ log: generateBlockModel.log }, dom, { locator: finalLocator, xpath: xpath });
+      let s2 = getElements({ log: generateBlockModel.log }, dom, {
+        locator: finalLocator,
+        xpath: xpath,
+      });
       if (s2.elements.length === 1) {
         let e = {
           Locator: isSimpleRule(t, uniq, mainModel)
@@ -324,13 +377,19 @@ const defineElements = ({ results, mainModel }, dom, Locator, uniq, t, ruleId, p
             : finalLocator,
           // Locator: finalLocator,
           content: s2.elements[0],
-          Name: nameElement(finalLocator, uniq, val, s2.elements[0]).slice(0, 20),
+          Name: nameElement(finalLocator, uniq, val, s2.elements[0]).slice(
+            0,
+            20
+          ),
         };
         if (!showEmptyLocator(mainModel, uniq)) {
           let smallFinalLocator = xpath
-            ? valueToXpath('', uniqueness, val)
-            : '' + valueToCss(uniqueness, val);
-          let s3 = getElements({ log: generateBlockModel.log }, dom, { locator: smallFinalLocator, xpath: xpath });
+            ? valueToXpath("", uniqueness, val)
+            : "" + valueToCss(uniqueness, val);
+          let s3 = getElements({ log: generateBlockModel.log }, dom, {
+            locator: smallFinalLocator,
+            xpath: xpath,
+          });
           if (s3.elements.length === 1) {
             e.Locator = smallFinalLocator;
           }
@@ -339,7 +398,7 @@ const defineElements = ({ results, mainModel }, dom, Locator, uniq, t, ruleId, p
       } else {
         generateBlockModel.log.addToLog({
           message: `Warning! Too much elements found by locator ${finalLocator}; ${s2.elements.length} elements`,
-          type: 'warning',
+          type: "warning",
         });
         // document.querySelector('#refresh').click();
       }
@@ -347,20 +406,26 @@ const defineElements = ({ results, mainModel }, dom, Locator, uniq, t, ruleId, p
   }
 };
 
-function getElementsByXpath (dom, locator) {
+function getElementsByXpath(dom, locator) {
   let results = [];
-  let result = document.evaluate(locator, dom, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+  let result = document.evaluate(
+    locator,
+    dom,
+    null,
+    XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+    null
+  );
   for (let i = 0; i < result.snapshotLength; i++) {
     results.push(result.snapshotItem(i));
   }
   return results;
 }
 
-function isXpath (locator) {
-  return locator[1] === '/';
+function isXpath(locator) {
+  return locator[1] === "/";
 }
 
-function getComposite ({ mainModel, results }, dom, t) {
+function getComposite({ mainModel, results }, dom, t) {
   const { ruleBlockModel } = mainModel;
   const rulesObj = ruleBlockModel.rules;
   const relatives = new Map();
@@ -368,17 +433,26 @@ function getComposite ({ mainModel, results }, dom, t) {
 
   rules.forEach((rule) => {
     if (!!rule.Locator) {
-      defineElements({ mainModel, results }, dom, rule.Locator, rule.uniqueness, t, rule.id, null);
+      defineElements(
+        { mainModel, results },
+        dom,
+        rule.Locator,
+        rule.uniqueness,
+        t,
+        rule.id,
+        null
+      );
     }
   });
-
 
   for (let k = 0; k < results.length; k++) {
     relatives.set(results[k].elId, 0);
     let child = results[k];
     for (let j = 0; j < results.length; j++) {
       const parent = results[j];
-      let r = isXpath(child.Locator) ? getElementsByXpath(parent.content, child.Locator) : parent.content.querySelectorAll(child.Locator);
+      let r = isXpath(child.Locator)
+        ? getElementsByXpath(parent.content, child.Locator)
+        : parent.content.querySelectorAll(child.Locator);
       for (let i = 0; i < r.length; i++) {
         if (r[i] === child.content) {
           let v = relatives.get(child.elId);
@@ -392,7 +466,9 @@ function getComposite ({ mainModel, results }, dom, t) {
     let child = results[k];
     for (let j = 0; j < results.length; j++) {
       const parent = results[j];
-      let r = isXpath(child.Locator) ? getElementsByXpath(parent.content, child.Locator) : parent.content.querySelectorAll(child.Locator);
+      let r = isXpath(child.Locator)
+        ? getElementsByXpath(parent.content, child.Locator)
+        : parent.content.querySelectorAll(child.Locator);
       for (let i = 0; i < r.length; i++) {
         if (r[i] === child.content) {
           let c = relatives.get(child.elId);
@@ -407,7 +483,7 @@ function getComposite ({ mainModel, results }, dom, t) {
   }
 }
 
-function getComplex ({ mainModel, results }, parent, t) {
+function getComplex({ mainModel, results }, parent, t) {
   const { ruleBlockModel } = mainModel;
   const rulesObj = ruleBlockModel.rules;
 
@@ -415,12 +491,20 @@ function getComplex ({ mainModel, results }, parent, t) {
   let rules = rulesObj.ComplexRules[t];
   rules.forEach((rule) => {
     if (!!rule.Root) {
-      defineElements({ mainModel, results }, dom, rule.Root, rule.uniqueness, t, rule.id, parent)
+      defineElements(
+        { mainModel, results },
+        dom,
+        rule.Root,
+        rule.uniqueness,
+        t,
+        rule.id,
+        parent
+      );
     }
-  })
+  });
 }
 
-function getSimple ({ mainModel, results }, parent, t) {
+function getSimple({ mainModel, results }, parent, t) {
   const { ruleBlockModel } = mainModel;
   const rulesObj = ruleBlockModel.rules;
 
@@ -428,10 +512,18 @@ function getSimple ({ mainModel, results }, parent, t) {
   let rules = rulesObj.SimpleRules[t];
   rules.forEach((rule, i) => {
     if (!!rule.Locator) {
-      defineElements({ mainModel, results }, dom, rule.Locator, rule.uniqueness, t, rule.id, parent);
+      defineElements(
+        { mainModel, results },
+        dom,
+        rule.Locator,
+        rule.uniqueness,
+        t,
+        rule.id,
+        parent
+      );
     }
   });
-};
+}
 
 export const generationCallBack = ({ mainModel }, r, err) => {
   const parser = new DOMParser();
@@ -443,7 +535,12 @@ export const generationCallBack = ({ mainModel }, r, err) => {
   console.log(rDom.body);
   // document.evaluate(".//*[@ui='label' and contains(.,'Bootstrap')]", observedDOM, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
   //let copyOfDom = parser.parseFromString(r, "text/html").body;
-  const { ruleBlockModel, settingsModel, conversionModel, generateBlockModel } = mainModel;
+  const {
+    ruleBlockModel,
+    settingsModel,
+    conversionModel,
+    generateBlockModel,
+  } = mainModel;
   const rulesObj = ruleBlockModel.rules;
   const composites = Object.keys(rulesObj.CompositeRules);
   const complex = Object.keys(rulesObj.ComplexRules);
@@ -453,7 +550,7 @@ export const generationCallBack = ({ mainModel }, r, err) => {
   if (err) {
     generateBlockModel.log.addToLog({
       message: `Error, loading data from active page! ${err}`,
-      type: 'error',
+      type: "error",
     });
     // objCopy.warningLog = [...objCopy.warningLog, getLog()];
     // document.querySelector('#refresh').click();
@@ -462,20 +559,22 @@ export const generationCallBack = ({ mainModel }, r, err) => {
   if (r) {
     composites.forEach((rule) => {
       try {
-        getComposite({ mainModel, results }, observedDOM, rule)
+        getComposite({ mainModel, results }, observedDOM, rule);
       } catch (e) {
         generateBlockModel.log.addToLog({
           message: `Error! Getting composite element: ${e}`,
-          type: 'error',
+          type: "error",
         });
         // objCopy.warningLog = [...objCopy.warningLog, getLog()];
         // document.querySelector('#refresh').click();
       }
-      ;
     });
 
     for (let i = 0; i < results.length; i++) {
-      let findParent = results.find(section => section.elId === results[i].parentId && results[i].parentId !== null);
+      let findParent = results.find(
+        (section) =>
+          section.elId === results[i].parentId && results[i].parentId !== null
+      );
       if (findParent) {
         if (findParent.children) {
           findParent.children.push(results[i]);
@@ -486,7 +585,14 @@ export const generationCallBack = ({ mainModel }, r, err) => {
       }
     }
 
-    results.push({ Locator: "body", Type: null, content: observedDOM, elId: null, parentId: null, parent: null });
+    results.push({
+      Locator: "body",
+      Type: null,
+      content: observedDOM,
+      elId: null,
+      parentId: null,
+      parent: null,
+    });
 
     for (let i = 0; i < results.length - 1; i++) {
       applyFoundResult({ mainModel }, results[i]);
@@ -503,7 +609,7 @@ export const generationCallBack = ({ mainModel }, r, err) => {
         } catch (e) {
           generateBlockModel.log.addToLog({
             message: `Error! Getting complex element: ${e}`,
-            type: 'error',
+            type: "error",
           });
           // objCopy.warningLog = [...objCopy.warningLog, getLog()];
           // document.querySelector('#refresh').click();
@@ -518,7 +624,7 @@ export const generationCallBack = ({ mainModel }, r, err) => {
         } catch (e) {
           generateBlockModel.log.addToLog({
             message: `Error! Getting simple element: ${e}. Rule ${rule}`,
-            type: 'error',
+            type: "error",
           });
           // objCopy.warningLog = [...objCopy.warningLog, getLog()];
           // document.querySelector('#refresh').click();
@@ -526,24 +632,32 @@ export const generationCallBack = ({ mainModel }, r, err) => {
       });
     });
 
-    console.log(generateBlockModel.page.id)
-    console.log(generateBlockModel.page.name)
+    console.log(generateBlockModel.page.id);
+    console.log(generateBlockModel.page.name);
 
-    const pageAlreadyGenerated = generateBlockModel.pages.find(page => page.id === generateBlockModel.page.id);
+    const pageAlreadyGenerated = generateBlockModel.pages.find(
+      (page) => page.id === generateBlockModel.page.id
+    );
 
     if (!pageAlreadyGenerated) {
-      generateBlockModel.pages = [...generateBlockModel.pages, { ...generateBlockModel.page }];
+      generateBlockModel.pages = [
+        ...generateBlockModel.pages,
+        { ...generateBlockModel.page },
+      ];
       // console.log(generateBlockModel.pages);
       // generateBlockModel.pages.push(generateBlockModel.page);
       // mainModel.conversionModel.siteCodeReady = true;
       // conversionModel.genPageCode(generateBlockModel.page, mainModel);
 
       if (settingsModel.downloadAfterGeneration) {
-        conversionModel.downloadPageCode(generateBlockModel.page, mainModel.settingsModel.extension);
+        conversionModel.downloadPageCode(
+          generateBlockModel.page,
+          mainModel.settingsModel.extension
+        );
       }
       generateBlockModel.log.addToLog({
         message: `Success! Generates ${generateBlockModel.page.name}`,
-        type: 'success',
+        type: "success",
       });
       mainModel.fillLog(generateBlockModel.log.log);
     }
@@ -564,7 +678,7 @@ export const getLocationCallBack = ({ mainModel }, r, err) => {
   if (err) {
     generateBlockModel.log.addToLog({
       message: `Error, getting location from active page! ${err}`,
-      type: 'error',
+      type: "error",
     });
     // objCopy.warningLog = [...objCopy.warningLog, getLog()];
     // document.querySelector('#refresh').click();
@@ -574,9 +688,17 @@ export const getLocationCallBack = ({ mainModel }, r, err) => {
     generateBlockModel.page.url = r.pathname;
     generateBlockModel.page.id = hashCode(r.pathname);
     generateBlockModel.siteInfo.hostName = r.hostname;
-    let sitePackage = r.host ? r.host.split('.').reverse().map(e => e.replace(/[^a-zA-Z0-9]+/g, '')).join('.') : '';
+    let sitePackage = r.host
+      ? r.host
+          .split(".")
+          .reverse()
+          .map((e) => e.replace(/[^a-zA-Z0-9]+/g, ""))
+          .join(".")
+      : "";
     generateBlockModel.page.package = sitePackage;
-    generateBlockModel.siteInfo.siteTitle = camelCase(r.hostname.substring(0, r.hostname.lastIndexOf(".")));
+    generateBlockModel.siteInfo.siteTitle = camelCase(
+      r.hostname.substring(0, r.hostname.lastIndexOf("."))
+    );
     generateBlockModel.siteInfo.origin = r.origin;
     generateBlockModel.currentPageId = hashCode(r.pathname);
     generateBlockModel.siteInfo.domainName = r.host;
@@ -590,7 +712,7 @@ export const getDomainCallBack = ({ mainModel }, r, err) => {
   if (err) {
     generateBlockModel.log.addToLog({
       message: `Error, getting domain from active page! ${err}`,
-      type: 'error',
+      type: "error",
     });
     // objCopy.warningLog = [...objCopy.warningLog, getLog()];
     // document.querySelector('#refresh').click();
@@ -598,7 +720,7 @@ export const getDomainCallBack = ({ mainModel }, r, err) => {
 
   if (r) {
     generateBlockModel.siteInfo.domainName = r;
-    generateBlockModel.siteInfo.pack = r.split('.').reverse().join('.');
+    generateBlockModel.siteInfo.pack = r.split(".").reverse().join(".");
   }
 };
 
@@ -608,7 +730,7 @@ export const getTitleCallBack = ({ mainModel }, r, err) => {
   if (err) {
     generateBlockModel.log.addToLog({
       message: `Error, getting title from active page! ${err}`,
-      type: 'error',
+      type: "error",
     });
     // objCopy.warningLog = [...objCopy.warningLog, getLog()];
     // document.querySelector('#refresh').click();
@@ -625,24 +747,24 @@ export default class GenerateBlockModel {
   @observable sections;
   @observable pages = [];
   @observable page = {
-    id: '',
-    name: '',
-    title: '',
-    url: '',
-    package: '',
-    elements: []
+    id: "",
+    name: "",
+    title: "",
+    url: "",
+    package: "",
+    elements: [],
   };
   @observable siteInfo = {};
   @observable currentPageId;
   @observable urlsList = [];
 
-  constructor () {
+  constructor() {
     this.log = new Log();
     this.sections = new Map();
 
     const generateStorage = window.localStorage;
-    const urlsListFromStorage = generateStorage.getItem('SiteMapUrlsList');
-    console.log(urlsListFromStorage)
+    const urlsListFromStorage = generateStorage.getItem("SiteMapUrlsList");
+    console.log(urlsListFromStorage);
     this.log = new Log();
 
     if (urlsListFromStorage) {
@@ -650,24 +772,24 @@ export default class GenerateBlockModel {
       this.urlsList = urlsObject.urlsList || [];
     } else {
       this.urlsList = SiteUrls.urlList;
-      generateStorage.setItem('SiteMapUrlsList', JSON.stringify(this.urlsList));
+      generateStorage.setItem("SiteMapUrlsList", JSON.stringify(this.urlsList));
     }
   }
 
   @action
-  generate (mainModel) {
+  generate(mainModel) {
     this.page = {
-      id: '',
-      name: '',
-      title: '',
-      url: '',
-      package: '',
-      elements: []
+      id: "",
+      name: "",
+      title: "",
+      url: "",
+      package: "",
+      elements: [],
     };
 
     this.log.clearLog();
 
-    chrome.devtools.inspectedWindow.eval('document.location', (r, err) => {
+    chrome.devtools.inspectedWindow.eval("document.location", (r, err) => {
       getLocationCallBack({ mainModel }, r, err);
     });
 
@@ -679,42 +801,51 @@ export default class GenerateBlockModel {
     // 	getTitleCallBack({ mainModel }, r, err);
     // });
 
-    chrome.devtools.inspectedWindow.eval('document.lastChild.outerHTML', (r, err) => {
-      generationCallBack({ mainModel }, r, err)
-    });
+    chrome.devtools.inspectedWindow.eval(
+      "document.lastChild.outerHTML",
+      (r, err) => {
+        generationCallBack({ mainModel }, r, err);
+      }
+    );
   }
 
   @action
-  clearGeneration () {
+  clearGeneration() {
     this.sections = new Map();
     this.pages = [];
     this.siteInfo = {};
     this.page = {
-      id: '',
-      name: '',
-      title: '',
-      url: '',
-      package: '',
-      elements: []
+      id: "",
+      name: "",
+      title: "",
+      url: "",
+      package: "",
+      elements: [],
     };
     this.log.clearLog();
   }
 
-  downloadUrlsList () {
+  downloadUrlsList() {
     const objToSave = {
-      content: JSON.stringify({
-        urlsList: this.urlsList
-      }, null, '\t'),
-      name: `UrlsListExample.json`
+      content: JSON.stringify(
+        {
+          urlsList: this.urlsList,
+        },
+        null,
+        "\t"
+      ),
+      name: `UrlsListExample.json`,
     };
     if (objToSave.content && objToSave.name) {
-      let blob = new Blob([objToSave.content], { type: "text/plain;charset=utf-8" });
+      let blob = new Blob([objToSave.content], {
+        type: "text/plain;charset=utf-8",
+      });
       saveAs(blob, objToSave.name);
     }
   }
 
   @action
-  importUrlList (file, mainModel) {
+  importUrlList(file, mainModel) {
     this.log.clearLog();
 
     if (window.File && window.FileReader && window.FileList && window.Blob) {
@@ -733,72 +864,82 @@ export default class GenerateBlockModel {
             const generateStorage = window.localStorage;
 
             this.urlsList = newUrlObject.urlsList || [];
-            generateStorage.setItem('SiteMapUrlsList', JSON.stringify(newUrlObject));
+            generateStorage.setItem(
+              "SiteMapUrlsList",
+              JSON.stringify(newUrlObject)
+            );
 
             this.log.addToLog({
               message: `Success! New url list uploaded`,
-              type: 'success'
+              type: "success",
             });
             mainModel.fillLog(this.log.log);
           } catch (e) {
             this.log.addToLog({
               message: `Error occurs parsing json file: ${e}. JSON is invalid. Check import JSON.`,
-              type: 'error'
+              type: "error",
             });
             mainModel.fillLog(this.log.log);
           }
         };
-        reader.readAsText(f)
+        reader.readAsText(f);
       } catch (e) {
         this.log.addToLog({
           message: `Error occurs reading file ${e}.`,
-          type: 'error'
+          type: "error",
         });
         mainModel.fillLog(this.log.log);
       }
     } else {
       this.log.addToLog({
-        message: 'Warning! The File APIs are not fully supported in this browser.',
-        type: 'warning'
+        message:
+          "Warning! The File APIs are not fully supported in this browser.",
+        type: "warning",
       });
       mainModel.fillLog(this.log.log);
     }
   }
 
   @action
-  generateSeveralPages (mainModel) {
+  generateSeveralPages(mainModel) {
     this.clearGeneration();
 
     const urlList = this.urlsList.slice();
 
     const getDOMByUrl = async (mainModel, url, index) => {
       this.page = {
-        id: '',
-        name: '',
-        title: '',
-        url: '',
-        package: '',
-        elements: []
+        id: "",
+        name: "",
+        title: "",
+        url: "",
+        package: "",
+        elements: [],
       };
 
       const domReady = () => {
-        chrome.devtools.inspectedWindow.eval('document.location', (r, err) => {
+        chrome.devtools.inspectedWindow.eval("document.location", (r, err) => {
           getLocationCallBack({ mainModel }, r, err);
         });
-        chrome.devtools.inspectedWindow.eval('document.lastChild.outerHTML', (r, err) => {
-          generationCallBack({ mainModel }, r, err);
-          index++;
-          if (index < urlList.length) {
-            getDOMByUrl(mainModel, urlList[index], index);
+        chrome.devtools.inspectedWindow.eval(
+          "document.lastChild.outerHTML",
+          (r, err) => {
+            generationCallBack({ mainModel }, r, err);
+            index++;
+            if (index < urlList.length) {
+              getDOMByUrl(mainModel, urlList[index], index);
+            }
           }
-        });
+        );
       };
 
-      chrome.devtools.inspectedWindow.eval(`window.location='${url}'`, (result, err) => {
-        setTimeout(() => {
-          domReady();
-        }, 2500);
-      });
+      chrome.devtools.inspectedWindow.eval(
+        `window.location='${url}'`,
+        (result, err) => {
+          setTimeout(() => {
+            domReady();
+          }, 2500);
+        }
+      );
 
       // const u = new URL(url);
       //

@@ -1,9 +1,9 @@
 const JavaJDIUITemplate = {
-	"package" : "",
-	"siteName" : "",
-	"nameCase" : "camelCase",
-	"typeCase" : "PascalCase",
-	"site" : `package {{package}};
+  package: "",
+  siteName: "",
+  nameCase: "camelCase",
+  typeCase: "PascalCase",
+  site: `package {{package}};
 	
 import {{package}}.pages.*;
 import com.epam.jdi.uitests.web.selenium.elements.composite.WebSite;
@@ -14,9 +14,9 @@ public class {{siteName}} extends WebSite {
 {{pages}} 	
 }`,
 
-	"siteElement" : `    @JPage(url = "{{url}}", title = "{{title}}") 
+  siteElement: `    @JPage(url = "{{url}}", title = "{{title}}") 
     public static {{type}} {{name}};`,
-	"page" : `package {{package}}.pages;
+  page: `package {{package}}.pages;
 
 import com.epam.jdi.uitests.web.selenium.elements.common.*;
 import com.epam.jdi.uitests.web.selenium.elements.complex.*;
@@ -30,14 +30,14 @@ import {{package}}.sections.*;
 public class {{type}} extends WebPage {
 {{elements}}	
 }`,
-	"pageElementCss" : `    @Css("{{locator}}") public {{type}} {{name}};`,
-	"pageElementXPath" : `    @XPath("{{locator}}") public {{type}} {{name}};`,
-	"pageElementComplex" : `    @J{{type}}({{locators}})
+  pageElementCss: `    @Css("{{locator}}") public {{type}} {{name}};`,
+  pageElementXPath: `    @XPath("{{locator}}") public {{type}} {{name}};`,
+  pageElementComplex: `    @J{{type}}({{locators}})
 	public {{type}} {{name}};`,
-	"locatorCss" : `{{type}} = @FindBy(css = "{{locator}}"),`,
-	"locatorXPath" : `{{type}} = @FindBy(xpath = "{{locator}}"),`,
+  locatorCss: `{{type}} = @FindBy(css = "{{locator}}"),`,
+  locatorXPath: `{{type}} = @FindBy(xpath = "{{locator}}"),`,
 
-	"section" : `package {{package}}.sections;
+  section: `package {{package}}.sections;
 
 import com.epam.jdi.uitests.web.selenium.elements.common.*;
 import com.epam.jdi.uitests.web.selenium.elements.complex.*;
@@ -50,7 +50,7 @@ import com.epam.jdi.uitests.web.selenium.elements.pageobjects.annotations.FindBy
 public class {{type}} extends Section {
 {{elements}}	
 }`,
-	"form" : `package {{package}}.sections;
+  form: `package {{package}}.sections;
 
 import com.epam.jdi.uitests.web.selenium.elements.common.*;
 import com.epam.jdi.uitests.web.selenium.elements.complex.*;
@@ -64,14 +64,14 @@ import {{package}}.entities.*;
 public class {{type}} extends Form<{{data}}> {
 {{elements}}	
 }`,
-	"data" : `package {{package}}.entities;
+  data: `package {{package}}.entities;
 
 import com.epam.jdi.tools.DataClass;
 
 public class {{type}} extends DataClass<{{type}}> {
 {{elements}}
 }`,
-	"dataElement" : `    public String {{name}};`
+  dataElement: `    public String {{name}};`,
 };
 
 export { JavaJDIUITemplate };

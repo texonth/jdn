@@ -1,30 +1,29 @@
-import { observable, action } from 'mobx';
+import { observable, action } from "mobx";
 import { saveAs } from "file-saver";
-import RulesJson from '../json/rules';
+import RulesJson from "../json/rules";
 import Log from "./Log";
-
 
 export default class RulesBlockModel {
   @observable rules;
-  rulesStorageName = 'JDNElementRules';
-  @observable currentRuleSet = '';
-  @observable currentRuleName = '';
+  rulesStorageName = "JDNElementRules";
+  @observable currentRuleSet = "";
+  @observable currentRuleName = "";
   @observable currentRuleItem = 0;
   @observable elementFields = {};
   @observable log = {};
 
   commonFields = {
-//		"Name": "TextField",
-//		"Type": "Combobox",
-    "parent": "internal",
-    "parentId": "internal",
-    "elId": "internal"
+    //		"Name": "TextField",
+    //		"Type": "Combobox",
+    parent: "internal",
+    parentId: "internal",
+    elId: "internal",
   };
 
   // TODO make this name editable in the next generation
-  @observable ruleName = 'Default rules';
+  @observable ruleName = "Default rules";
 
-  constructor () {
+  constructor() {
     const rulesStorage = window.localStorage;
     const rulesFromStorage = rulesStorage.getItem(this.rulesStorageName);
     this.log = new Log();
@@ -40,61 +39,67 @@ export default class RulesBlockModel {
     const complex = Object.keys(this.rules.ComplexRules);
     const simple = Object.keys(this.rules.SimpleRules);
 
-    simple.forEach(rule => {
+    simple.forEach((rule) => {
       this.elementFields[rule] = {
         ...this.commonFields,
-        Locator: 'TextField'
-      }
+        Locator: "TextField",
+      };
     });
 
-    composites.forEach(rule => {
+    composites.forEach((rule) => {
       this.elementFields[rule] = {
         ...this.commonFields,
-        Locator: 'TextField',
-        isSection: 'internal',
-        expanded: 'internal',
-        children: 'internal'
+        Locator: "TextField",
+        isSection: "internal",
+        expanded: "internal",
+        children: "internal",
       };
-      if (rule.toLowerCase() === 'form') {
+      if (rule.toLowerCase() === "form") {
         this.elementFields[rule].Entity = "TextField";
       }
     });
 
-    complex.forEach(rule => {
+    complex.forEach((rule) => {
       this.elementFields[rule] = {
         ...this.commonFields,
-        Root: 'TextField'
+        Root: "TextField",
       };
-      if (rule.toLowerCase().includes('table')) {
+      if (rule.toLowerCase().includes("table")) {
         this.elementFields[rule] = {
           ...this.elementFields[rule],
           ...{
-            "Headers": "TextField",
-            "RowHeaders": "TextField",
-            "Header": "TextField",
-            "RowHeader": "TextField",
-            "Cell": "TextField",
-            "Column": "TextField",
-            "Row": "TextField",
-            "Footer": "TextField",
-            "Height": "TextField",
-            "Width": "TextField",
-            "RowStartIndex": "TextField",
-            "UseCache": "Checkbox",
-            "HeaderTypes": "Combobox",
-            "HeaderTypesValues": ["All", "Headers", "No Headers", "Columns Headers", "Rows Headers"]
-          }
-        }
+            Headers: "TextField",
+            RowHeaders: "TextField",
+            Header: "TextField",
+            RowHeader: "TextField",
+            Cell: "TextField",
+            Column: "TextField",
+            Row: "TextField",
+            Footer: "TextField",
+            Height: "TextField",
+            Width: "TextField",
+            RowStartIndex: "TextField",
+            UseCache: "Checkbox",
+            HeaderTypes: "Combobox",
+            HeaderTypesValues: [
+              "All",
+              "Headers",
+              "No Headers",
+              "Columns Headers",
+              "Rows Headers",
+            ],
+          },
+        };
       } else {
         this.elementFields[rule] = {
           ...this.elementFields[rule],
           ...{
-            "Value": "TextField",
-            "List": "TextField",
-            "Expand": "TextField",
-            "Enum": "TextField"
-          }
-        }
+            Value: "TextField",
+            List: "TextField",
+            Expand: "TextField",
+            Enum: "TextField",
+          },
+        };
       }
     });
   }
@@ -102,7 +107,7 @@ export default class RulesBlockModel {
   // TODO update localStorage if update rules
 
   @action
-  clearRuleStorage () {
+  clearRuleStorage() {
     const rulesStorage = window.localStorage;
     rulesStorage.removeItem(this.rulesStorageName);
     this.rules = JSON.parse(JSON.stringify(RulesJson));
@@ -110,7 +115,7 @@ export default class RulesBlockModel {
   }
 
   @action
-  changeListOfAttr (value, index) {
+  changeListOfAttr(value, index) {
     const copy = this.rules.ListOfSearchAttributes.slice();
     copy[index] = value;
     this.rules.ListOfSearchAttributes = copy;
@@ -118,7 +123,7 @@ export default class RulesBlockModel {
   }
 
   @action
-  deleteItemFromListOfAttr (index) {
+  deleteItemFromListOfAttr(index) {
     const copy = this.rules.ListOfSearchAttributes.slice();
     copy.splice(index, 1);
     this.rules.ListOfSearchAttributes = copy;
@@ -126,69 +131,83 @@ export default class RulesBlockModel {
   }
 
   @action
-  addItemToListOfAttr (value) {
+  addItemToListOfAttr(value) {
     const copy = this.rules.ListOfSearchAttributes.slice();
     copy.push(value);
     this.rules.ListOfSearchAttributes = copy;
     this.updateRules();
   }
 
-  updateRules () {
+  updateRules() {
     const rulesStorage = window.localStorage;
     rulesStorage.setItem(this.rulesStorageName, JSON.stringify(this.rules));
     console.log(this.rules);
   }
 
   @action
-  setCurrentRuleName (rule) {
+  setCurrentRuleName(rule) {
     this.currentRuleName = rule;
   }
 
   @action
-  setCurrentRuleSet (ruleSet) {
+  setCurrentRuleSet(ruleSet) {
     this.currentRuleSet = ruleSet;
     this.currentRuleItem = 0;
-    this.currentRuleName = '';
+    this.currentRuleName = "";
   }
 
   @action
-  handleSwitchRule (index) {
+  handleSwitchRule(index) {
     this.currentRuleItem = index;
   }
 
   @action
-  handleAddRuleItem () {
-    const currentRules = this.rules[this.currentRuleSet][this.currentRuleName].slice();
+  handleAddRuleItem() {
+    const currentRules = this.rules[this.currentRuleSet][
+      this.currentRuleName
+    ].slice();
     const rule = currentRules.slice(-1)[0];
     const newRule = {};
 
     if (rule.Locator || rule.Root) {
-      Object.keys(rule).forEach(prop => {
-        newRule[prop] = '';
+      Object.keys(rule).forEach((prop) => {
+        newRule[prop] = "";
       });
       newRule.id = rule.id + 1;
       currentRules.push(newRule);
-      this.currentRuleItem = this.rules[this.currentRuleSet][this.currentRuleName].length;
-      this.rules[this.currentRuleSet][this.currentRuleName] = currentRules.slice();
+      this.currentRuleItem = this.rules[this.currentRuleSet][
+        this.currentRuleName
+      ].length;
+      this.rules[this.currentRuleSet][
+        this.currentRuleName
+      ] = currentRules.slice();
       this.updateRules();
     }
   }
 
   @action
-  handleDeleteRuleItem (index) {
-    const currentRules = this.rules[this.currentRuleSet][this.currentRuleName].slice();
+  handleDeleteRuleItem(index) {
+    const currentRules = this.rules[this.currentRuleSet][
+      this.currentRuleName
+    ].slice();
     if (currentRules.length > 1) {
       currentRules.splice(index, 1);
-      this.rules[this.currentRuleSet][this.currentRuleName] = currentRules.slice();
+      this.rules[this.currentRuleSet][
+        this.currentRuleName
+      ] = currentRules.slice();
       this.updateRules();
     }
   }
 
   @action
-  handleEditRuleName (value, field) {
-    const currentRules = this.rules[this.currentRuleSet][this.currentRuleName].slice();
+  handleEditRuleName(value, field) {
+    const currentRules = this.rules[this.currentRuleSet][
+      this.currentRuleName
+    ].slice();
     currentRules[this.currentRuleItem][field] = value;
-    this.rules[this.currentRuleSet][this.currentRuleName] = currentRules.slice();
+    this.rules[this.currentRuleSet][
+      this.currentRuleName
+    ] = currentRules.slice();
     this.updateRules();
   }
 
@@ -197,19 +216,21 @@ export default class RulesBlockModel {
   // TODO delete rule e.g Button
   // TODO add new rule for unknown item next generation
 
-  downloadCurrentRules (framework) {
+  downloadCurrentRules(framework) {
     let objToSave = {
-      content: JSON.stringify(this.rules, null, '\t'),
-      name: `${framework}Rules.json`
+      content: JSON.stringify(this.rules, null, "\t"),
+      name: `${framework}Rules.json`,
     };
     if (objToSave.content && objToSave.name) {
-      let blob = new Blob([objToSave.content], { type: "text/plain;charset=utf-8" });
+      let blob = new Blob([objToSave.content], {
+        type: "text/plain;charset=utf-8",
+      });
       saveAs(blob, objToSave.name);
     }
   }
 
   @action
-  importRules (file, mainModel) {
+  importRules(file, mainModel) {
     this.log.clearLog();
 
     function setRightIndex(ruleset) {
@@ -217,7 +238,7 @@ export default class RulesBlockModel {
         ruleset[rules] = ruleset[rules].slice().map((rule, index) => {
           rule.id = index;
           return rule;
-        })
+        });
       }
     }
 
@@ -257,29 +278,30 @@ export default class RulesBlockModel {
             this.updateRules();
             this.log.addToLog({
               message: `Success! New rules uploaded`,
-              type: 'success'
+              type: "success",
             });
             mainModel.fillLog(this.log.log);
           } catch (e) {
             this.log.addToLog({
               message: `Error occurs parsing json file: ${e}. JSON is invalid. Check import JSON.`,
-              type: 'error'
+              type: "error",
             });
             mainModel.fillLog(this.log.log);
           }
         };
-        reader.readAsText(f)
+        reader.readAsText(f);
       } catch (e) {
         this.log.addToLog({
           message: `Error occurs reading file ${e}.`,
-          type: 'error'
+          type: "error",
         });
         mainModel.fillLog(this.log.log);
       }
     } else {
       this.log.addToLog({
-        message: 'Warning! The File APIs are not fully supported in this browser.',
-        type: 'warning'
+        message:
+          "Warning! The File APIs are not fully supported in this browser.",
+        type: "warning",
       });
       mainModel.fillLog(this.log.log);
     }
