@@ -17,7 +17,9 @@ const cssToXPath = (css) => {
     return `@${attr}='${value}'`;
   }
 
-  if (css === "") return "";
+  if (css === "") {
+    return "";
+  }
   let i = 0;
   let start;
   let result = "//";
@@ -47,7 +49,9 @@ const cssToXPath = (css) => {
           case ".":
             i++;
             start = i;
-            while (i < length && css[i].match(/[a-z0-9A-Z0-9:\-_\.]/)){i++};
+            while (i < length && css[i].match(/[a-z0-9A-Z0-9:\-_\.]/)){
+              i++
+            };
             attributes.push(
               convertToClass(
                 i === length ? css.substr(start) : css.substring(start, i)
@@ -57,7 +61,9 @@ const cssToXPath = (css) => {
           case "#":
             i++;
             start = i;
-            while (i < length && css[i].match(/[a-z0-9A-Z0-9:\-_\.]/)){i++};
+            while (i < length && css[i].match(/[a-z0-9A-Z0-9:\-_\.]/)){
+              i++
+            };
             attributes.push(
               convertToId(
                 i === length ? css.substr(start) : css.substring(start, i)
@@ -87,10 +93,11 @@ const cssToXPath = (css) => {
               if (attribute.slice(-1) !== "'") {
                 attribute += "'";
               }
-            } else if (css[i] !== "]")
+            } else if (css[i] !== "]"){
               return `Can't process Css. Unexpected symbol №${i + 1}(${
                 css[i]
               }) in attributes`;
+            }
             attributes.push(attribute);
             i++;
             break;

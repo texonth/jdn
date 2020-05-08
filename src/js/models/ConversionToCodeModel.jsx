@@ -1,85 +1,7 @@
 import { observable, action } from "mobx";
 import { saveAs } from "file-saver";
 import JSZip from "../jszip/dist/jszip";
-
-export default class ConversionToCodeModel {
-  @observable currentPageCode;
-  @observable siteCodeReady = false;
-  @observable generatedPages = [];
-
-  @action
-  clearOldConversion() {
-    this.generatedPages = [];
-  }
-
-  @action
-  genPageCode(page, mainModel) {
-    this.currentPageCode = pageCode(page, mainModel);
-    this.generatedPages.push(this.currentPageCode);
-  }
-
-  @action
-  setCurrentPageCode(index) {
-    this.currentPageCode = this.generatedPages[index];
-  }
-
-  downloadPageCode(page, extension) {
-    let objToSave = {
-      content: this.currentPageCode,
-      name: getPageName(page.name) + extension,
-    };
-    if (objToSave.content && objToSave.name) {
-      let blob = new Blob([objToSave.content], {
-        type: "text/plain;charset=utf-8",
-      });
-      saveAs(blob, objToSave.name);
-    }
-  }
-
-  zipAllCode(mainModel) {
-    let zip = new JSZip();
-    let pack = mainModel.generateBlockModel.siteInfo.pack;
-    let pages = mainModel.generateBlockModel.pages;
-    let sections = mainModel.generateBlockModel.sections;
-    let siteTitle = mainModel.generateBlockModel.siteInfo.siteTitle;
-    let extension = mainModel.settingsModel.extension;
-    let origin = mainModel.generateBlockModel.siteInfo.origin;
-    if (!siteTitle) return;
-    let siteName = getSiteName(siteTitle);
-
-    zip.file(siteName + extension, siteCode(pack, origin, siteName, mainModel));
-
-    this.generatedPages.forEach((page, index) => {
-      zip
-        .folder("pages")
-        .file(getPageName(pages[index].name) + extension, page);
-    });
-
-    sections.forEach((section) => {
-      zip
-        .folder("sections")
-        .file(
-          getClassName(section.Name) + extension,
-          sectionCode(pack, section, mainModel)
-        );
-    });
-
-    sections.forEach((section) => {
-      if (section.Type === "Form") {
-        zip
-          .folder("entities")
-          .file(
-            getEntityName(section.Name) + extension,
-            entityCode(pack, section, mainModel)
-          );
-      }
-    });
-
-    zip.generateAsync({ type: "blob" }).then(function (content) {
-      saveAs(content, "pageobject.zip");
-    });
-  }
-}
+// TODO: Export function
 
 function varName(name) {
   return name[0].toLowerCase() + name.slice(1);
@@ -403,4 +325,83 @@ export function pageCode(page, mainModel) {
   );
 
   return pageTemplate;
+}
+
+export default class ConversionToCodeModel {
+  @observable currentPageCode;
+  @observable siteCodeReady = false;
+  @observable generatedPages = [];
+
+  @action
+  clearOldConversion() {
+    this.generatedPages = [];
+  }
+
+  @action
+  genPageCode(page, mainModel) {
+    this.currentPageCode = pageCode(page, mainModel);
+    this.generatedPages.push(this.currentPageCode);
+  }
+
+  @action
+  setCurrentPageCode(index) {
+    this.currentPageCode = this.generatedPages[index];
+  }
+
+  downloadPageCode(page, extension) {
+    let objToSave = {
+      content: this.currentPageCode,
+      name: getPageName(page.name) + extension,
+    };
+    if (objToSave.content && objToSave.name) {
+      let blob = new Blob([objToSave.content], {
+        type: "text/plain;charset=utf-8",
+      });
+      saveAs(blob, objToSave.name);
+    }
+  }
+
+  zipAllCode(mainModel) {
+    let zip = new JSZip();
+    let pack = mainModel.generateBlockModel.siteInfo.pack;
+    let pages = mainModel.generateBlockModel.pages;
+    let sections = mainModel.generateBlockModel.sections;
+    let siteTitle = mainModel.generateBlockModel.siteInfo.siteTitle;
+    let extension = mainModel.settingsModel.extension;
+    let origin = mainModel.generateBlockModel.siteInfo.origin;
+    if (!siteTitle) return;
+    let siteName = getSiteName(siteTitle);
+
+    zip.file(siteName + extension, siteCode(pack, origin, siteName, mainModel));
+
+    this.generatedPages.forEach((page, index) => {
+      zip
+        .folder("pages")
+        .file(getPageName(pages[index].name) + extension, page);
+    });
+
+    sections.forEach((section) => {
+      zip
+        .folder("sections")
+        .file(
+          getClassName(section.Name) + extension,
+          sectionCode(pack, section, mainModel)
+        );
+    });
+
+    sections.forEach((section) => {
+      if (section.Type === "Form") {
+        zip
+          .folder("entities")
+          .file(
+            getEntityName(section.Name) + extension,
+            entityCode(pack, section, mainModel)
+          );
+      }
+    });
+
+    zip.generateAsync({ type: "blob" }).then(function (content) {
+      saveAs(content, "pageobject.zip");
+    });
+  }
 }
