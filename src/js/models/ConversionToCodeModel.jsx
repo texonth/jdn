@@ -105,7 +105,7 @@ function complexLocators(el, fields, mainModel) {
   let locators = [];
   for (let field in fields) {
     let locator = el[field];
-    if (!!locator && typeof locator === "string") {
+    if (Boolean(locator) && typeof locator === "string") {
       templatePath =
         locatorType(locator) === "Css"
           ? template.locatorCss
@@ -182,8 +182,8 @@ function genCodeOfElements(parentId, arrOfElements, mainModel) {
   for (let i = 0; i < arrOfElements.length; i++) {
     let el = getElement(arrOfElements[i], generateBlockModel);
 
-    if (el.parentId === parentId && (!!el.Locator || !!el.Root)) {
-      if (!!composites[el.Type]) {
+    if (el.parentId === parentId && (Boolean(el.Locator) || (el.Root))) {
+      if (Boolean(composites[el.Type])) {
         result += simpleCode(
           locatorType(el.Locator),
           el.Locator,
@@ -192,7 +192,7 @@ function genCodeOfElements(parentId, arrOfElements, mainModel) {
           mainModel
         );
       }
-      if (!!complex[el.Type]) {
+      if (Boolean(complex[el.Type])) {
         let fields = getFields(ruleBlockModel.elementFields[el.Type]);
         result += isSimple(el, fields)
           ? simpleCode(
@@ -209,7 +209,7 @@ function genCodeOfElements(parentId, arrOfElements, mainModel) {
               mainModel
             );
       }
-      if (!!simple[el.Type]) {
+      if (Boolean(simple[el.Type])) {
         result += simpleCode(
           locatorType(el.Locator),
           el.Locator,

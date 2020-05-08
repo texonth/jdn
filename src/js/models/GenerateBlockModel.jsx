@@ -102,8 +102,8 @@ function createCorrectXpath(originalLocator, uniqueness, value, locator) {
 }
 
 function valueToXpath(originalLocator, uniqueness, value) {
-  if (!!value) {
-    if (!!uniqueness.locator) {
+  if (Boolean(value)) {
+    if (Boolean(uniqueness.locator)) {
       return createCorrectXpath(
         originalLocator,
         uniqueness,
@@ -121,7 +121,7 @@ function valueToXpath(originalLocator, uniqueness, value) {
 }
 
 function valueToCss(uniqueness, value) {
-  if (!!value) {
+  if (Boolean(value)) {
     switch (uniqueness.value) {
       case "class":
         return `.${value.replace(/\s/g, ".")}`;
@@ -175,7 +175,7 @@ const findInParent = ({ sections, page }, element, parent) => {
     }
   });
 
-  if (!!found) {
+  if (Boolean(found)) {
     let sec = sections.get(found);
     let children = sec.children;
     for (let i = 0; i < children.length; i++) {
@@ -238,7 +238,7 @@ const applyFoundResult = ({ mainModel }, e, parent, ruleId) => {
     element.children = e.children || [];
     let found = generateBlockModel.sections.get(element.elId);
 
-    if (!!found) {
+    if (Boolean(found)) {
       // element = found;
       generateBlockModel.page.elements.push(found.elId);
     } else {
@@ -432,7 +432,7 @@ function getComposite({ mainModel, results }, dom, t) {
   const rules = rulesObj.CompositeRules[t];
 
   rules.forEach((rule) => {
-    if (!!rule.Locator) {
+    if (Boolean(rule.Locator)) {
       defineElements(
         { mainModel, results },
         dom,
@@ -490,7 +490,7 @@ function getComplex({ mainModel, results }, parent, t) {
   let dom = parent.content;
   let rules = rulesObj.ComplexRules[t];
   rules.forEach((rule) => {
-    if (!!rule.Root) {
+    if (Boolean(rule.Root)) {
       defineElements(
         { mainModel, results },
         dom,
@@ -511,7 +511,7 @@ function getSimple({ mainModel, results }, parent, t) {
   let dom = parent.content;
   let rules = rulesObj.SimpleRules[t];
   rules.forEach((rule, i) => {
-    if (!!rule.Locator) {
+    if (Boolean(rule.Locator)) {
       defineElements(
         { mainModel, results },
         dom,

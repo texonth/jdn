@@ -56,7 +56,7 @@ class GenerateResults extends React.Component {
   render() {
     const { classes, mainModel } = this.props;
     const pages = mainModel.generateBlockModel.pages || [];
-    const pageReady = !!pages.length;
+    const pageReady = Boolean(pages.length);
 
     return (
       <div className={classes.controlsContainer}>
