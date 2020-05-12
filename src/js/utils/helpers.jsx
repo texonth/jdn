@@ -50,7 +50,7 @@ const cssToXPath = (css) => {
             i++;
             start = i;
             while (i < length && css[i].match(/[a-z0-9A-Z0-9:\-_\.]/)){
-              i++
+              i++;
             }
             attributes.push(
               convertToClass(

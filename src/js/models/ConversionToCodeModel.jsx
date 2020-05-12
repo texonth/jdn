@@ -17,8 +17,9 @@ function poName(name, poName) {
   if (
     result.length > 4 &&
     result.substr(-4).toLowerCase() !== poName.toLowerCase()
-  )
+  ){
     result += poName;
+  }
   return result;
 }
 
@@ -104,15 +105,17 @@ function complexLocators(el, fields, mainModel) {
   let templatePath = "";
   let locators = [];
   for (let field in fields) {
-    let locator = el[field];
-    if (locator && typeof locator === "string") {
-      templatePath =
-        locatorType(locator) === "Css"
-          ? template.locatorCss
-          : template.locatorXPath;
-      templatePath = templatePath.replace(/({{type}})/, field.toLowerCase());
-      templatePath = templatePath.replace(/({{locator}})/, locator);
-      locators.push(templatePath);
+    if ({}.hasOwnProperty.call(fields, field)) {
+      let locator = el[field];
+      if (locator && typeof locator === "string") {
+        templatePath =
+          locatorType(locator) === "Css"
+            ? template.locatorCss
+            : template.locatorXPath;
+        templatePath = templatePath.replace(/({{type}})/, field.toLowerCase());
+        templatePath = templatePath.replace(/({{locator}})/, locator);
+        locators.push(templatePath);
+      }
     }
   }
   const lastLoc = locators[locators.length - 1];
@@ -126,7 +129,9 @@ function getFields(obj, commonFields) {
   let clone = Object.assign({}, obj);
 
   for (let field in commonFields) {
-    delete clone[field];
+    if ({}.hasOwnProperty.call(commonFields, field)) {
+      delete clone[field];
+    }
   }
 
   for (let field in clone) {

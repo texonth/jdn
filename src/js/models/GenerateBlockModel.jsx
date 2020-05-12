@@ -9,6 +9,21 @@ function isXpath(locator) {
   return locator[1] === "/";
 }
 
+function getElementsByXpath(dom, locator) {
+  let results = [];
+  let result = document.evaluate(
+    locator,
+    dom,
+    null,
+    XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+    null
+  );
+  for (let i = 0; i < result.snapshotLength; i++) {
+    results.push(result.snapshotItem(i));
+  }
+  return results;
+}
+
 const getElements = ({ log }, dom, locatorType) => {
   let elements = [];
   try {
@@ -24,8 +39,8 @@ const getElements = ({ log }, dom, locatorType) => {
     document.querySelector("#refresh").click();
   }
   return {
-    elements: elements,
-    locatorType: locatorType,
+    elements,
+    locatorType,
   };
 };
 
@@ -46,8 +61,9 @@ function getCorrectLocator(dom, locator, uniqueness) {
     results.locator.indexOf("//") === 0
       ? "." + results.locator
       : results.locator;
-  if (uniqueness.locator)
+  if (uniqueness.locator){
     results.locator += generateLocator(results.xpath, uniqueness.locator);
+  }
   return results;
 }
 
@@ -160,7 +176,9 @@ function hashCode(str) {
     i,
     chr;
 
-  if (str === 0) return hash;
+  if (str === 0) {
+    return hash;
+  }
 
   for (i = 0; i < str.length; i++) {
     chr = str.charCodeAt(i);
@@ -411,20 +429,6 @@ const defineElements = (
   }
 };
 
-function getElementsByXpath(dom, locator) {
-  let results = [];
-  let result = document.evaluate(
-    locator,
-    dom,
-    null,
-    XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-    null
-  );
-  for (let i = 0; i < result.snapshotLength; i++) {
-    results.push(result.snapshotItem(i));
-  }
-  return results;
-}
 
 function getComposite({ mainModel, results }, dom, t) {
   const { ruleBlockModel } = mainModel;
@@ -525,6 +529,24 @@ function getSimple({ mainModel, results }, parent, t) {
     }
   });
 }
+
+export const getTitleCallBack = ({ mainModel }, r, err) => {
+  const { generateBlockModel } = mainModel;
+
+  if (err) {
+    generateBlockModel.log.addToLog({
+      message: `Error, getting title from active page! ${err}`,
+      type: "error",
+    });
+    // objCopy.warningLog = [...objCopy.warningLog, getLog()];
+    // document.querySelector('#refresh').click();
+  }
+
+  if (r) {
+    generateBlockModel.page.title = r;
+    generateBlockModel.page.name = camelCase(r);
+  }
+};
 
 export const generationCallBack = ({ mainModel }, r, err) => {
   const parser = new DOMParser();
@@ -725,23 +747,6 @@ export const getDomainCallBack = ({ mainModel }, r, err) => {
   }
 };
 
-export const getTitleCallBack = ({ mainModel }, r, err) => {
-  const { generateBlockModel } = mainModel;
-
-  if (err) {
-    generateBlockModel.log.addToLog({
-      message: `Error, getting title from active page! ${err}`,
-      type: "error",
-    });
-    // objCopy.warningLog = [...objCopy.warningLog, getLog()];
-    // document.querySelector('#refresh').click();
-  }
-
-  if (r) {
-    generateBlockModel.page.title = r;
-    generateBlockModel.page.name = camelCase(r);
-  }
-};
 
 export default class GenerateBlockModel {
   @observable log;
