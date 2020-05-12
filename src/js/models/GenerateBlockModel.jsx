@@ -4,6 +4,11 @@ import Log from "./Log";
 import { SiteUrls } from "../json/siteUrls";
 import { saveAs } from "file-saver";
 
+
+function isXpath(locator) {
+  return locator[1] === "/";
+}
+
 const getElements = ({ log }, dom, locatorType) => {
   let elements = [];
   try {
@@ -102,8 +107,8 @@ function createCorrectXpath(originalLocator, uniqueness, value, locator) {
 }
 
 function valueToXpath(originalLocator, uniqueness, value) {
-  if (Boolean(value)) {
-    if (Boolean(uniqueness.locator)) {
+  if ((value)) {
+    if ((uniqueness.locator)) {
       return createCorrectXpath(
         originalLocator,
         uniqueness,
@@ -121,7 +126,7 @@ function valueToXpath(originalLocator, uniqueness, value) {
 }
 
 function valueToCss(uniqueness, value) {
-  if (Boolean(value)) {
+  if ((value)) {
     switch (uniqueness.value) {
       case "class":
         return `.${value.replace(/\s/g, ".")}`;
@@ -175,7 +180,7 @@ const findInParent = ({ sections, page }, element, parent) => {
     }
   });
 
-  if (Boolean(found)) {
+  if ((found)) {
     let sec = sections.get(found);
     let children = sec.children;
     for (let i = 0; i < children.length; i++) {
@@ -238,7 +243,7 @@ const applyFoundResult = ({ mainModel }, e, parent, ruleId) => {
     element.children = e.children || [];
     let found = generateBlockModel.sections.get(element.elId);
 
-    if (Boolean(found)) {
+    if ((found)) {
       // element = found;
       generateBlockModel.page.elements.push(found.elId);
     } else {
@@ -421,10 +426,6 @@ function getElementsByXpath(dom, locator) {
   return results;
 }
 
-function isXpath(locator) {
-  return locator[1] === "/";
-}
-
 function getComposite({ mainModel, results }, dom, t) {
   const { ruleBlockModel } = mainModel;
   const rulesObj = ruleBlockModel.rules;
@@ -432,7 +433,7 @@ function getComposite({ mainModel, results }, dom, t) {
   const rules = rulesObj.CompositeRules[t];
 
   rules.forEach((rule) => {
-    if (Boolean(rule.Locator)) {
+    if ((rule.Locator)) {
       defineElements(
         { mainModel, results },
         dom,
@@ -490,7 +491,7 @@ function getComplex({ mainModel, results }, parent, t) {
   let dom = parent.content;
   let rules = rulesObj.ComplexRules[t];
   rules.forEach((rule) => {
-    if (Boolean(rule.Root)) {
+    if ((rule.Root)) {
       defineElements(
         { mainModel, results },
         dom,
@@ -511,7 +512,7 @@ function getSimple({ mainModel, results }, parent, t) {
   let dom = parent.content;
   let rules = rulesObj.SimpleRules[t];
   rules.forEach((rule, i) => {
-    if (Boolean(rule.Locator)) {
+    if ((rule.Locator)) {
       defineElements(
         { mainModel, results },
         dom,

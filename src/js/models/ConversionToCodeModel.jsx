@@ -105,7 +105,7 @@ function complexLocators(el, fields, mainModel) {
   let locators = [];
   for (let field in fields) {
     let locator = el[field];
-    if (Boolean(locator) && typeof locator === "string") {
+    if (locator && typeof locator === "string") {
       templatePath =
         locatorType(locator) === "Css"
           ? template.locatorCss
@@ -142,7 +142,9 @@ function isSimple(el, fields) {
   let count = 0;
 
   for (let field in fields) {
-    if (el[field] !== "") count++;
+    if (el[field] !== ""){
+      count++;
+    }
   }
   return count === 1;
 }
@@ -159,7 +161,7 @@ function genEntities(parentId, arrOfElements, mainModel) {
       (el) =>
         el.parentId === parentId &&
         (simple[el.Type] || complex[el.Type]) &&
-        el.Type != "Button"
+        el.Type !== "Button"
     )
     .map((el) => entityTemplate.replace(/({{name}})/, varName(el.Name)))
     .join("\n");
@@ -182,8 +184,8 @@ function genCodeOfElements(parentId, arrOfElements, mainModel) {
   for (let i = 0; i < arrOfElements.length; i++) {
     let el = getElement(arrOfElements[i], generateBlockModel);
 
-    if (el.parentId === parentId && (Boolean(el.Locator) || (el.Root))) {
-      if (Boolean(composites[el.Type])) {
+    if (el.parentId === parentId && (el.Locator || el.Root)) {
+      if (composites[el.Type]) {
         result += simpleCode(
           locatorType(el.Locator),
           el.Locator,
@@ -192,7 +194,7 @@ function genCodeOfElements(parentId, arrOfElements, mainModel) {
           mainModel
         );
       }
-      if (Boolean(complex[el.Type])) {
+      if (complex[el.Type]) {
         let fields = getFields(ruleBlockModel.elementFields[el.Type]);
         result += isSimple(el, fields)
           ? simpleCode(
@@ -209,7 +211,7 @@ function genCodeOfElements(parentId, arrOfElements, mainModel) {
               mainModel
             );
       }
-      if (Boolean(simple[el.Type])) {
+      if (simple[el.Type]) {
         result += simpleCode(
           locatorType(el.Locator),
           el.Locator,
@@ -369,7 +371,9 @@ export default class ConversionToCodeModel {
     let siteTitle = mainModel.generateBlockModel.siteInfo.siteTitle;
     let extension = mainModel.settingsModel.extension;
     let origin = mainModel.generateBlockModel.siteInfo.origin;
-    if (!siteTitle) return;
+    if (!siteTitle) {
+      return;
+    }
     let siteName = getSiteName(siteTitle);
 
     zip.file(siteName + extension, siteCode(pack, origin, siteName, mainModel));

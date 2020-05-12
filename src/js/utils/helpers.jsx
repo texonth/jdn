@@ -10,11 +10,11 @@ const cssToXPath = (css) => {
   function convertToClass(value) {
     return `contains(@class,'${value}')`;
   }
-  function convertToId(value) {
-    return convertToAtribute("id", value);
-  }
   function convertToAtribute(attr, value) {
     return `@${attr}='${value}'`;
+  }
+  function convertToId(value) {
+    return convertToAtribute("id", value);
   }
 
   if (css === "") {
@@ -63,7 +63,7 @@ const cssToXPath = (css) => {
             start = i;
             while (i < length && css[i].match(/[a-z0-9A-Z0-9:\-_\.]/)){
               i++
-            };
+            }
             attributes.push(
               convertToId(
                 i === length ? css.substr(start) : css.substring(start, i)
