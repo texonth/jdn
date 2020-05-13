@@ -303,9 +303,10 @@ function getValue(content, uniqueness) {
     case "text":
       return (content.innerText || content.textContent).trim().split(/\n/)[0];
     default:
-      return content.attributes[uniqueness.value]
-        ? content.attributes[uniqueness.value].value
-        : undefined;
+      if (content.attributes[uniqueness.value]){
+        return content.attributes[uniqueness.value].value
+      }
+      return;
   }
 }
 
@@ -341,8 +342,8 @@ const defineElements = (
   const { generateBlockModel } = mainModel;
   let splituniqueness = uniq.split("#");
   let uniqueness = {
-    locator: splituniqueness.length == 2 ? splituniqueness[0] : "",
-    value: splituniqueness.length == 2 ? splituniqueness[1] : uniq,
+    locator: splituniqueness.length === 2 ? splituniqueness[0] : "",
+    value: splituniqueness.length === 2 ? splituniqueness[1] : uniq,
   };
   let firstSearch = searchByWithoutValue(
     { log: generateBlockModel.log },
@@ -411,7 +412,7 @@ const defineElements = (
             : "" + valueToCss(uniqueness, val);
           let s3 = getElements({ log: generateBlockModel.log }, dom, {
             locator: smallFinalLocator,
-            xpath: xpath,
+            xpath,
           });
           if (s3.elements.length === 1) {
             e.Locator = smallFinalLocator;
