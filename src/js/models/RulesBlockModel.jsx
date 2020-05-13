@@ -235,10 +235,13 @@ export default class RulesBlockModel {
 
     function setRightIndex(ruleset) {
       for (let rules in ruleset) {
-        ruleset[rules] = ruleset[rules].slice().map((rule, index) => {
-          rule.id = index;
-          return rule;
-        });
+
+        if ({}.hasOwnProperty.call(ruleset, rules)) {
+          ruleset[rules] = ruleset[rules].slice().map((rule, index) => {
+            rule.id = index;
+            return rule;
+          });
+        }
       }
     }
 

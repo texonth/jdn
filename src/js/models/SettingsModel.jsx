@@ -153,20 +153,22 @@ export default class SettingsModel {
             const newTemplate = JSON.parse(contents);
 
             for (let field in this.template) {
-              try {
-                if (
-                  !["siteName", "package"].includes(field) &&
-                  !newTemplate[field]
-                ) {
-                  isErrorContent = true;
-                  throw new FieldException(field);
+              if ({}.hasOwnProperty.call(this.template, field)) {
+                try {
+                  if (
+                    !["siteName", "package"].includes(field) &&
+                    !newTemplate[field]
+                  ) {
+                    isErrorContent = true;
+                    throw new FieldException(field);
+                  }
+                } catch (e) {
+                  this.log.addToLog({
+                    message: `${e.name} ${e.message}`,
+                    type: "error",
+                  });
+                  mainModel.fillLog(this.log.log);
                 }
-              } catch (e) {
-                this.log.addToLog({
-                  message: `${e.name} ${e.message}`,
-                  type: "error",
-                });
-                mainModel.fillLog(this.log.log);
               }
             }
 
