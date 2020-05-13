@@ -304,7 +304,7 @@ function getValue(content, uniqueness) {
       return (content.innerText || content.textContent).trim().split(/\n/)[0];
     default:
       if (content.attributes[uniqueness.value]){
-        return content.attributes[uniqueness.value].value
+        return content.attributes[uniqueness.value].value;
       }
       return;
   }
@@ -392,7 +392,7 @@ const defineElements = (
         : firstSearch.locatorType.locator + valueToCss(uniqueness, val);
       let s2 = getElements({ log: generateBlockModel.log }, dom, {
         locator: finalLocator,
-        xpath: xpath,
+        xpath,
       });
       if (s2.elements.length === 1) {
         let e = {
