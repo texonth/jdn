@@ -1,3 +1,5 @@
+/*eslint-env browser*/
+
 import { genRand, cssToXPath } from "../utils/helpers";
 import { observable, action } from "mobx";
 import Log from "./Log";
