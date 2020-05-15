@@ -6,15 +6,12 @@
   "devtools_page": "index.html",
   "version": "2.0.1",
 
-  "permissions": [
-    "activeTab",
-    "tabs"
-  ],
+  "permissions": ["activeTab", "tabs"],
 
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],
-      "js": ["build/main.js"]
+      "js": ["build/bundle.js"]
     }
   ]
 }
