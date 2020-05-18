@@ -26,6 +26,7 @@
     "url": "https://github.com/jdi-testing/jdn"
   },
   "dependencies": {
+    "antd": "^4.2.4",
     "classnames": "^2.2.6",
     "mobx": "^5.15.4",
     "mobx-react": "^6.2.2",
@@ -59,6 +60,7 @@
     "babel-preset-mobx": "^2.0.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-1": "^6.24.1",
+    "css-loader": "^3.5.3",
     "eslint": "^7.0.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-react": "^7.20.0",
@@ -67,6 +69,7 @@
     "json-loader": "^0.5.7",
     "prettier": "2.0.5",
     "react-test-renderer": "^16.13.1",
+    "style-loader": "^1.2.1",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3"

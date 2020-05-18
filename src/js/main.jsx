@@ -4,7 +4,6 @@ import injectSheet from "react-jss";
 import MediaQuery from "react-responsive";
 import { observer, Provider } from "mobx-react";
 import { observable } from "mobx";
-import PropTypes from "prop-types";
 import ScreenSizes from "./utils/screen-dimesions";
 import {
   TabsBlockWrapper,

@@ -12,7 +12,7 @@ module.exports = {
   },
   plugins: [new webpack.HotModuleReplacementPlugin()],
   resolve: {
-    extensions: [".js", ".jsx"],
+    extensions: [".js", ".jsx"]
   },
   module: {
     rules: [
@@ -21,6 +21,10 @@ module.exports = {
         use: ["babel-loader"],
         include: path.join(__dirname, "src"),
       },
-    ],
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader']
+      }
+    ]
   },
 };
