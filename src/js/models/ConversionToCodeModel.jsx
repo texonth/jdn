@@ -1,6 +1,6 @@
 import { observable, action } from "mobx";
 import { saveAs } from "file-saver";
-import JSZip from "../jszip/dist/jszip";
+import JSZip from "jszip";
 // TODO: Export function
 
 function varName(name) {
