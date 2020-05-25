@@ -1,2 +1,2 @@
 call npm install
-call npm start
+call npm run webpack
