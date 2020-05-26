@@ -3,6 +3,7 @@ import injectSheet from "react-jss";
 import PropTypes from "prop-types";
 import { inject, observer } from "mobx-react";
 import Button from "../../../components/Button/Button";
+import { Checkbox } from 'antd';
 import { exportIcon, importIcon, settings } from "../../../../icons/index";
 import ReactFileReader from "react-file-reader";
 
@@ -58,6 +59,7 @@ class GenerateBlock extends React.Component {
 
     return (
       <div>
+        <Checkbox>Checkbox</Checkbox>
         <div>
           <div className={`${classes.generateStyle} BtnGroup`}>
             <Button

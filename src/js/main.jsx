@@ -13,6 +13,8 @@ import {
 import LogComponentWrapper from "./blocks/log/LogComponent";
 import MainModel from "./models/MainModel";
 
+import 'antd/dist/antd.css';
+
 const styles = {
   commonContainer: {
     height: "100vh",
