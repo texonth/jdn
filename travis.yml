@@ -19,7 +19,7 @@ stages:
 jobs:
   include:
     - stage: prepare
-      name: Welcome to jdi
+      name: Welcome to jdn
       script:
         - echo ------------------- WELCOME TO JDN ----------------------
         - node --version #it is helpful
