@@ -21,7 +21,7 @@ const styles = {
 
 @inject("mainModel")
 @observer
-class GenerateSettings extends React.Component {
+class ManageSettings extends React.Component {
   handleSettings = () => {
     const { mainModel } = this.props;
 
@@ -44,9 +44,9 @@ class GenerateSettings extends React.Component {
   handleBack = () => {
     const { mainModel } = this.props;
 
-    mainModel.setLeftPart("GenerateBlockWrapper");
+    mainModel.setLeftPart("ManageBlockWrapper");
     if (mainModel.generateBlockModel.pages.length) {
-      mainModel.setRightPart("GenerateResultsWrapper");
+      mainModel.setRightPart("ManageResultsWrapper");
     } else {
       mainModel.setRightPart();
     }
@@ -94,8 +94,8 @@ class GenerateSettings extends React.Component {
   }
 }
 
-GenerateSettings.propTypes = {};
+ManageSettings.propTypes = {};
 
-const GenerateSettingsWrapper = injectSheet(styles)(GenerateSettings);
+const ManageSettingsWrapper = injectSheet(styles)(ManageSettings);
 
-export default GenerateSettingsWrapper;
+export default ManageSettingsWrapper;
