@@ -69,6 +69,7 @@
     "file-saver": "^2.0.2",
     "jest": "^25.4.0",
     "json-loader": "^0.5.7",
+    "less-loader": "^6.1.0",
     "prettier": "2.0.5",
     "react-test-renderer": "^16.13.1",
     "style-loader": "^1.2.1",
