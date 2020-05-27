@@ -1,0 +1,40 @@
+language: node_js
+node_js:
+  - "stable"
+
+cache:
+  directories:
+    - node_modules
+
+script:
+  - npm run build
+
+stages:
+  - prepare
+  - compile
+  - test
+  - reports
+
+
+jobs:
+  include:
+    - stage: prepare
+      name: Welcome to jdi
+      script:
+        - echo ------------------- WELCOME TO JDN ----------------------
+        - node --version #it is helpful
+        - npm install
+
+    - stage: compile
+      name: Compile jdn code
+      script:
+        - npm webpack
+
+after_failure:
+  - echo "Build was failed"
+after_success:
+  - echo "Build was successful"
+
+# extra time during long builds
+install:
+  - travis_wait
