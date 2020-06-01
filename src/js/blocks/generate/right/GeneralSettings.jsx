@@ -1,9 +1,7 @@
 import React from "react";
 import injectSheet from "react-jss";
-import PropTypes from "prop-types";
 import { inject, observer } from "mobx-react";
-import Checkbox from "../../../components/Checkbox/Checkbox";
-import CustomSelectWrapper from "../../../components/CustomSelect/CustomSelect";
+import { Checkbox, Select } from 'antd';
 import { Languages, Frameworks } from "../../../json/settings";
 
 const styles = {
@@ -15,6 +13,12 @@ const styles = {
   },
   selectWrapper: {
     margin: "10px 0",
+  },
+  selectElement: {
+    width: "200px",
+  },
+  label: {
+    marginRight: "10px",
   },
 };
 
@@ -55,27 +59,32 @@ class GeneralSettings extends React.Component {
     return (
       <div className={classes.generateStyle}>
         <div className={classes.selectWrapper}>
-          <CustomSelectWrapper
-            label="Language"
+          <span className={classes.label}>Language</span>
+          <Select 
+            className={classes.selectElement}
+            placeholder="Select"
             options={Languages}
-            defaultValue={defaultLanguage}
-            change={this.handleChangeLanguage}
+            defaultValue={defaultLanguage?.value}
+            onChange={this.handleChangeLanguage}
           />
         </div>
         <div className={classes.selectWrapper}>
-          <CustomSelectWrapper
-            label="Frameworks"
+          <span className={classes.label}>Frameworks</span>
+          <Select 
+            className={classes.selectElement}
+            placeholder="Select"
             options={Frameworks}
-            defaultValue={defaultFrameWork}
-            change={this.handleChangeFramework}
+            defaultValue={defaultFrameWork?.value}
+            onChange={this.handleChangeFramework}
           />
         </div>
         <div className={classes.checkboxWrapper}>
-          <Checkbox
-            onCheckboxChange={this.handleCheckboxChange}
-            label={"Generate & Download"}
+          <Checkbox 
+            onChange={this.handleCheckboxChange}
             checked={mainModel.settingsModel.downloadAfterGeneration}
-          />
+          >
+            Generate & Download
+          </Checkbox>
         </div>
       </div>
     );
