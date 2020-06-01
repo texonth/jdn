@@ -3,7 +3,6 @@ import injectSheet from "react-jss";
 import PropTypes from "prop-types";
 import { inject, observer } from "mobx-react";
 import Button from "../../../components/Button/Button";
-import Infinity from "../../../components/Infinity/Infinity";
 import { importIcon } from "../../../../icons/index";
 
 const styles = {
