@@ -1,10 +1,9 @@
 import React from "react";
 import injectSheet from "react-jss";
 import ReactFileReader from "react-file-reader";
-import PropTypes from "prop-types";
 import { inject, observer } from "mobx-react";
-import Button from "../../../components/Button/Button";
-import { exportIcon, importIcon, back } from "../../../../icons/index";
+import { Button } from 'antd';
+import { ArrowLeftOutlined, LogoutOutlined, LoginOutlined } from '@ant-design/icons';
 
 const styles = {
   generateStyle: {
@@ -58,15 +57,16 @@ class GenerateSettings extends React.Component {
       <div>
         <div className={`${classes.generateStyle} BtnGroup`}>
           <Button
-            className="BtnGroup-item"
-            icon={back}
-            onclick={this.handleBack}
+            size='large'
+            icon={<ArrowLeftOutlined />}
+            onClick={this.handleBack}
           />
           <Button
-            className="BtnGroup-item"
-            label={"Settings"}
-            onclick={this.handleSettings}
-          />
+            size='large'
+            onClick={this.handleSettings}
+          >
+            Settings
+          </Button>
         </div>
         <div className={classes.buttonContainer}>
           <ReactFileReader
@@ -77,17 +77,19 @@ class GenerateSettings extends React.Component {
             multipleFiles={false}
           >
             <Button
-              className={classes.btn}
-              label={"Import"}
-              icon={importIcon}
-            />
+              icon={<LoginOutlined />}
+              size='large'
+            >
+              Import
+            </Button>
           </ReactFileReader>
           <Button
-            className={classes.btn}
-            label={"Export"}
-            icon={exportIcon}
-            onclick={this.handleExportTemplate}
-          />
+              icon={<LogoutOutlined />}
+              size='large'
+              onClick={this.handleExportTemplate}
+            >
+              Export
+            </Button>
         </div>
       </div>
     );
