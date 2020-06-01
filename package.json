@@ -27,6 +27,7 @@
     "url": "https://github.com/jdi-testing/jdn"
   },
   "dependencies": {
+    "@ant-design/icons": "^4.2.1",
     "antd": "^4.2.4",
     "classnames": "^2.2.6",
     "jszip": "^3.4.0",

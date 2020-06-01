@@ -3,10 +3,8 @@ import ReactFileReader from "react-file-reader";
 import injectSheet from "react-jss";
 import { inject, observer } from "mobx-react";
 import { observable, action } from "mobx";
-import PropTypes from "prop-types";
-import Button from "../../../components/Button/Button";
-import LabelWrapper from "../../../components/Label/Label";
-import { exportIcon, importIcon } from "../../../../icons/index";
+import { Button, Tag } from 'antd';
+import { LogoutOutlined, LoginOutlined } from '@ant-design/icons';
 import { headerStyle } from "../../BlockStyles";
 
 const styles = {
@@ -112,7 +110,7 @@ class RulesBlock extends React.Component {
     return (
       <div>
         <span className={classes.headerStyle}>Page: </span>
-        <LabelWrapper>{mainModel.ruleBlockModel.ruleName}</LabelWrapper>
+        <Tag color="#6f42c1">{mainModel.ruleBlockModel.ruleName}</Tag>
         <div className={classes.buttonContainer}>
           <ReactFileReader
             handleFiles={(file) => {
@@ -122,17 +120,19 @@ class RulesBlock extends React.Component {
             multipleFiles={false}
           >
             <Button
-              className={classes.btn}
-              label={"Import"}
-              icon={importIcon}
-            />
+              icon={<LoginOutlined />}
+              size='large'
+            >
+              Import
+            </Button>
           </ReactFileReader>
           <Button
-            className={classes.btn}
-            label={"Export"}
-            icon={exportIcon}
-            onclick={this.handleExportRules}
-          />
+            icon={<LogoutOutlined />}
+            size='large'
+            onClick={this.handleExportRules}
+          >
+            Export
+          </Button>
         </div>
         <div>
           <ul className={classes.list}>
