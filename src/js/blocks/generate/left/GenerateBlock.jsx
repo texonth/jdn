@@ -1,8 +1,8 @@
 import React from "react";
 import injectSheet from "react-jss";
 import { inject, observer } from "mobx-react";
-import Button from "../../../components/Button/Button";
-import { exportIcon, importIcon, settings } from "../../../../icons/index";
+import { Button } from 'antd';
+import  { SettingOutlined, LogoutOutlined, LoginOutlined } from '@ant-design/icons';
 import ReactFileReader from "react-file-reader";
 
 const styles = {
@@ -60,14 +60,16 @@ class GenerateBlock extends React.Component {
         <div>
           <div className={`${classes.generateStyle} BtnGroup`}>
             <Button
-              className="BtnGroup-item btn-primary"
-              label={"Generate"}
-              onclick={this.handleGenerate}
-            />
+              size='large'
+              type="primary"
+              onClick={this.handleGenerate}
+            >
+              Generate
+            </Button>
             <Button
-              className="BtnGroup-item"
-              icon={settings}
-              onclick={this.handleOpenSettings}
+              size='large'
+              icon={<SettingOutlined />}
+              onClick={this.handleOpenSettings}
             />
           </div>
         </div>
@@ -75,10 +77,12 @@ class GenerateBlock extends React.Component {
           <div className={`${classes.generateStyleAll}`}>
             <Button
               disabled={!isEnabled}
-              className="BtnGroup-item btn-primary"
-              label={"Generate Several Page"}
-              onclick={this.handleGenerateSeveral}
-            />
+              size='large'
+              type="primary"
+              onClick={this.handleGenerateSeveral}
+            >
+              Generate Several Page
+            </Button>
           </div>
           <div className={`${classes.generateStyleAll}`}>
             <ReactFileReader
@@ -88,18 +92,20 @@ class GenerateBlock extends React.Component {
               fileTypes={[".json"]}
               multipleFiles={false}
             >
-              <Button
-                className="btn"
-                label={"Load urls list"}
-                icon={importIcon}
-              />
+            <Button
+              icon={<LoginOutlined />}
+              size='large'
+            >
+              Load urls list
+            </Button>
             </ReactFileReader>
             <Button
-              className="btn"
-              label={"See example"}
-              icon={exportIcon}
-              onclick={this.handleExportUrlsListJSON}
-            />
+              icon={<LogoutOutlined />}
+              size='large'
+              onClick={this.handleExportUrlsListJSON}
+            >
+              See example
+            </Button>
           </div>
         </div>
       </div>
