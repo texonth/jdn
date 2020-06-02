@@ -1,9 +1,15 @@
 <!DOCTYPE html>
-<html>
-  <head>
-  </head>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+</head>
   <body>
-    <iframe src="" frameborder="0"></iframe>
-    <script src="js/panel.js"></script>
+    <script>
+      window.onload = () => {
+        chrome.devtools.panels.create("JDN", "icon.png", "panel.html", (panel) => {
+          console.log(panel);
+        });
+      };
+    </script>
   </body>
 </html>

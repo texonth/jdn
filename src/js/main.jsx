@@ -12,6 +12,8 @@ import {
 } from "./blocks/tabs/Tabs";
 import LogComponentWrapper from "./blocks/log/LogComponent";
 import MainModel from "./models/MainModel";
+import '../css/index.css';
+import 'antd/dist/antd.css';
 
 const styles = {
   commonContainer: {

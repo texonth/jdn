@@ -1,23 +1,53 @@
-var path = require("path");
-var webpack = require("webpack");
+const path = require("path");
+const webpack = require("webpack");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   devtool: "module-source-map",
   mode: "development",
   entry: [
-    "./src/js/main"
+    "./src/js/main.jsx",
+    "./src/manifest.json"
   ],
   output: {
-    path: path.join(__dirname, "src", "build"),
-    filename: "bundle.js",
-    publicPath: "/static/",
+    path: path.join(__dirname, "dist"),
+    filename: "[name].bundle.js",
+    publicPath: "/",
   },
-  plugins: [new webpack.HotModuleReplacementPlugin()],
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new HtmlWebpackPlugin({
+      title: 'JDN extension',
+      template: './src/index.html',
+      filename: 'index.html',
+      inject: false
+    }),
+    new HtmlWebpackPlugin({
+      title: 'JDN extension - panel',
+      template: './src/panel.html',
+      filename: 'panel.html'
+    }),
+    new MiniCssExtractPlugin()
+  ],
   resolve: {
     extensions: [".js", ".jsx"]
   },
   module: {
     rules: [
+      {
+        type: 'javascript/auto',
+        test: /manifest\.json$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: "./[name].[ext]"
+            }
+          }
+        ]
+      },
       {
         test: /\.jsx?$/,
         use: ["babel-loader"],
@@ -25,8 +55,7 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
-        include: path.join(__dirname, "src")
+        use: [MiniCssExtractPlugin.loader, 'css-loader']
       },
       {
         test: /\.less$/i,
