@@ -1,27 +1,32 @@
 import React from "react";
 import injectSheet from "react-jss";
-import PropTypes from "prop-types";
 import { inject, observer } from "mobx-react";
-import { observable, action } from "mobx";
 import { headerStyle, internalDivStyle } from "../../BlockStyles";
-import Button from "../../../components/Button/Button";
-import Link from "../../../components/Link/Link";
-import Input from "../../../components/Input/Input";
-import { add, close } from "../../../../icons/index";
+import { Button, Input } from 'antd';
+import { PlusOutlined, CloseOutlined } from '@ant-design/icons';
 
 const styles = {
   headerStyle,
   smallBtn: {
-    width: "24px",
-    height: "24px",
-    padding: 0,
+    border: "none",
   },
   containerStyle: {
     display: "flex",
+    "align-items": "center",
     ...internalDivStyle,
   },
   textInput: {
     margin: "5px",
+    width: "200px",
+  },
+  addRule: {
+    border: "none",
+    color: '#23a24d',
+  },
+  deleteRule: {
+    color: '#dd2e44',
+    marginLeft: "5px",
+    border: "none",
   },
 };
 
@@ -51,9 +56,11 @@ class ListOfSearchAttributes extends React.Component {
         <div>
           <span className={classes.headerStyle}>Unique attributes </span>
           <Button
-            className={classes.smallBtn}
-            icon={add}
-            onclick={this.handleAddItem}
+            className={classes.addRule}
+            size='large'
+            type='dashed'
+            icon={<PlusOutlined />}
+            onClick={this.handleAddItem}
           />
         </div>
         {list.map((item, index) => (
@@ -64,13 +71,15 @@ class ListOfSearchAttributes extends React.Component {
               placeholder="Attribute name"
               value={item}
               index={index}
-              onchange={(value) => {
-                this.handleChangeAttribute(value, index);
+              onChange={(event) => {
+                this.handleChangeAttribute(event.target.value, index);
               }}
             />
-            <Link
-              icon={close}
-              onclick={() => {
+            <Button 
+              className={classes.smallBtn, classes.deleteRule}
+              icon={<CloseOutlined twoToneColor="#eb2f96" />}
+              type="text"
+              onClick={() => {
                 this.handleDeleteItem(index);
               }}
             />

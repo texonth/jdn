@@ -1,13 +1,10 @@
 import React from "react";
 import injectSheet from "react-jss";
-import PropTypes from "prop-types";
 import { inject, observer } from "mobx-react";
-import { observable, action } from "mobx";
+import { observable } from "mobx";
 import { headerStyle, internalDivStyle } from "../../BlockStyles";
-import Button from "../../../components/Button/Button";
-import Link from "../../../components/Link/Link";
-import Input from "../../../components/Input/Input";
-import { add, close } from "../../../../icons/index";
+import { Input } from 'antd';
+import { PlusOutlined, CloseOutlined } from '@ant-design/icons';
 
 const styles = {
   headerStyle,
@@ -22,6 +19,7 @@ const styles = {
   },
   textInput: {
     margin: "5px",
+    width: "200px",
   },
   headerContainer: {
     borderBottom: "2px solid #e1e4e8",
@@ -41,9 +39,11 @@ const styles = {
     display: "inline-block",
     width: "100px",
   },
+  addRule: {
+    color: '#23a24d',
+  },
   deleteRule: {
-    width: "16px",
-    height: "16px",
+    color: '#dd2e44',
     marginLeft: "5px",
   },
   ruleLink: {
@@ -114,8 +114,7 @@ class RuleForElement extends React.Component {
                   }}
                 >
                   {`Rule ${index + 1}`}
-                  <img
-                    src={close}
+                  <CloseOutlined 
                     className={classes.deleteRule}
                     onClick={(e) => {
                       this.handleDeleteRule(e, index);
@@ -125,9 +124,8 @@ class RuleForElement extends React.Component {
               );
             })}
             <a role="tab" className="UnderlineNav-item">
-              <img
-                src={add}
-                className={classes.deleteRule}
+              <PlusOutlined 
+                className={classes.addRule}
                 onClick={this.handleAddRule}
               />
             </a>
@@ -140,9 +138,12 @@ class RuleForElement extends React.Component {
                 <div key={field + title} className={classes.fields}>
                   <span className={classes.field}>{field} </span>
                   <Input
+                    className='form-control textInput'
+                    className={classes. textInput}
+                    type="text"
                     value={rules[itemIndex][field]}
-                    onchange={(e) => {
-                      this.handleEditRule(e, field);
+                    onChange={(e) => {
+                      this.handleEditRule(e.target.value, field);
                     }}
                   />
                 </div>
