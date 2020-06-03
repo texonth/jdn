@@ -60,20 +60,10 @@ module.exports = {
       {
         test: /\.less$/i,
         use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: true,
-            },
-          },
-          {
-            loader: 'less-loader',
-            options: {
-              sourceMap: true,
-            },
-          },
-        ],
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          "less-loader"
+        ]
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
