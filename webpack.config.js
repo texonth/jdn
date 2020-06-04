@@ -29,7 +29,9 @@ module.exports = {
       template: './src/panel.html',
       filename: 'panel.html'
     }),
-    new MiniCssExtractPlugin()
+    new MiniCssExtractPlugin({
+      filename: "./css/[name].css"
+    })
   ],
   resolve: {
     extensions: [".js", ".jsx"]
@@ -62,19 +64,28 @@ module.exports = {
         use: [
           MiniCssExtractPlugin.loader,
           "css-loader",
-          "less-loader"
+          {
+            loader: "less-loader",
+            options: {
+              lessOptions: { // important extra layer for less-loader^6.0.0
+                javascriptEnabled: true
+              }
+            }
+          }
         ]
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
         use: [
-          'file-loader'
+          'file-loader',
+          'url-loader'
         ]
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/,
         use: [
-          'file-loader'
+          'file-loader',
+          'url-loader'
         ]
       }
     ]

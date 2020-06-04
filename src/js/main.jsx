@@ -13,7 +13,7 @@ import {
 import LogComponentWrapper from "./blocks/log/LogComponent";
 import MainModel from "./models/MainModel";
 import '../css/index.css';
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.less';
 
 const styles = {
   commonContainer: {
