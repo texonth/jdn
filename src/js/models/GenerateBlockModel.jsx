@@ -670,7 +670,7 @@ export const generationCallBack = ({ mainModel }, r, err) => {
       // generateBlockModel.pages.push(generateBlockModel.page);
       // mainModel.conversionModel.siteCodeReady = true;
       conversionModel.genPageCode(generateBlockModel.page, mainModel);
-      
+
       if (settingsModel.downloadAfterGeneration) {
         conversionModel.downloadPageCode(
           generateBlockModel.page,

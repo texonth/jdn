@@ -69,7 +69,7 @@ class GeneralSettings extends React.Component {
             change={this.handleChangeFramework}
           />
         </div>
-        <div className={classes.checkboxWrapper}>       
+        <div className={classes.checkboxWrapper}>
           <Checkbox
             onCheckboxChange={this.handleCheckboxChange}
             label={"Generate & Download"}
