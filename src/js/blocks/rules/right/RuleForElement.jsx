@@ -1,11 +1,8 @@
 import React from "react";
 import injectSheet from "react-jss";
-import PropTypes from "prop-types";
 import { inject, observer } from "mobx-react";
 import { observable, action } from "mobx";
 import { headerStyle, internalDivStyle } from "../../BlockStyles";
-import Button from "../../../components/Button/Button";
-import Link from "../../../components/Link/Link";
 import Input from "../../../components/Input/Input";
 import { add, close } from "../../../../icons/index";
 

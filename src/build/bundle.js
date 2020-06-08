@@ -63,7 +63,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "85e18584a7fd4af3dcd4";
+/******/ 	var hotCurrentHash = "85e5f221e1fd7ab8dc5e";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -58855,15 +58855,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_10__);
 /* harmony import */ var react_jss__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! react-jss */ "./node_modules/react-jss/dist/react-jss.esm.js");
-/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
-/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_12__);
-/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! mobx-react */ "./node_modules/mobx-react/dist/mobxreact.esm.js");
-/* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! mobx */ "./node_modules/mobx/lib/mobx.module.js");
-/* harmony import */ var _BlockStyles__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../BlockStyles */ "./src/js/blocks/BlockStyles.jsx");
-/* harmony import */ var _components_Button_Button__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../../components/Button/Button */ "./src/js/components/Button/Button.jsx");
-/* harmony import */ var _components_Link_Link__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../../components/Link/Link */ "./src/js/components/Link/Link.jsx");
-/* harmony import */ var _components_Input_Input__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../../components/Input/Input */ "./src/js/components/Input/Input.jsx");
-/* harmony import */ var _icons_index__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../../../../icons/index */ "./src/icons/index.js");
+/* harmony import */ var mobx_react__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! mobx-react */ "./node_modules/mobx-react/dist/mobxreact.esm.js");
+/* harmony import */ var mobx__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! mobx */ "./node_modules/mobx/lib/mobx.module.js");
+/* harmony import */ var _BlockStyles__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../BlockStyles */ "./src/js/blocks/BlockStyles.jsx");
+/* harmony import */ var _components_Input_Input__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../components/Input/Input */ "./src/js/components/Input/Input.jsx");
+/* harmony import */ var _icons_index__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../../../icons/index */ "./src/icons/index.js");
 
 
 
@@ -58892,11 +58888,8 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 
 
-
-
-
 var styles = {
-  headerStyle: _BlockStyles__WEBPACK_IMPORTED_MODULE_15__["headerStyle"],
+  headerStyle: _BlockStyles__WEBPACK_IMPORTED_MODULE_14__["headerStyle"],
   smallBtn: {
     width: "24px",
     height: "24px",
@@ -58904,7 +58897,7 @@ var styles = {
   },
   containerStyle: _objectSpread({
     display: "flex"
-  }, _BlockStyles__WEBPACK_IMPORTED_MODULE_15__["internalDivStyle"]),
+  }, _BlockStyles__WEBPACK_IMPORTED_MODULE_14__["internalDivStyle"]),
   textInput: {
     margin: "5px"
   },
@@ -58938,7 +58931,7 @@ var styles = {
     cursor: "pointer"
   }
 };
-var RuleForElement = (_dec = Object(mobx_react__WEBPACK_IMPORTED_MODULE_13__["inject"])("mainModel"), _dec(_class = Object(mobx_react__WEBPACK_IMPORTED_MODULE_13__["observer"])(_class = (_class2 = (_temp = /*#__PURE__*/function (_React$Component) {
+var RuleForElement = (_dec = Object(mobx_react__WEBPACK_IMPORTED_MODULE_12__["inject"])("mainModel"), _dec(_class = Object(mobx_react__WEBPACK_IMPORTED_MODULE_12__["observer"])(_class = (_class2 = (_temp = /*#__PURE__*/function (_React$Component) {
   _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4___default()(RuleForElement, _React$Component);
 
   var _super = _createSuper(RuleForElement);
@@ -59020,7 +59013,7 @@ var RuleForElement = (_dec = Object(mobx_react__WEBPACK_IMPORTED_MODULE_13__["in
             _this2.handleSwitchTab(index);
           }
         }, "Rule ".concat(index + 1), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_10___default.a.createElement("img", {
-          src: _icons_index__WEBPACK_IMPORTED_MODULE_19__["close"],
+          src: _icons_index__WEBPACK_IMPORTED_MODULE_16__["close"],
           className: classes.deleteRule,
           onClick: function onClick(e) {
             _this2.handleDeleteRule(e, index);
@@ -59030,7 +59023,7 @@ var RuleForElement = (_dec = Object(mobx_react__WEBPACK_IMPORTED_MODULE_13__["in
         role: "tab",
         className: "UnderlineNav-item"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_10___default.a.createElement("img", {
-        src: _icons_index__WEBPACK_IMPORTED_MODULE_19__["add"],
+        src: _icons_index__WEBPACK_IMPORTED_MODULE_16__["add"],
         className: classes.deleteRule,
         onClick: this.handleAddRule
       })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_10___default.a.createElement("div", {
@@ -59042,7 +59035,7 @@ var RuleForElement = (_dec = Object(mobx_react__WEBPACK_IMPORTED_MODULE_13__["in
             className: classes.fields
           }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_10___default.a.createElement("span", {
             className: classes.field
-          }, field, " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_10___default.a.createElement(_components_Input_Input__WEBPACK_IMPORTED_MODULE_18__["default"], {
+          }, field, " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_10___default.a.createElement(_components_Input_Input__WEBPACK_IMPORTED_MODULE_15__["default"], {
             value: rules[itemIndex][field],
             onchange: function onchange(e) {
               _this2.handleEditRule(e, field);
@@ -59054,7 +59047,7 @@ var RuleForElement = (_dec = Object(mobx_react__WEBPACK_IMPORTED_MODULE_13__["in
   }]);
 
   return RuleForElement;
-}(react__WEBPACK_IMPORTED_MODULE_10___default.a.Component), _temp), (_descriptor = _babel_runtime_helpers_applyDecoratedDescriptor__WEBPACK_IMPORTED_MODULE_7___default()(_class2.prototype, "isEditable", [mobx__WEBPACK_IMPORTED_MODULE_14__["observable"]], {
+}(react__WEBPACK_IMPORTED_MODULE_10___default.a.Component), _temp), (_descriptor = _babel_runtime_helpers_applyDecoratedDescriptor__WEBPACK_IMPORTED_MODULE_7___default()(_class2.prototype, "isEditable", [mobx__WEBPACK_IMPORTED_MODULE_13__["observable"]], {
   configurable: true,
   enumerable: true,
   writable: true,
@@ -62397,6 +62390,7 @@ var RulesBlockModel = (_class = (_temp = /*#__PURE__*/function () {
   }, {
     key: "updateRules",
     value: function updateRules() {
+      // debugger;
       var rulesStorage = window.localStorage;
       rulesStorage.setItem(this.rulesStorageName, JSON.stringify(this.rules));
       console.log(this.rules);
@@ -62444,6 +62438,11 @@ var RulesBlockModel = (_class = (_temp = /*#__PURE__*/function () {
       if (currentRules.length > 1) {
         currentRules.splice(index, 1);
         this.rules[this.currentRuleSet][this.currentRuleName] = currentRules.slice();
+
+        if (this.currentRuleItem === currentRules.length) {
+          this.currentRuleItem--;
+        }
+
         this.updateRules();
       }
     }
