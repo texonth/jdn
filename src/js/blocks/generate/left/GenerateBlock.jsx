@@ -1,6 +1,5 @@
 import React from "react";
 import injectSheet from "react-jss";
-import PropTypes from "prop-types";
 import { inject, observer } from "mobx-react";
 import Button from "../../../components/Button/Button";
 import { exportIcon, importIcon, settings } from "../../../../icons/index";
@@ -77,7 +76,7 @@ class GenerateBlock extends React.Component {
             <Button
               disabled={!isEnabled}
               className="BtnGroup-item btn-primary"
-              label={"Generate Several Page"}
+              label={"Generate Several Pages"}
               onclick={this.handleGenerateSeveral}
             />
           </div>
