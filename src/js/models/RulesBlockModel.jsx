@@ -195,6 +195,9 @@ export default class RulesBlockModel {
       this.rules[this.currentRuleSet][
         this.currentRuleName
       ] = currentRules.slice();
+      if (this.currentRuleItem === currentRules.length) {
+        this.currentRuleItem--;
+      }
       this.updateRules();
     }
   }
