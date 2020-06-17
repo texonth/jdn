@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 class Checkbox extends Component {
   state = {
-    isChecked: this.props.checked === "true",
+    isChecked: this.props.checked ? true : false,
   };
 
   toggleCheckboxChange = () => {

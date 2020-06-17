@@ -141,7 +141,6 @@ export default class RulesBlockModel {
   updateRules() {
     const rulesStorage = window.localStorage;
     rulesStorage.setItem(this.rulesStorageName, JSON.stringify(this.rules));
-    console.log(this.rules);
   }
 
   @action

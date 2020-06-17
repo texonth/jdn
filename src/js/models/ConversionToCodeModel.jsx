@@ -59,8 +59,6 @@ function simpleCode(locatorType, locator, elType, name, mainModel) {
   const template = mainModel.settingsModel.template;
   let templatePath = "";
 
-  console.log("locator", locator);
-
   if (isEmptyLocator(locator)) {
     templatePath = `    public ${elType} ${varName(name)};`;
   } else {
