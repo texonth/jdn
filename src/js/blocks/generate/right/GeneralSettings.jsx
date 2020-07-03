@@ -1,6 +1,5 @@
 import React from "react";
 import injectSheet from "react-jss";
-import PropTypes from "prop-types";
 import { inject, observer } from "mobx-react";
 import Checkbox from "../../../components/Checkbox/Checkbox";
 import CustomSelectWrapper from "../../../components/CustomSelect/CustomSelect";
@@ -24,7 +23,7 @@ class GeneralSettings extends React.Component {
   handleCheckboxChange = () => {
     const { mainModel } = this.props;
 
-    mainModel.settingsModel.triggerDownloadAfterGen();
+    mainModel.settingsModel.triggerDownloadAfterGen(mainModel);
   };
 
   handleChangeLanguage = (option) => {

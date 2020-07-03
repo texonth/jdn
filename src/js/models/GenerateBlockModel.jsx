@@ -290,7 +290,6 @@ function fillEl({ results, mainModel }, element, type, parent, ruleId) {
     result.elId = hashCode(element.Locator + type);
     results.push(result);
   } else {
-    console.log(element);
     result.parentId = parent.elId;
     result.parent = parent.Name;
     result.elId = genRand("El");
@@ -558,7 +557,6 @@ export const generationCallBack = ({ mainModel }, r, err) => {
   getTitleCallBack({ mainModel }, rDom.title);
 
   const observedDOM = rDom.body;
-  console.log(rDom.body);
   // document.evaluate(".//*[@ui='label' and contains(.,'Bootstrap')]", observedDOM, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
   //let copyOfDom = parser.parseFromString(r, "text/html").body;
   const {
@@ -658,8 +656,6 @@ export const generationCallBack = ({ mainModel }, r, err) => {
       });
     });
 
-    console.log(generateBlockModel.page.id);
-    console.log(generateBlockModel.page.name);
 
     const pageAlreadyGenerated = generateBlockModel.pages.find(
       (page) => page.id === generateBlockModel.page.id
@@ -673,7 +669,7 @@ export const generationCallBack = ({ mainModel }, r, err) => {
       // console.log(generateBlockModel.pages);
       // generateBlockModel.pages.push(generateBlockModel.page);
       // mainModel.conversionModel.siteCodeReady = true;
-      // conversionModel.genPageCode(generateBlockModel.page, mainModel);
+      conversionModel.genPageCode(generateBlockModel.page, mainModel);
 
       if (settingsModel.downloadAfterGeneration) {
         conversionModel.downloadPageCode(
@@ -773,7 +769,6 @@ export default class GenerateBlockModel {
 
     const generateStorage = window.localStorage;
     const urlsListFromStorage = generateStorage.getItem("SiteMapUrlsList");
-    console.log(urlsListFromStorage);
     this.log = new Log();
 
     if (urlsListFromStorage) {

@@ -37,8 +37,9 @@ export default class SettingsModel {
   }
 
   @action
-  triggerDownloadAfterGen() {
+  triggerDownloadAfterGen(mainModel) {
     this.downloadAfterGeneration = !this.downloadAfterGeneration;
+    mainModel.settingsModel.downloadAfterGeneration = this.downloadAfterGeneration;
     window.localStorage.setItem(
       "DownloadAfterGeneration",
       this.downloadAfterGeneration.toString()
