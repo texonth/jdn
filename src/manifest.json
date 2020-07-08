@@ -3,7 +3,7 @@
   "name": "JDN",
   "description": "",
   "devtools_page": "index.html",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "permissions": [
     "activeTab",
     "tabs"
@@ -19,5 +19,6 @@
       ],
       "all_frames": true
     }
-  ]
+  ],
+  "content_security_policy": "script-src 'self' 'sha256-JHNDcj8MYLazH4b/hK7V1/SE7KBZFC2mH5FvcLzQ0hc='; object-src 'self';"
 }

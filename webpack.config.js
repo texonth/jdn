@@ -14,7 +14,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, "dist"),
     filename: "[name].bundle.js",
-    publicPath: "/",
+    publicPath: "./",
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
@@ -51,7 +51,7 @@ module.exports = {
         ]
       },
       {
-        test: /\.jsx?$/,
+        test: /\.js?x$/,
         use: ["babel-loader"],
         include: path.join(__dirname, "src"),
       },
@@ -75,10 +75,16 @@ module.exports = {
         ]
       },
       {
-        test: /\.(png|svg|jpg|gif)$/,
+        test: /\.(png|jpe?g|gif)$/i,
         use: [
-          'file-loader',
-          'url-loader'
+          {
+            loader: 'file-loader',
+            options: {
+              esModule: false,
+              name: '[name].[ext]',
+              outputPath: './images/'
+            },
+          },
         ]
       },
       {
