@@ -28,7 +28,7 @@ jobs:
     - stage: compile
       name: Compile jdn code
       script:
-        - npm webpack
+        - npm run webpack
 
 after_failure:
   - echo "Build was failed"
