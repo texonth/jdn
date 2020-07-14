@@ -37,7 +37,7 @@ deploy:
   file: dist/*
   skip_cleanup: true
   on:
-    tags: true
+    branch: master
 
 after_failure:
   - echo "Build was failed"
