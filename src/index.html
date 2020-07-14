@@ -1,9 +1,16 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <style type="text/css"></style>
-  </head>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+</head>
   <body>
-    <script src="js/panel.js"></script>
+  <script>
+    console.log('JDN plugin enabled');
+    window.onload = () => {
+      chrome.devtools.panels.create("JDN", "icon.png", "panel.html", (panel) => {
+        console.log(panel);
+      });
+    };
+  </script>
   </body>
 </html>

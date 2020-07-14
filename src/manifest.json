@@ -1,17 +1,24 @@
 {
   "manifest_version": 2,
-
   "name": "JDN",
   "description": "",
   "devtools_page": "index.html",
-  "version": "2.0.3",
-
-  "permissions": ["activeTab", "tabs"],
-
+  "version": "2.0.6",
+  "permissions": [
+    "activeTab",
+    "tabs"
+  ],
   "content_scripts": [
     {
-      "matches": ["http://*/*", "https://*/*"],
-      "js": ["build/bundle.js"]
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "./main.bundle.js"
+      ],
+      "all_frames": true
     }
-  ]
+  ],
+  "content_security_policy": "script-src 'self' 'sha256-JHNDcj8MYLazH4b/hK7V1/SE7KBZFC2mH5FvcLzQ0hc='; object-src 'self';"
 }

@@ -1,13 +1,13 @@
-const settings = "icons/settings.png";
-const importIcon = "icons/import.png";
-const exportIcon = "icons/export.png";
-const add = "icons/add.png";
-const close = "icons/close.png";
-const back = "icons/back.png";
-const arrowDown = "icons/arrow-down.png";
-const errorIcon = "icons/error.png";
-const successIcon = "icons/success.png";
-const warningIcon = "icons/warning.png";
+const settings = require("./settings.png");
+const importIcon = require("./import.png");
+const exportIcon = require("./export.png");
+const add = require("./add.png");
+const close = require("./close.png");
+const back = require("./back.png");
+const arrowDown = require("./arrow-down.png");
+const errorIcon = require("./error.png");
+const successIcon = require("./success.png");
+const warningIcon = require("./warning.png");
 
 export {
   settings,
