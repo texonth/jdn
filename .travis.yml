@@ -30,6 +30,15 @@ jobs:
       script:
         - npm run webpack
 
+deploy:
+  provider: releases
+  api_key: "aa60564706663c431d907927f971c07a2a1815a2"
+  file_glob: true
+  file: dist/*
+  skip_cleanup: true
+  on:
+    tags: true
+
 after_failure:
   - echo "Build was failed"
 after_success:
