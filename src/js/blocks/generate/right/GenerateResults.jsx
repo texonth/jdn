@@ -2,9 +2,8 @@ import React from "react";
 import injectSheet from "react-jss";
 import PropTypes from "prop-types";
 import { inject, observer } from "mobx-react";
-import Button from "../../../components/Button/Button";
-import Infinity from "../../../components/Infinity/Infinity";
-import { importIcon } from "../../../../icons/index";
+import { SearchOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 
 const styles = {
   buttonContainer: {
@@ -64,10 +63,8 @@ class GenerateResults extends React.Component {
           {pageReady && (
             <div>
               <Button
-                className={classes.btn}
-                icon={importIcon}
-                onclick={this.handleDownloadSiteCode}
-              />
+                onClick={this.handleDownloadSiteCode}
+                icon={<SearchOutlined />}>import</Button>
               <span>{`Download site ${mainModel.generateBlockModel.siteInfo.siteTitle}`}</span>
             </div>
           )}
@@ -75,19 +72,19 @@ class GenerateResults extends React.Component {
             pages.map((page, index) => (
               <div key={page.id}>
                 <Button
-                  className={classes.btn}
-                  icon={importIcon}
-                  onclick={() => {
+                  onClick={() => {
                     this.handleDownloadPageCode(page, index);
                   }}
-                />
+                  icon={<SearchOutlined />}>import</Button>
                 <span>{`Download page ${page.name}`}</span>
               </div>
             ))}
         </div>
         <div>
           {pageReady && (
-            <Button label={"Clear Results"} onclick={this.clearGenResults} />
+            <Button onclick={this.clearGenResults}>
+              Clear Results
+            </Button>
           )}
         </div>
       </div>

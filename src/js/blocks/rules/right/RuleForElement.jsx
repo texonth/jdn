@@ -88,7 +88,7 @@ class RuleForElement extends React.Component {
     const { classes, mainModel } = this.props;
     const title = mainModel.ruleBlockModel.currentRuleName;
     const ruleSet = mainModel.ruleBlockModel.currentRuleSet;
-    const rules = mainModel.ruleBlockModel.rules[ruleSet][title] || [];
+    const rules = mainModel.ruleBlockModel.rules && mainModel.ruleBlockModel.rules[ruleSet] && mainModel.ruleBlockModel.rules[ruleSet][title] || [];
     const itemIndex = mainModel.ruleBlockModel.currentRuleItem;
     const ruleFields = this.getCurrentRuleFields(rules, itemIndex);
 
