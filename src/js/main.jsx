@@ -10,6 +10,8 @@ import RulesBlockWrapper from "./blocks/rules/left/RulesBlock";
 import ListOfSearchAttributesWrapper from "./blocks/rules/right/ListOfSearchAttributes";
 import RuleForElementWrapper from "./blocks/rules/right/RuleForElement";
 
+import GenerateBlockWrapper from "./blocks/generate/left/GenerateBlock";
+
 import MainModel from "./models/MainModel";
 
 import { Menu, Button, Row, Col } from 'antd';
@@ -82,23 +84,23 @@ class App extends React.Component {
                 <GeneralSettingsWrapper></GeneralSettingsWrapper>
               </Col>
               <Col span={16}>
-                <GenerateResultsWrapper></GenerateResultsWrapper>
                 <RulesBlockWrapper></RulesBlockWrapper>
                 <RuleForElementWrapper></RuleForElementWrapper>
               </Col>
             </Row>
           </div>
           }
-          {/*<GenerateBlockWrapper></GenerateBlockWrapper>*/}
 
           {current === 'urls' &&
           <div>
-            <ListOfSearchAttributesWrapper></ListOfSearchAttributesWrapper>
+            <GenerateBlockWrapper></GenerateBlockWrapper>
+            <GenerateResultsWrapper></GenerateResultsWrapper>
           </div>
           }
 
           {current === 'results' &&
           <div>
+            <ListOfSearchAttributesWrapper></ListOfSearchAttributesWrapper>
             <GeneralSettingsWrapper></GeneralSettingsWrapper>
             <GenerateResultsWrapper></GenerateResultsWrapper>
           </div>
