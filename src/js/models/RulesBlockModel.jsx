@@ -6,9 +6,9 @@ import Log from "./Log";
 export default class RulesBlockModel {
   @observable rules;
   rulesStorageName = "JDNElementRules";
-  @observable currentRuleSet = "";
-  @observable currentRuleName = "";
-  @observable currentRuleItem = 0;
+  // @observable currentRuleSet = "";
+  // @observable currentRuleName = "";
+  // @observable currentRuleItem = 0;
   @observable elementFields = {};
   @observable log = {};
 
@@ -162,26 +162,26 @@ export default class RulesBlockModel {
 
   @action
   handleAddRuleItem() {
-    const currentRules = this.rules[this.currentRuleSet][
-      this.currentRuleName
-    ].slice();
-    const rule = currentRules.slice(-1)[0];
-    const newRule = {};
-
-    if (rule.Locator || rule.Root) {
-      Object.keys(rule).forEach((prop) => {
-        newRule[prop] = "";
-      });
-      newRule.id = rule.id + 1;
-      currentRules.push(newRule);
-      this.currentRuleItem = this.rules[this.currentRuleSet][
-        this.currentRuleName
-      ].length;
-      this.rules[this.currentRuleSet][
-        this.currentRuleName
-      ] = currentRules.slice();
-      this.updateRules();
-    }
+    // const currentRules = this.rules[this.currentRuleSet][
+    //   this.currentRuleName
+    // ].slice();
+    // const rule = currentRules.slice(-1)[0];
+    // const newRule = {};
+    //
+    // if (rule.Locator || rule.Root) {
+    //   Object.keys(rule).forEach((prop) => {
+    //     newRule[prop] = "";
+    //   });
+    //   newRule.id = rule.id + 1;
+    //   currentRules.push(newRule);
+    //   this.currentRuleItem = this.rules[this.currentRuleSet][
+    //     this.currentRuleName
+    //   ].length;
+    //   this.rules[this.currentRuleSet][
+    //     this.currentRuleName
+    //   ] = currentRules.slice();
+    //   this.updateRules();
+    // }
   }
 
   @action

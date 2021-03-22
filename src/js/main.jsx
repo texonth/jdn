@@ -4,13 +4,11 @@ import injectSheet from "react-jss";
 import { observer, Provider } from "mobx-react";
 import { observable } from "mobx";
 
-import GenerateResultsWrapper from "./blocks/generate/right/GenerateResults";
-import GeneralSettingsWrapper from "./blocks/generate/right/GeneralSettings";
-import RulesBlockWrapper from "./blocks/rules/left/RulesBlock";
-import ListOfSearchAttributesWrapper from "./blocks/rules/right/ListOfSearchAttributes";
-import RuleForElementWrapper from "./blocks/rules/right/RuleForElement";
+import GenerateResultsWrapper from "./blocks/generate/GenerateResults";
+import GeneralSettingsWrapper from "./blocks/generate/GeneralSettings";
+import { RulesBlock }  from "./blocks/rules/RulesBlock";
 
-import GenerateBlockWrapper from "./blocks/generate/left/GenerateBlock";
+import GenerateBlockWrapper from "./blocks/generate/GenerateBlock";
 
 import MainModel from "./models/MainModel";
 
@@ -83,9 +81,8 @@ class App extends React.Component {
               <Col span={8}>
                 <GeneralSettingsWrapper></GeneralSettingsWrapper>
               </Col>
-              <Col span={16}>
-                <RulesBlockWrapper></RulesBlockWrapper>
-                <RuleForElementWrapper></RuleForElementWrapper>
+              <Col span={16} style={{"padding": "10px", "minHeight": "100vh", "borderLeft": "2px solid #d8d8d8"}}>
+                <RulesBlock></RulesBlock>
               </Col>
             </Row>
           </div>
@@ -100,8 +97,8 @@ class App extends React.Component {
 
           {current === 'results' &&
           <div>
-            <ListOfSearchAttributesWrapper></ListOfSearchAttributesWrapper>
-            <GeneralSettingsWrapper></GeneralSettingsWrapper>
+            {/*<ListOfSearchAttributesWrapper></ListOfSearchAttributesWrapper>*/}
+            {/*<GeneralSettingsWrapper></GeneralSettingsWrapper>*/}
             <GenerateResultsWrapper></GenerateResultsWrapper>
           </div>
           }

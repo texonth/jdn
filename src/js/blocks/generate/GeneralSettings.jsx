@@ -1,7 +1,7 @@
 import React from "react";
 import injectSheet from "react-jss";
 import { inject, observer } from "mobx-react";
-import { Languages, Frameworks } from "../../../json/settings";
+import { Rules, Languages, Frameworks } from "../../json/settings";
 import { Select, Radio, Checkbox, Button } from 'antd';
 const { Option } = Select;
 
@@ -27,22 +27,35 @@ class GeneralSettings extends React.Component {
     mainModel.settingsModel.triggerDownloadAfterGen(mainModel);
   };
 
-  handleChangeLanguage = (option) => {
+  handleChangeRule = (option) => {
     const { mainModel } = this.props;
 
-    mainModel.settingsModel.changeLanguage(option.value);
+    mainModel.settingsModel.changeLanguage(option);
+    mainModel.generateBlockModel.clearGeneration();
+  };
+
+
+  handleChangeLanguage = (option) => {
+    const { mainModel } = this.props;
+    console.log(option);
+
+    mainModel.settingsModel.changeLanguage(option);
     mainModel.generateBlockModel.clearGeneration();
   };
 
   handleChangeFramework = (option) => {
     const { mainModel } = this.props;
 
-    mainModel.settingsModel.changeFramework(option.value);
+    mainModel.settingsModel.changeFramework(option);
     mainModel.generateBlockModel.clearGeneration();
   };
 
   render() {
     const { classes, mainModel } = this.props;
+    const defaultRule =
+      Rules.find(
+        (lang) => lang.value === mainModel.settingsModel.rules
+      );
     const defaultLanguage =
       Languages.find(
         (lang) => lang.value === mainModel.settingsModel.extension
@@ -52,13 +65,27 @@ class GeneralSettings extends React.Component {
         (frame) => frame.value === mainModel.settingsModel.framework
       );
 
+    // TODO: Use for default value of Rule or delete that property
+    // {mainModel.ruleBlockModel.ruleName}
     return (
       <div className={classes.generateStyle}>
-
-
         <div className={classes.selectWrapper}>
           <span style={{ margin: '0 10px 0 0'}}>
-            Language
+            Rules:
+          </span>
+          <Select
+            size="small"
+            defaultValue={defaultRule && defaultRule.value}
+            placeholder="Please select"
+            onChange={this.handleChangeRule}
+            style={{ width: '100%' }}
+            options={Rules}
+          >
+          </Select>
+        </div>
+        <div className={classes.selectWrapper}>
+          <span style={{ margin: '0 10px 0 0'}}>
+            Language:
           </span>
           <Select
             size="small"
@@ -72,13 +99,13 @@ class GeneralSettings extends React.Component {
         </div>
         <div className={classes.selectWrapper}>
           <span style={{ margin: '0 10px 0 0'}}>
-            Frameworks
+            Frameworks:
           </span>
           <Select
             size="small"
             defaultValue={defaultFramework && defaultFramework.value}
             placeholder="Please select"
-            onChange={this.handleChangeLanguage}
+            onChange={this.handleChangeFramework}
             style={{ width: '100%' }}
             options={Frameworks}
           >

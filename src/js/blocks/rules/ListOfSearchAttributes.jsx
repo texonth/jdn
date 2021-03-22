@@ -3,11 +3,11 @@ import injectSheet from "react-jss";
 import PropTypes from "prop-types";
 import { inject, observer } from "mobx-react";
 import { observable, action } from "mobx";
-import { headerStyle, internalDivStyle } from "../../BlockStyles";
-import Button from "../../../components/Button/Button";
-import Link from "../../../components/Link/Link";
-import Input from "../../../components/Input/Input";
-import { add, close } from "../../../../icons/index";
+import { headerStyle, internalDivStyle } from "../BlockStyles";
+import { DeleteOutlined } from '@ant-design/icons';
+
+import { Button, Input } from 'antd';
+import { add, close } from "../../../icons";
 
 const styles = {
   headerStyle,
@@ -46,6 +46,8 @@ class ListOfSearchAttributes extends React.Component {
   render() {
     const { classes, mainModel } = this.props;
     const list = mainModel.ruleBlockModel.rules.ListOfSearchAttributes || [];
+    console.log(list);
+
     return (
       <div>
         <div>
@@ -64,13 +66,14 @@ class ListOfSearchAttributes extends React.Component {
               placeholder="Attribute name"
               value={item}
               index={index}
-              onchange={(value) => {
+              onChange={(value) => {
                 this.handleChangeAttribute(value, index);
               }}
             />
-            <Link
-              icon={close}
-              onclick={() => {
+            <Button
+              type="link"
+              icon={<DeleteOutlined />}
+              onClick={() => {
                 this.handleDeleteItem(index);
               }}
             />

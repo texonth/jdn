@@ -3,7 +3,7 @@ import injectSheet from "react-jss";
 import { inject, observer } from "mobx-react";
 import { Button } from 'antd';
 
-import { exportIcon, importIcon, settings } from "../../../../icons/index";
+import { exportIcon, importIcon, settings } from "../../../icons";
 import ReactFileReader from "react-file-reader";
 
 const styles = {
@@ -35,9 +35,6 @@ class GenerateBlock extends React.Component {
 
   handleOpenSettings = () => {
     const { mainModel } = this.props;
-
-    mainModel.setLeftPart("GenerateSettingsWrapper");
-    mainModel.setRightPart("GeneralSettingsWrapper");
   };
 
   handleImportUrlsListJSON = (file) => {
