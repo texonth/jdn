@@ -67,6 +67,6 @@ const rulesJson = {
     ],
     Form: [{ Locator: "form", id: 0, uniqueness: "id" }],
   },
-};
+}
 
-export default rulesJson;
+export default rulesJson

@@ -27,6 +27,14 @@
   "bugs": {
     "url": "https://github.com/jdi-testing/jdn"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
     "antd": "^4.14.0",
