@@ -1,10 +1,10 @@
-import React from "react"
-import injectSheet from "react-jss"
-import PropTypes from "prop-types"
-import { inject, observer } from "mobx-react"
-import { SearchOutlined } from "@ant-design/icons"
-import { Button, Select } from "antd"
-import { toJS } from "mobx"
+import React from "react";
+import injectSheet from "react-jss";
+import PropTypes from "prop-types";
+import { inject, observer } from "mobx-react";
+import { SearchOutlined } from "@ant-design/icons";
+import { Button, Select } from "antd";
+import { toJS } from "mobx";
 
 const styles = {
   buttonContainer: {
@@ -21,44 +21,44 @@ const styles = {
     justifyContent: "space-between",
     padding: "10px",
   },
-}
+};
 
 @inject("mainModel")
 @observer
 class GenerateResults extends React.Component {
   handleDownloadSiteCode = () => {
-    const { mainModel } = this.props
+    const { mainModel } = this.props;
 
-    mainModel.conversionModel.clearOldConversion()
+    mainModel.conversionModel.clearOldConversion();
     mainModel.generateBlockModel.pages.forEach((p) => {
-      console.log(p)
-      mainModel.conversionModel.genPageCode(p, mainModel)
-    })
-    mainModel.conversionModel.zipAllCode(mainModel)
-  }
+      console.log(p);
+      mainModel.conversionModel.genPageCode(p, mainModel);
+    });
+    mainModel.conversionModel.zipAllCode(mainModel);
+  };
 
   handleDownloadPageCode = (page, index) => {
-    const { mainModel } = this.props
-    console.log(page)
-    mainModel.conversionModel.genPageCode(page, mainModel)
+    const { mainModel } = this.props;
+    console.log(page);
+    mainModel.conversionModel.genPageCode(page, mainModel);
     // mainModel.conversionModel.setCurrentPageCode(index);
     mainModel.conversionModel.downloadPageCode(
       page,
       mainModel.settingsModel.extension
-    )
-  }
+    );
+  };
 
   clearGenResults = () => {
-    const { mainModel } = this.props
+    const { mainModel } = this.props;
 
-    mainModel.generateBlockModel.clearGeneration()
-  }
+    mainModel.generateBlockModel.clearGeneration();
+  };
 
   render() {
-    const { classes, mainModel } = this.props
-    const pages = mainModel.generateBlockModel.pages || []
-    console.log(toJS(pages))
-    const pageReady = Boolean(pages.length)
+    const { classes, mainModel } = this.props;
+    const pages = mainModel.generateBlockModel.pages || [];
+    console.log(toJS(pages));
+    const pageReady = Boolean(pages.length);
 
     return (
       <div className={classes.controlsContainer}>
@@ -92,7 +92,7 @@ class GenerateResults extends React.Component {
                   size={"small"}
                   style={{ marginBottom: "5px" }}
                   onClick={() => {
-                    this.handleDownloadPageCode(page, index)
+                    this.handleDownloadPageCode(page, index);
                   }}
                 >
                   <svg
@@ -119,12 +119,12 @@ class GenerateResults extends React.Component {
           )}
         </div>
       </div>
-    )
+    );
   }
 }
 
-GenerateResults.propTypes = {}
+GenerateResults.propTypes = {};
 
-const GenerateResultsWrapper = injectSheet(styles)(GenerateResults)
+const GenerateResultsWrapper = injectSheet(styles)(GenerateResults);
 
-export default GenerateResultsWrapper
+export default GenerateResultsWrapper;

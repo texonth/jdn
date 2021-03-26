@@ -74,6 +74,6 @@ public class {{type}} extends DataClass<{{type}}> {
 {{elements}}
 }`,
   dataElement: `    public String {{name}};`,
-}
+};
 
-export { JavaJDILightTemplate }
+export { JavaJDILightTemplate };

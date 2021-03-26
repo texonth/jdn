@@ -1,9 +1,9 @@
-import React from "react"
-import injectSheet from "react-jss"
-import { inject, observer } from "mobx-react"
-import { Rules, Languages, Frameworks } from "../../json/settings"
-import { Select, Radio, Checkbox, Button } from "antd"
-const { Option } = Select
+import React from "react";
+import injectSheet from "react-jss";
+import { inject, observer } from "mobx-react";
+import { Rules, Languages, Frameworks } from "../../json/settings";
+import { Select, Radio, Checkbox, Button } from "antd";
+const { Option } = Select;
 
 const styles = {
   generateStyle: {
@@ -16,50 +16,50 @@ const styles = {
     margin: "2px 0",
     display: "flex",
   },
-}
+};
 
 @inject("mainModel")
 @observer
 class GeneralSettings extends React.Component {
   handleCheckboxChange = () => {
-    const { mainModel } = this.props
+    const { mainModel } = this.props;
 
-    mainModel.settingsModel.triggerDownloadAfterGen(mainModel)
-  }
+    mainModel.settingsModel.triggerDownloadAfterGen(mainModel);
+  };
 
   handleChangeRule = (option) => {
-    const { mainModel } = this.props
+    const { mainModel } = this.props;
 
-    mainModel.settingsModel.changeLanguage(option)
-    mainModel.generateBlockModel.clearGeneration()
-  }
+    mainModel.settingsModel.changeLanguage(option);
+    mainModel.generateBlockModel.clearGeneration();
+  };
 
   handleChangeLanguage = (option) => {
-    const { mainModel } = this.props
-    console.log(option)
+    const { mainModel } = this.props;
+    console.log(option);
 
-    mainModel.settingsModel.changeLanguage(option)
-    mainModel.generateBlockModel.clearGeneration()
-  }
+    mainModel.settingsModel.changeLanguage(option);
+    mainModel.generateBlockModel.clearGeneration();
+  };
 
   handleChangeFramework = (option) => {
-    const { mainModel } = this.props
+    const { mainModel } = this.props;
 
-    mainModel.settingsModel.changeFramework(option)
-    mainModel.generateBlockModel.clearGeneration()
-  }
+    mainModel.settingsModel.changeFramework(option);
+    mainModel.generateBlockModel.clearGeneration();
+  };
 
   render() {
-    const { classes, mainModel } = this.props
+    const { classes, mainModel } = this.props;
     const defaultRule = Rules.find(
       (lang) => lang.value === mainModel.settingsModel.rules
-    )
+    );
     const defaultLanguage = Languages.find(
       (lang) => lang.value === mainModel.settingsModel.extension
-    )
+    );
     const defaultFramework = Frameworks.find(
       (frame) => frame.value === mainModel.settingsModel.framework
-    )
+    );
 
     // TODO: Use for default value of Rule or delete that property
     // {mainModel.ruleBlockModel.ruleName}
@@ -107,12 +107,12 @@ class GeneralSettings extends React.Component {
           </Checkbox>
         </div>
       </div>
-    )
+    );
   }
 }
 
-GeneralSettings.propTypes = {}
+GeneralSettings.propTypes = {};
 
-const GeneralSettingsWrapper = injectSheet(styles)(GeneralSettings)
+const GeneralSettingsWrapper = injectSheet(styles)(GeneralSettings);
 
-export default GeneralSettingsWrapper
+export default GeneralSettingsWrapper;

@@ -1,10 +1,10 @@
-import React from "react"
-import injectSheet from "react-jss"
-import { inject, observer } from "mobx-react"
-import { Button } from "antd"
+import React from "react";
+import injectSheet from "react-jss";
+import { inject, observer } from "mobx-react";
+import { Button } from "antd";
 
-import { exportIcon, importIcon, settings } from "../../../icons"
-import ReactFileReader from "react-file-reader"
+import { exportIcon, importIcon, settings } from "../../../icons";
+import ReactFileReader from "react-file-reader";
 
 const styles = {
   generateStyle: {
@@ -14,44 +14,44 @@ const styles = {
     margin: "10px 0 10px 10px",
     display: "flex",
   },
-}
+};
 
 @inject("mainModel")
 @observer
 class GenerateBlock extends React.Component {
   handleGenerate = () => {
-    const { mainModel } = this.props
+    const { mainModel } = this.props;
 
-    mainModel.generateBlockModel.generate(mainModel)
-    mainModel.setRightPart("GenerateResultsWrapper")
-  }
+    mainModel.generateBlockModel.generate(mainModel);
+    mainModel.setRightPart("GenerateResultsWrapper");
+  };
 
   handleGenerateSeveral = () => {
-    const { mainModel } = this.props
+    const { mainModel } = this.props;
 
-    mainModel.generateBlockModel.generateSeveralPages(mainModel)
-    mainModel.setRightPart("GenerateResultsWrapper")
-  }
+    mainModel.generateBlockModel.generateSeveralPages(mainModel);
+    mainModel.setRightPart("GenerateResultsWrapper");
+  };
 
   handleOpenSettings = () => {
-    const { mainModel } = this.props
-  }
+    const { mainModel } = this.props;
+  };
 
   handleImportUrlsListJSON = (file) => {
-    const { mainModel } = this.props
+    const { mainModel } = this.props;
 
-    mainModel.generateBlockModel.importUrlList(file, mainModel)
-  }
+    mainModel.generateBlockModel.importUrlList(file, mainModel);
+  };
 
   handleExportUrlsListJSON = () => {
-    const { mainModel } = this.props
+    const { mainModel } = this.props;
 
-    mainModel.generateBlockModel.downloadUrlsList()
-  }
+    mainModel.generateBlockModel.downloadUrlsList();
+  };
 
   render() {
-    const { classes, mainModel } = this.props
-    const isEnabled = (mainModel.generateBlockModel.urlsList || []).length
+    const { classes, mainModel } = this.props;
+    const isEnabled = (mainModel.generateBlockModel.urlsList || []).length;
 
     return (
       <div>
@@ -76,7 +76,7 @@ class GenerateBlock extends React.Component {
           <div className={`${classes.generateStyleAll}`}>
             <ReactFileReader
               handleFiles={(file) => {
-                this.handleImportUrlsListJSON(file)
+                this.handleImportUrlsListJSON(file);
               }}
               fileTypes={[".json"]}
               multipleFiles={false}
@@ -113,12 +113,12 @@ class GenerateBlock extends React.Component {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
 
-GenerateBlock.propTypes = {}
+GenerateBlock.propTypes = {};
 
-const GenerateBlockWrapper = injectSheet(styles)(GenerateBlock)
+const GenerateBlockWrapper = injectSheet(styles)(GenerateBlock);
 
-export default GenerateBlockWrapper
+export default GenerateBlockWrapper;

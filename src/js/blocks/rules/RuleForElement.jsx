@@ -1,70 +1,70 @@
-import React from "react"
-import injectSheet from "react-jss"
-import { inject, observer } from "mobx-react"
-import { observable, action, toJS } from "mobx"
-import { headerStyle, internalDivStyle } from "../BlockStyles"
-import { add, close } from "../../../icons"
-import { Button, Input } from "antd"
+import React from "react";
+import injectSheet from "react-jss";
+import { inject, observer } from "mobx-react";
+import { observable, action, toJS } from "mobx";
+import { headerStyle, internalDivStyle } from "../BlockStyles";
+import { add, close } from "../../../icons";
+import { Button, Input } from "antd";
 import {
   CaretRightOutlined,
   DeleteOutlined,
   UserOutlined,
-} from "@ant-design/icons"
+} from "@ant-design/icons";
 
 @inject("mainModel")
 @observer
 export class RuleForElement extends React.Component {
-  @observable isEditable = false
-  @observable show = true
-  hiddenRule = true
+  @observable isEditable = false;
+  @observable show = true;
+  hiddenRule = true;
 
   @action
   handleShowList = () => {
-    this.show = !this.show
-  }
+    this.show = !this.show;
+  };
 
   handleEditRuleName = () => {
-    this.isEditable = !this.isEditable
-  }
+    this.isEditable = !this.isEditable;
+  };
 
   getCurrentRuleFields = (rules, index) => {
     if (rules && rules.length) {
-      console.log(rules[index])
-      return Object.keys(rules[index])
+      console.log(rules[index]);
+      return Object.keys(rules[index]);
     }
-    return []
-  }
+    return [];
+  };
 
   handleDeleteRule = (e, { ruleSet, index }) => {
-    e.stopPropagation()
+    e.stopPropagation();
     this.props.mainModel.ruleBlockModel.handleDeleteRuleItem(e, {
       ruleSet,
       index,
-    })
-  }
+    });
+  };
 
   handleAddRule = (event, { ruleSet, index }) => {
     this.props.mainModel.ruleBlockModel.handleAddRuleItem(event, {
       ruleSet,
       index,
-    })
-  }
+    });
+  };
 
   handleEditRule = (event, { ruleSet, index, field }) => {
     this.props.mainModel.ruleBlockModel.handleEditRuleName(event, {
       ruleSet,
       index,
       field,
-    })
-  }
+    });
+  };
 
   render() {
-    const { classes, mainModel, ruleSet, title, index } = this.props
+    const { classes, mainModel, ruleSet, title, index } = this.props;
     const rules =
       (mainModel.ruleBlockModel.rules &&
         mainModel.ruleBlockModel.rules[ruleSet] &&
         mainModel.ruleBlockModel.rules[ruleSet][title]) ||
-      []
+      [];
 
     return (
       <div>
@@ -108,7 +108,7 @@ export class RuleForElement extends React.Component {
                     icon={<DeleteOutlined />}
                     type="link"
                     onClick={(e) => {
-                      this.handleDeleteRule(e, { ruleSet, index })
+                      this.handleDeleteRule(e, { ruleSet, index });
                     }}
                   />
                 </div>
@@ -121,18 +121,18 @@ export class RuleForElement extends React.Component {
                           size={"small"}
                           value={rules[index][field]}
                           onChange={(e) => {
-                            this.handleEditRule(e, { ruleSet, index, field })
+                            this.handleEditRule(e, { ruleSet, index, field });
                           }}
                         />
                       </div>
-                    )
+                    );
                   }
                 })}
               </div>
-            )
+            );
           })}
         </div>
       </div>
-    )
+    );
   }
 }

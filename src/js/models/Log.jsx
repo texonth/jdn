@@ -1,24 +1,24 @@
-import { observable, action } from "mobx"
+import { observable, action } from "mobx";
 
 export default class Log {
-  @observable log
+  @observable log;
 
   constructor() {
-    this.log = []
+    this.log = [];
   }
 
   isEmpty() {
-    this.log.length ? false : true
+    this.log.length ? false : true;
   }
 
   @action
   addToLog({ message, type }) {
-    const date = new Date()
-    this.log.push({ message, type, time: date })
+    const date = new Date();
+    this.log.push({ message, type, time: date });
   }
 
   @action
   clearLog() {
-    this.log = []
+    this.log = [];
   }
 }

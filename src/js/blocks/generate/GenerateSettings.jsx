@@ -1,10 +1,10 @@
-import React from "react"
-import injectSheet from "react-jss"
-import ReactFileReader from "react-file-reader"
-import PropTypes from "prop-types"
-import { inject, observer } from "mobx-react"
-import { exportIcon, importIcon, back } from "../../../icons"
-import { Button } from "antd"
+import React from "react";
+import injectSheet from "react-jss";
+import ReactFileReader from "react-file-reader";
+import PropTypes from "prop-types";
+import { inject, observer } from "mobx-react";
+import { exportIcon, importIcon, back } from "../../../icons";
+import { Button } from "antd";
 
 const styles = {
   generateStyle: {
@@ -17,29 +17,29 @@ const styles = {
   btn: {
     marginRight: "5px",
   },
-}
+};
 
 @inject("mainModel")
 @observer
 class GenerateSettings extends React.Component {
   handleSettings = () => {
-    const { mainModel } = this.props
-  }
+    const { mainModel } = this.props;
+  };
 
   handleExportTemplate = () => {
-    const { mainModel } = this.props
+    const { mainModel } = this.props;
 
-    mainModel.settingsModel.downloadCurrentTemplate()
-  }
+    mainModel.settingsModel.downloadCurrentTemplate();
+  };
 
   handleImportTemplate = (file) => {
-    const { mainModel } = this.props
+    const { mainModel } = this.props;
 
-    mainModel.generateBlockModel.clearGeneration()
-    mainModel.settingsModel.importNewTemplate(file, mainModel)
-  }
+    mainModel.generateBlockModel.clearGeneration();
+    mainModel.settingsModel.importNewTemplate(file, mainModel);
+  };
   render() {
-    const { classes } = this.props
+    const { classes } = this.props;
     return (
       <div>
         <div className={`${classes.generateStyle} BtnGroup`}>
@@ -52,7 +52,7 @@ class GenerateSettings extends React.Component {
         <div className={classes.buttonContainer}>
           <ReactFileReader
             handleFiles={(file) => {
-              this.handleImportTemplate(file)
+              this.handleImportTemplate(file);
             }}
             fileTypes={[".json"]}
             multipleFiles={false}
@@ -71,12 +71,12 @@ class GenerateSettings extends React.Component {
           />
         </div>
       </div>
-    )
+    );
   }
 }
 
-GenerateSettings.propTypes = {}
+GenerateSettings.propTypes = {};
 
-const GenerateSettingsWrapper = injectSheet(styles)(GenerateSettings)
+const GenerateSettingsWrapper = injectSheet(styles)(GenerateSettings);
 
-export default GenerateSettingsWrapper
+export default GenerateSettingsWrapper;

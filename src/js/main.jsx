@@ -1,23 +1,23 @@
-import React from "react"
-import ReactDOM from "react-dom"
-import injectSheet from "react-jss"
-import { observer, Provider } from "mobx-react"
-import { observable } from "mobx"
+import React from "react";
+import ReactDOM from "react-dom";
+import injectSheet from "react-jss";
+import { observer, Provider } from "mobx-react";
+import { observable } from "mobx";
 
-import GenerateResultsWrapper from "./blocks/generate/GenerateResults"
-import GeneralSettingsWrapper from "./blocks/generate/GeneralSettings"
-import { RulesBlock } from "./blocks/rules/RulesBlock"
+import GenerateResultsWrapper from "./blocks/generate/GenerateResults";
+import GeneralSettingsWrapper from "./blocks/generate/GeneralSettings";
+import { RulesBlock } from "./blocks/rules/RulesBlock";
 
-import GenerateBlockWrapper from "./blocks/generate/GenerateBlock"
+import GenerateBlockWrapper from "./blocks/generate/GenerateBlock";
 
-import MainModel from "./models/MainModel"
+import MainModel from "./models/MainModel";
 
-import { Menu, Button, Row, Col } from "antd"
-const { SubMenu } = Menu
+import { Menu, Button, Row, Col } from "antd";
+const { SubMenu } = Menu;
 
-import "antd/lib/style/themes/default.less"
-import "antd/dist/antd.less"
-import "../css/main.less"
+import "antd/lib/style/themes/default.less";
+import "antd/dist/antd.less";
+import "../css/main.less";
 const styles = {
   commonContainer: {
     position: "relative",
@@ -37,22 +37,22 @@ const styles = {
     height: "400px",
     minHeight: "fit-content",
   },
-}
+};
 
 @observer
 class App extends React.Component {
-  @observable mainModel = new MainModel()
+  @observable mainModel = new MainModel();
 
   handleClick = (e) => {
-    console.log("click ", e)
-    this.mainModel.currentTab = { current: e.key }
-  }
+    console.log("click ", e);
+    this.mainModel.currentTab = { current: e.key };
+  };
 
   render() {
-    const { classes } = this.props
+    const { classes } = this.props;
 
-    const { current } = this.mainModel.currentTab
-    console.log(current)
+    const { current } = this.mainModel.currentTab;
+    console.log(current);
     return (
       <Provider mainModel={this.mainModel}>
         <div className={classes.commonContainer}>
@@ -135,14 +135,14 @@ class App extends React.Component {
           {/*)}*/}
         </div>
       </Provider>
-    )
+    );
   }
 }
 
-const AppWrapper = injectSheet(styles)(App)
+const AppWrapper = injectSheet(styles)(App);
 
-const div = document.getElementById("chromeExtensionReactApp")
+const div = document.getElementById("chromeExtensionReactApp");
 
 if (div instanceof Element) {
-  ReactDOM.render(<AppWrapper />, div)
+  ReactDOM.render(<AppWrapper />, div);
 }

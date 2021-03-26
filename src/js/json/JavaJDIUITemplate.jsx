@@ -72,6 +72,6 @@ public class {{type}} extends DataClass<{{type}}> {
 {{elements}}
 }`,
   dataElement: `    public String {{name}};`,
-}
+};
 
-export { JavaJDIUITemplate }
+export { JavaJDIUITemplate };

@@ -1,30 +1,30 @@
-import React from "react"
-import ReactFileReader from "react-file-reader"
-import injectSheet from "react-jss"
-import { inject, observer } from "mobx-react"
-import { observable, action, toJS } from "mobx"
-import PropTypes from "prop-types"
-import { Button, Col } from "antd"
-import { exportIcon, importIcon } from "../../../icons"
-import { headerStyle } from "../BlockStyles"
-import { CaretRightOutlined, Icon } from "@ant-design/icons"
-import { RuleForElement } from "./RuleForElement"
+import React from "react";
+import ReactFileReader from "react-file-reader";
+import injectSheet from "react-jss";
+import { inject, observer } from "mobx-react";
+import { observable, action, toJS } from "mobx";
+import PropTypes from "prop-types";
+import { Button, Col } from "antd";
+import { exportIcon, importIcon } from "../../../icons";
+import { headerStyle } from "../BlockStyles";
+import { CaretRightOutlined, Icon } from "@ant-design/icons";
+import { RuleForElement } from "./RuleForElement";
 
 @observer
 class ListOfHiddenItems extends React.Component {
-  @observable show = false
+  @observable show = false;
 
-  hiddenRule = true
+  hiddenRule = true;
 
   @action
   handleShowList = () => {
-    this.show = !this.show
-  }
+    this.show = !this.show;
+  };
 
   render() {
-    const { name, list, className, linkClass, ruleSet } = this.props
+    const { name, list, className, linkClass, ruleSet } = this.props;
 
-    console.log(ruleSet)
+    console.log(ruleSet);
 
     return (
       <li>
@@ -39,7 +39,7 @@ class ListOfHiddenItems extends React.Component {
               <li
                 key={item + index}
                 onClick={() => {
-                  this.hiddenRule = !this.hiddenRule
+                  this.hiddenRule = !this.hiddenRule;
                 }}
               >
                 <RuleForElement
@@ -53,7 +53,7 @@ class ListOfHiddenItems extends React.Component {
           </ul>
         )}
       </li>
-    )
+    );
   }
 }
 
@@ -61,28 +61,28 @@ class ListOfHiddenItems extends React.Component {
 @observer
 export class RulesBlock extends React.Component {
   handleExportRules = () => {
-    const { mainModel } = this.props
-    const rulesName = mainModel.settingsModel.framework
+    const { mainModel } = this.props;
+    const rulesName = mainModel.settingsModel.framework;
 
-    mainModel.ruleBlockModel.downloadCurrentRules(rulesName)
-  }
+    mainModel.ruleBlockModel.downloadCurrentRules(rulesName);
+  };
 
   handleImportRules = (file) => {
-    const { mainModel } = this.props
+    const { mainModel } = this.props;
 
-    mainModel.generateBlockModel.clearGeneration()
-    mainModel.ruleBlockModel.importRules(file, mainModel)
-  }
+    mainModel.generateBlockModel.clearGeneration();
+    mainModel.ruleBlockModel.importRules(file, mainModel);
+  };
 
   render() {
-    const { classes, mainModel } = this.props
-    console.log(toJS(mainModel.ruleBlockModel.rules))
+    const { classes, mainModel } = this.props;
+    console.log(toJS(mainModel.ruleBlockModel.rules));
     const simpleRules =
-      Object.keys(mainModel.ruleBlockModel.rules.SimpleRules) || []
+      Object.keys(mainModel.ruleBlockModel.rules.SimpleRules) || [];
     const complexRules =
-      Object.keys(mainModel.ruleBlockModel.rules.ComplexRules) || []
+      Object.keys(mainModel.ruleBlockModel.rules.ComplexRules) || [];
     const compositeRules =
-      Object.keys(mainModel.ruleBlockModel.rules.CompositeRules) || []
+      Object.keys(mainModel.ruleBlockModel.rules.CompositeRules) || [];
 
     return (
       <div>
@@ -92,7 +92,7 @@ export class RulesBlock extends React.Component {
             <div style={{ display: "inline-block" }}>
               <ReactFileReader
                 handleFiles={(file) => {
-                  this.handleImportRules(file)
+                  this.handleImportRules(file);
                 }}
                 fileTypes={[".json"]}
                 multipleFiles={false}
@@ -155,6 +155,6 @@ export class RulesBlock extends React.Component {
           </ul>
         </div>
       </div>
-    )
+    );
   }
 }

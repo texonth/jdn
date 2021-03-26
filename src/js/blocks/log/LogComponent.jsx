@@ -1,8 +1,8 @@
-import React from "react"
-import injectSheet from "react-jss"
-import { inject, observer } from "mobx-react"
-import PropTypes from "prop-types"
-import { errorIcon, successIcon, warningIcon } from "../../../icons/index"
+import React from "react";
+import injectSheet from "react-jss";
+import { inject, observer } from "mobx-react";
+import PropTypes from "prop-types";
+import { errorIcon, successIcon, warningIcon } from "../../../icons/index";
 
 const styles = {
   buttonContainer: {
@@ -46,63 +46,63 @@ const styles = {
   logItem: {
     marginLeft: "10px",
   },
-}
+};
 
 @inject("mainModel")
 @observer
 class LogComponent extends React.Component {
   triggerShow = () => {
-    const { mainModel } = this.props
-    mainModel.triggerShowLog()
-  }
+    const { mainModel } = this.props;
+    mainModel.triggerShowLog();
+  };
 
   displayLogIcon = () => {
-    const { mainModel, classes } = this.props
+    const { mainModel, classes } = this.props;
     const findError = mainModel.applicationLog.find(
       (logItem) => logItem.type === "error"
-    )
+    );
     const findWarn = mainModel.applicationLog.find(
       (logItem) => logItem.type === "warning"
-    )
+    );
     const findSuccess = mainModel.applicationLog.find(
       (logItem) => logItem.type === "success"
-    )
-    let icon
+    );
+    let icon;
 
     if (findSuccess) {
-      icon = successIcon
+      icon = successIcon;
     }
     if (findWarn) {
-      icon = warningIcon
+      icon = warningIcon;
     }
     if (findError) {
-      icon = errorIcon
+      icon = errorIcon;
     }
     if (icon) {
-      return <img className={classes.logIcon} src={icon} />
+      return <img className={classes.logIcon} src={icon} />;
     }
-    return <p>Empty Log</p>
-  }
+    return <p>Empty Log</p>;
+  };
 
   displayLogItem = (item) => {
-    const { classes } = this.props
-    let time
+    const { classes } = this.props;
+    let time;
     if (item.time) {
-      time = `${item.time.getHours()}:${item.time.getMinutes()}:${item.time.getSeconds()}:${item.time.getMilliseconds()}`
+      time = `${item.time.getHours()}:${item.time.getMinutes()}:${item.time.getSeconds()}:${item.time.getMilliseconds()}`;
     }
     return (
       <div className={classes.logItemContainer}>
         <p className={classes.logItem}>{time}</p>
         <p className={classes.logItem}>{item.message}</p>
       </div>
-    )
-  }
+    );
+  };
 
   render() {
-    const { classes, mainModel } = this.props
+    const { classes, mainModel } = this.props;
     const classContainer = mainModel.showLog
       ? classes.logContainerExpand
-      : classes.logContainer
+      : classes.logContainer;
 
     return (
       <div className={classContainer} onClick={this.triggerShow}>
@@ -115,12 +115,12 @@ class LogComponent extends React.Component {
           </div>
         )}
       </div>
-    )
+    );
   }
 }
 
-LogComponent.propTypes = {}
+LogComponent.propTypes = {};
 
-const LogComponentWrapper = injectSheet(styles)(LogComponent)
+const LogComponentWrapper = injectSheet(styles)(LogComponent);
 
-export default LogComponentWrapper
+export default LogComponentWrapper;
