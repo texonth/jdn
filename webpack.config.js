@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-  devtool: "module-source-map",
+  devtool: "inline-cheap-module-source-map",
   mode: "development",
   entry: [
     "./src/js/main.jsx",
