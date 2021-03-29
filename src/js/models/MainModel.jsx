@@ -10,13 +10,10 @@ export default class MainModel {
   @observable conversionModel;
   @observable settingsModel;
   @observable ruleBlockModel;
-  @observable currentTab = { current: "settings" };
-  @observable currentRightPart = "";
-  @observable currentLeftPart = "GenerateBlockWrapper";
+  @observable tab = "settings";
   @observable currentPageId;
   @observable applicationLog = [];
   @observable showLog = false;
-  ApplicationMap = new Map();
 
   constructor() {
     this.generateBlockModel = new GenerateBlockModel();
@@ -25,11 +22,8 @@ export default class MainModel {
     this.settingsModel = new SettingsModel();
   }
 
-  @action
-  switchTab(tab) {
-    this.currentTab = tab;
-    this.currentRightPart = "";
-    this.currentLeftPart = this.ApplicationMap.get(tab).initialLeft;
+  @action setTab = (tab) => {
+    this.tab = tab;
   }
 
   @action

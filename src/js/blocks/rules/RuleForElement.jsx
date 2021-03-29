@@ -21,6 +21,7 @@ export class RuleForElement extends React.Component {
   @action
   handleShowList = () => {
     this.show = !this.show;
+    this.setState({show: this.show});
   };
 
   handleEditRuleName = () => {
@@ -35,26 +36,26 @@ export class RuleForElement extends React.Component {
     return [];
   };
 
-  handleDeleteRule = (e, { ruleSet, index }) => {
+  handleDeleteRule = (e, { ruleSet, title, index }) => {
     e.stopPropagation();
     this.props.mainModel.ruleBlockModel.handleDeleteRuleItem(e, {
       ruleSet,
+      title,
       index,
     });
   };
 
-  handleAddRule = (event, { ruleSet, index }) => {
+  handleAddRule = (event, { ruleSet, title, index }) => {
     this.props.mainModel.ruleBlockModel.handleAddRuleItem(event, {
       ruleSet,
+      title,
       index,
     });
   };
 
-  handleEditRule = (event, { ruleSet, index, field }) => {
-    this.props.mainModel.ruleBlockModel.handleEditRuleName(event, {
-      ruleSet,
-      index,
-      field,
+  handleEditRule = (value, { ruleSet, title, field, index }) => {
+    this.props.mainModel.ruleBlockModel.handleEditRuleName(value, {
+      ruleSet, title, field, index
     });
   };
 
@@ -72,13 +73,12 @@ export class RuleForElement extends React.Component {
           <span className={"treeCounter"}>{rules.length}</span>
           <CaretRightOutlined
             rotate={this.show ? 0 : 90}
-            onClick={this.handleAddRule}
           />
           <span className={"link"}>{title}</span>
         </div>
         <div hidden={this.show} className={"posr"}>
           <Button
-            onClick={this.handleAddRule(e, { ruleSet, index })}
+            onClick={(e) => {this.handleAddRule(e, { ruleSet, title, index })}}
             className={"add"}
             type="link"
           >
@@ -108,7 +108,7 @@ export class RuleForElement extends React.Component {
                     icon={<DeleteOutlined />}
                     type="link"
                     onClick={(e) => {
-                      this.handleDeleteRule(e, { ruleSet, index });
+                      this.handleDeleteRule(e, { ruleSet, title, index });
                     }}
                   />
                 </div>
@@ -121,7 +121,7 @@ export class RuleForElement extends React.Component {
                           size={"small"}
                           value={rules[index][field]}
                           onChange={(e) => {
-                            this.handleEditRule(e, { ruleSet, index, field });
+                            this.handleEditRule(e, { ruleSet, title, field, index });
                           }}
                         />
                       </div>

@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import injectSheet from "react-jss";
 import { observer, Provider } from "mobx-react";
-import { observable } from "mobx";
+import {computed, observable} from "mobx";
 
 import GenerateResultsWrapper from "./blocks/generate/GenerateResults";
 import GeneralSettingsWrapper from "./blocks/generate/GeneralSettings";
@@ -44,21 +44,24 @@ class App extends React.Component {
   @observable mainModel = new MainModel();
 
   handleClick = (e) => {
-    console.log("click ", e);
-    this.mainModel.currentTab = { current: e.key };
+    this.mainModel.setTab(e.key);
+    this.setState({tab: e.key});
   };
+
+  @computed get tab() {
+    return this.mainModel.tab
+  }
 
   render() {
     const { classes } = this.props;
-
-    const { current } = this.mainModel.currentTab;
-    console.log(current);
+    console.log(this.props);
+    console.log(this.mainModel);
     return (
       <Provider mainModel={this.mainModel}>
         <div className={classes.commonContainer}>
           <Menu
             onClick={this.handleClick}
-            selectedKeys={[current]}
+            selectedKeys={[this.tab]}
             mode="horizontal"
           >
             <Menu.Item key="settings">Settings</Menu.Item>
@@ -72,8 +75,8 @@ class App extends React.Component {
             <Menu.Item key="warnings">Warnings</Menu.Item>
           </Menu>
 
-          {current === "settings" && (
-            <div>
+          {this.tab === "settings" && (
+            <div key="settings">
               <Row>
                 <Col span={8}>
                   <GeneralSettingsWrapper></GeneralSettingsWrapper>
@@ -92,15 +95,15 @@ class App extends React.Component {
             </div>
           )}
 
-          {current === "urls" && (
-            <div>
+          {this.tab === "urls" && (
+            <div key="urls">
               <GenerateBlockWrapper></GenerateBlockWrapper>
               <GenerateResultsWrapper></GenerateResultsWrapper>
             </div>
           )}
 
-          {current === "results" && (
-            <div>
+          {this.tab === "results" && (
+            <div key="results">
               {/*<ListOfSearchAttributesWrapper></ListOfSearchAttributesWrapper>*/}
               {/*<GeneralSettingsWrapper></GeneralSettingsWrapper>*/}
               <GenerateResultsWrapper></GenerateResultsWrapper>

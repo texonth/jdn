@@ -13,12 +13,13 @@ import { RuleForElement } from "./RuleForElement";
 @observer
 class ListOfHiddenItems extends React.Component {
   @observable show = false;
-
   hiddenRule = true;
 
   @action
   handleShowList = () => {
     this.show = !this.show;
+    this.setState({show: this.show});
+    console.log(this.show)
   };
 
   render() {

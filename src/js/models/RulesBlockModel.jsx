@@ -6,9 +6,6 @@ import Log from "./Log";
 export default class RulesBlockModel {
   @observable rules;
   rulesStorageName = "JDNElementRules";
-  // @observable currentRuleSet = "";
-  // @observable currentRuleName = "";
-  // @observable currentRuleItem = 0;
   @observable elementFields = {};
   @observable log = {};
 
@@ -144,9 +141,15 @@ export default class RulesBlockModel {
   }
 
   @action
-  handleAddRuleItem(event, { ruleSet, index }) {
-    const currentRules = this.rules[ruleSet][index].slice();
+  handleAddRuleItem(event, { ruleSet, title, index }) {
+    console.log(this.rules, ruleSet, title, index);
+    console.log(this.rules[ruleSet][title]);
+
+    const currentRules = this.rules[ruleSet][title].slice();
+    console.log(currentRules);
     const rule = currentRules.slice(-1)[0];
+    console.log(rule);
+
     const newRule = {};
 
     if (rule.Locator || rule.Root) {
@@ -155,30 +158,29 @@ export default class RulesBlockModel {
       });
       newRule.id = rule.id + 1;
       currentRules.push(newRule);
-      this.currentRuleItem = this.rules[ruleSet][index].length;
-      this.rules[ruleSet][index] = currentRules.slice();
+      this.rules[ruleSet][title] = currentRules;
       this.updateRules();
     }
   }
 
   @action
-  handleDeleteRuleItem(event, { ruleSet, index }) {
-    const currentRules = this.rules[ruleSet][index].slice();
+  handleDeleteRuleItem(event, { ruleSet, title, index }) {
+    console.log(this.rules[ruleSet], title, index);
+    const currentRules = this.rules[ruleSet][title].slice();
     if (currentRules.length > 1) {
       currentRules.splice(index, 1);
-      this.rules[ruleSet][index] = currentRules.slice();
-      if (this.currentRuleItem === currentRules.length) {
-        this.currentRuleItem--;
-      }
+      this.rules[ruleSet][title] = currentRules.slice();
       this.updateRules();
     }
   }
 
   @action
-  handleEditRuleName(event, { ruleSet, index, field }) {
-    const currentRules = this.rules[field][index].slice();
-    currentRules[ruleSet][field] = value;
-    this.rules[ruleSet][index] = currentRules.slice();
+  handleEditRuleName(value, { ruleSet, title, field, index }) {
+    console.log(this.rules[ruleSet], title, field)
+    const currentRules = this.rules[ruleSet][title].slice();
+    currentRules[index][field] = value;
+    console.log(currentRules[index][field], value)
+    this.rules[ruleSet][title][field] = currentRules.slice();
     this.updateRules();
   }
 
