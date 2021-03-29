@@ -50,7 +50,7 @@ class App extends React.Component {
 
   @computed get tab() {
     return this.mainModel.tab
-  }
+  };
 
   render() {
     const { classes } = this.props;

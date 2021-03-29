@@ -176,10 +176,10 @@ export default class RulesBlockModel {
 
   @action
   handleEditRuleName(value, { ruleSet, title, field, index }) {
-    console.log(this.rules[ruleSet], title, field)
+    console.log(this.rules[ruleSet], title, field);
     const currentRules = this.rules[ruleSet][title].slice();
     currentRules[index][field] = value;
-    console.log(currentRules[index][field], value)
+    console.log(currentRules[index][field], value);
     this.rules[ruleSet][title][field] = currentRules.slice();
     this.updateRules();
   }
