@@ -78,7 +78,10 @@ export class RuleForElement extends React.Component {
         </div>
         <div hidden={this.show} className={"posr"}>
           <Button
-            onClick={(e) => {this.handleAddRule(e, { ruleSet, title, index })}}
+            onClick={(e) => {
+              this.handleAddRule(e, { ruleSet, title, index });
+              this.forceUpdate();
+            }}
             className={"add"}
             type="link"
           >
@@ -109,6 +112,7 @@ export class RuleForElement extends React.Component {
                     type="link"
                     onClick={(e) => {
                       this.handleDeleteRule(e, { ruleSet, title, index });
+                      this.forceUpdate();
                     }}
                   />
                 </div>
@@ -122,6 +126,7 @@ export class RuleForElement extends React.Component {
                           value={rules[index][field]}
                           onChange={(e) => {
                             this.handleEditRule(e, { ruleSet, title, field, index });
+                            this.forceUpdate();
                           }}
                         />
                       </div>

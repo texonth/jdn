@@ -23,14 +23,12 @@ class GenerateBlock extends React.Component {
     const { mainModel } = this.props;
 
     mainModel.generateBlockModel.generate(mainModel);
-    mainModel.setRightPart("GenerateResultsWrapper");
   };
 
   handleGenerateSeveral = () => {
     const { mainModel } = this.props;
 
     mainModel.generateBlockModel.generateSeveralPages(mainModel);
-    mainModel.setRightPart("GenerateResultsWrapper");
   };
 
   handleOpenSettings = () => {
