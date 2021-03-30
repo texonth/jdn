@@ -54,6 +54,7 @@ class GenerateResults extends React.Component {
     mainModel.generateBlockModel.clearGeneration();
   };
 
+  /*eslint complexity: ["error", 6]*/
   render() {
     const { classes, mainModel } = this.props;
     const pages = mainModel.generateBlockModel.pages || [];
