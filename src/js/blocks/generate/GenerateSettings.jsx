@@ -3,8 +3,8 @@ import injectSheet from "react-jss";
 import ReactFileReader from "react-file-reader";
 import PropTypes from "prop-types";
 import { inject, observer } from "mobx-react";
-import Button from "../../../components/Button/Button";
-import { exportIcon, importIcon, back } from "../../../../icons/index";
+import { exportIcon, importIcon, back } from "../../../icons";
+import { Button } from "antd";
 
 const styles = {
   generateStyle: {
@@ -21,11 +21,9 @@ const styles = {
 
 @inject("mainModel")
 @observer
-class ManageSettings extends React.Component {
+class GenerateSettings extends React.Component {
   handleSettings = () => {
     const { mainModel } = this.props;
-
-    mainModel.setRightPart("GeneralSettingsWrapper");
   };
 
   handleExportTemplate = () => {
@@ -40,28 +38,11 @@ class ManageSettings extends React.Component {
     mainModel.generateBlockModel.clearGeneration();
     mainModel.settingsModel.importNewTemplate(file, mainModel);
   };
-
-  handleBack = () => {
-    const { mainModel } = this.props;
-
-    mainModel.setLeftPart("ManageBlockWrapper");
-    if (mainModel.generateBlockModel.pages.length) {
-      mainModel.setRightPart("ManageResultsWrapper");
-    } else {
-      mainModel.setRightPart();
-    }
-  };
-
   render() {
     const { classes } = this.props;
     return (
       <div>
         <div className={`${classes.generateStyle} BtnGroup`}>
-          <Button
-            className="BtnGroup-item"
-            icon={back}
-            onclick={this.handleBack}
-          />
           <Button
             className="BtnGroup-item"
             label={"Settings"}
@@ -94,8 +75,8 @@ class ManageSettings extends React.Component {
   }
 }
 
-ManageSettings.propTypes = {};
+GenerateSettings.propTypes = {};
 
-const ManageSettingsWrapper = injectSheet(styles)(ManageSettings);
+const GenerateSettingsWrapper = injectSheet(styles)(GenerateSettings);
 
-export default ManageSettingsWrapper;
+export default GenerateSettingsWrapper;

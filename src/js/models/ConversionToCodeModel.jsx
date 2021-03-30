@@ -17,7 +17,7 @@ function poName(name, poName) {
   if (
     result.length > 4 &&
     result.substr(-4).toLowerCase() !== poName.toLowerCase()
-  ){
+  ) {
     result += poName;
   }
   return result;
@@ -145,7 +145,7 @@ function isSimple(el, fields) {
   let count = 0;
 
   for (let field in fields) {
-    if (el[field] !== ""){
+    if (el[field] !== "") {
       count++;
     }
   }

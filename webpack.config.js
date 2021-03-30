@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-  devtool: "module-source-map",
+  devtool: "inline-cheap-module-source-map",
   mode: "development",
   entry: [
     "./src/js/main.jsx",
@@ -67,11 +67,38 @@ module.exports = {
             loader: "less-loader",
             options: {
               lessOptions: { // important extra layer for less-loader^6.0.0
-                javascriptEnabled: true
+                javascriptEnabled: true,
+                modifyVars: {
+                  'primary-color': '#008ace',
+                  'menu-horizontal-line-height': '26px',
+                  'menu-bg': '#f3f3f2',
+                  'border-radius-base': '3px',
+                  'font-family': '\'Source Sans Pro\', sans-serif',
+                  'menu-item-font-size': '14px',
+                  'menu-item-color': '#222',
+                  'border-color-base': '#d8d8d8',
+                  'checkbox-size': '13px',
+                  'btn-group-border': '#777777'
+                },
               }
             }
           }
         ]
+      },
+      {
+        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+        use: [
+          {
+            loader: 'babel-loader',
+          },
+          {
+            loader: '@svgr/webpack',
+            options: {
+              babel: false,
+              icon: true,
+            },
+          },
+        ],
       },
       {
         test: /\.(png|jpe?g|gif)$/i,

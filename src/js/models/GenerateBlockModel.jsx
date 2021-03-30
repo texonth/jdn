@@ -6,7 +6,6 @@ import Log from "./Log";
 import { SiteUrls } from "../json/siteUrls";
 import { saveAs } from "file-saver";
 
-
 function isXpath(locator) {
   return locator[1] === "/";
 }
@@ -63,7 +62,7 @@ function getCorrectLocator(dom, locator, uniqueness) {
     results.locator.indexOf("//") === 0
       ? "." + results.locator
       : results.locator;
-  if (uniqueness.locator){
+  if (uniqueness.locator) {
     results.locator += generateLocator(results.xpath, uniqueness.locator);
   }
   return results;
@@ -125,8 +124,8 @@ function createCorrectXpath(originalLocator, uniqueness, value, locator) {
 }
 
 function valueToXpath(originalLocator, uniqueness, value) {
-  if ((value)) {
-    if ((uniqueness.locator)) {
+  if (value) {
+    if (uniqueness.locator) {
       return createCorrectXpath(
         originalLocator,
         uniqueness,
@@ -144,7 +143,7 @@ function valueToXpath(originalLocator, uniqueness, value) {
 }
 
 function valueToCss(uniqueness, value) {
-  if ((value)) {
+  if (value) {
     switch (uniqueness.value) {
       case "class":
         return `.${value.replace(/\s/g, ".")}`;
@@ -200,7 +199,7 @@ const findInParent = ({ sections, page }, element, parent) => {
     }
   });
 
-  if ((found)) {
+  if (found) {
     let sec = sections.get(found);
     let children = sec.children;
     for (let i = 0; i < children.length; i++) {
@@ -263,7 +262,7 @@ const applyFoundResult = ({ mainModel }, e, parent, ruleId) => {
     element.children = e.children || [];
     let found = generateBlockModel.sections.get(element.elId);
 
-    if ((found)) {
+    if (found) {
       // element = found;
       generateBlockModel.page.elements.push(found.elId);
     } else {
@@ -304,7 +303,7 @@ function getValue(content, uniqueness) {
     case "text":
       return (content.innerText || content.textContent).trim().split(/\n/)[0];
     default:
-      if (content.attributes[uniqueness.value]){
+      if (content.attributes[uniqueness.value]) {
         return content.attributes[uniqueness.value].value;
       }
       return;
@@ -431,7 +430,6 @@ const defineElements = (
   }
 };
 
-
 function getComposite({ mainModel, results }, dom, t) {
   const { ruleBlockModel } = mainModel;
   const rulesObj = ruleBlockModel.rules;
@@ -439,7 +437,7 @@ function getComposite({ mainModel, results }, dom, t) {
   const rules = rulesObj.CompositeRules[t];
 
   rules.forEach((rule) => {
-    if ((rule.Locator)) {
+    if (rule.Locator) {
       defineElements(
         { mainModel, results },
         dom,
@@ -497,7 +495,7 @@ function getComplex({ mainModel, results }, parent, t) {
   let dom = parent.content;
   let rules = rulesObj.ComplexRules[t];
   rules.forEach((rule) => {
-    if ((rule.Root)) {
+    if (rule.Root) {
       defineElements(
         { mainModel, results },
         dom,
@@ -518,7 +516,7 @@ function getSimple({ mainModel, results }, parent, t) {
   let dom = parent.content;
   let rules = rulesObj.SimpleRules[t];
   rules.forEach((rule, i) => {
-    if ((rule.Locator)) {
+    if (rule.Locator) {
       defineElements(
         { mainModel, results },
         dom,
@@ -656,7 +654,6 @@ export const generationCallBack = ({ mainModel }, r, err) => {
       });
     });
 
-
     const pageAlreadyGenerated = generateBlockModel.pages.find(
       (page) => page.id === generateBlockModel.page.id
     );
@@ -745,7 +742,6 @@ export const getDomainCallBack = ({ mainModel }, r, err) => {
     generateBlockModel.siteInfo.pack = r.split(".").reverse().join(".");
   }
 };
-
 
 export default class GenerateBlockModel {
   @observable log;

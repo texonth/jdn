@@ -49,7 +49,7 @@ const cssToXPath = (css) => {
           case ".":
             i++;
             start = i;
-            while (i < length && css[i].match(/[a-z0-9A-Z0-9:\-_\.]/)){
+            while (i < length && css[i].match(/[a-z0-9A-Z0-9:\-_\.]/)) {
               i++;
             }
             attributes.push(
@@ -61,7 +61,7 @@ const cssToXPath = (css) => {
           case "#":
             i++;
             start = i;
-            while (i < length && css[i].match(/[a-z0-9A-Z0-9:\-_\.]/)){
+            while (i < length && css[i].match(/[a-z0-9A-Z0-9:\-_\.]/)) {
               i++;
             }
             attributes.push(
@@ -93,7 +93,7 @@ const cssToXPath = (css) => {
               if (attribute.slice(-1) !== "'") {
                 attribute += "'";
               }
-            } else if (css[i] !== "]"){
+            } else if (css[i] !== "]") {
               return `Can't process Css. Unexpected symbol №${i + 1}(${
                 css[i]
               }) in attributes`;

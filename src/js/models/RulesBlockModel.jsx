@@ -6,9 +6,6 @@ import Log from "./Log";
 export default class RulesBlockModel {
   @observable rules;
   rulesStorageName = "JDNElementRules";
-  @observable currentRuleSet = "";
-  @observable currentRuleName = "";
-  @observable currentRuleItem = 0;
   @observable elementFields = {};
   @observable log = {};
 
@@ -144,28 +141,15 @@ export default class RulesBlockModel {
   }
 
   @action
-  setCurrentRuleName(rule) {
-    this.currentRuleName = rule;
-  }
+  handleAddRuleItem(event, { ruleSet, title, index }) {
+    console.log(this.rules, ruleSet, title, index);
+    console.log(this.rules[ruleSet][title]);
 
-  @action
-  setCurrentRuleSet(ruleSet) {
-    this.currentRuleSet = ruleSet;
-    this.currentRuleItem = 0;
-    this.currentRuleName = "";
-  }
-
-  @action
-  handleSwitchRule(index) {
-    this.currentRuleItem = index;
-  }
-
-  @action
-  handleAddRuleItem() {
-    const currentRules = this.rules[this.currentRuleSet][
-      this.currentRuleName
-    ].slice();
+    const currentRules = this.rules[ruleSet][title].slice();
+    console.log(currentRules);
     const rule = currentRules.slice(-1)[0];
+    console.log(rule);
+
     const newRule = {};
 
     if (rule.Locator || rule.Root) {
@@ -174,42 +158,29 @@ export default class RulesBlockModel {
       });
       newRule.id = rule.id + 1;
       currentRules.push(newRule);
-      this.currentRuleItem = this.rules[this.currentRuleSet][
-        this.currentRuleName
-      ].length;
-      this.rules[this.currentRuleSet][
-        this.currentRuleName
-      ] = currentRules.slice();
+      this.rules[ruleSet][title] = currentRules;
       this.updateRules();
     }
   }
 
   @action
-  handleDeleteRuleItem(index) {
-    const currentRules = this.rules[this.currentRuleSet][
-      this.currentRuleName
-    ].slice();
+  handleDeleteRuleItem(event, { ruleSet, title, index }) {
+    console.log(this.rules[ruleSet], title, index);
+    const currentRules = this.rules[ruleSet][title].slice();
     if (currentRules.length > 1) {
       currentRules.splice(index, 1);
-      this.rules[this.currentRuleSet][
-        this.currentRuleName
-      ] = currentRules.slice();
-      if (this.currentRuleItem === currentRules.length) {
-        this.currentRuleItem--;
-      }
+      this.rules[ruleSet][title] = currentRules.slice();
       this.updateRules();
     }
   }
 
   @action
-  handleEditRuleName(value, field) {
-    const currentRules = this.rules[this.currentRuleSet][
-      this.currentRuleName
-    ].slice();
-    currentRules[this.currentRuleItem][field] = value;
-    this.rules[this.currentRuleSet][
-      this.currentRuleName
-    ] = currentRules.slice();
+  handleEditRuleName(value, { ruleSet, title, field, index }) {
+    console.log(this.rules[ruleSet], title, field);
+    const currentRules = this.rules[ruleSet][title].slice();
+    currentRules[index][field] = value;
+    console.log(currentRules[index][field], value);
+    this.rules[ruleSet][title][field] = currentRules.slice();
     this.updateRules();
   }
 
@@ -237,7 +208,6 @@ export default class RulesBlockModel {
 
     function setRightIndex(ruleset) {
       for (let rules in ruleset) {
-
         if ({}.hasOwnProperty.call(ruleset, rules)) {
           ruleset[rules] = ruleset[rules].slice().map((rule, index) => {
             rule.id = index;

@@ -7,6 +7,9 @@ import Log from "./Log";
 export default class SettingsModel {
   @observable downloadAfterGeneration = false;
   // @observable jdi = true;
+  //TODO: check rules when possible
+  @observable rules = "";
+  @observable rule = "";
   @observable extension = "";
   @observable framework = "";
   @observable template;
@@ -55,6 +58,14 @@ export default class SettingsModel {
   }
 
   @action
+  changeRule(lang) {
+    this.rule = lang;
+
+    window.localStorage.setItem("DefaultRule", this.rule);
+    // this.setTemplate();
+  }
+
+  @action
   changeFramework(frame) {
     this.framework = frame;
 
@@ -65,6 +76,8 @@ export default class SettingsModel {
   @action
   setTemplate() {
     const settingsStorage = window.localStorage;
+
+    console.log([this.extension, this.framework]);
 
     if (this.extension === ".java" && this.framework === "jdiUI") {
       const defaultTemplate = settingsStorage.getItem("DefaultTemplateJdiUI");

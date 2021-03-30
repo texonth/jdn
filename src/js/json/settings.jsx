@@ -3,6 +3,12 @@ const Languages = [
   { value: ".cs", label: "C#" },
 ];
 
+const Rules = [
+  { value: "angular", label: "Angular" },
+  { value: "react", label: "React" },
+  { value: "bootstrap", label: "Bootstrap" },
+];
+
 const Frameworks = [
   { value: "jdiLight", label: "JDI Light" },
   { value: "jdiUI", label: "JDI UI" },
@@ -10,4 +16,4 @@ const Frameworks = [
   { value: "selenide", label: "Selenide" },
 ];
 
-export { Languages, Frameworks };
+export { Languages, Rules, Frameworks };
