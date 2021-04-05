@@ -1,7 +1,7 @@
 import { observable, action } from "mobx";
 import GenerateBlockModel from "./GenerateBlockModel";
 import RulesBlockModel from "./RulesBlockModel";
-import GenerateBlockWrapper from "../blocks/generate/GenerateBlock";
+import GenerateBlock from "../blocks/generate/GenerateBlock";
 import ConversionToCodeModel from "./ConversionToCodeModel";
 import SettingsModel from "./SettingsModel";
 

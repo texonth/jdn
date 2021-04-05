@@ -16,7 +16,6 @@ import {
 export class RuleForElement extends React.Component {
   @observable isEditable = false;
   @observable show = true;
-  hiddenRule = true;
 
   @action
   handleShowList = () => {

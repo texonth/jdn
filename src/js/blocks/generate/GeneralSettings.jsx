@@ -21,10 +21,12 @@ const styles = {
 @inject("mainModel")
 @observer
 class GeneralSettings extends React.Component {
-  handleCheckboxChange = () => {
+  handleCheckboxChange = (e) => {
     const { mainModel } = this.props;
 
     mainModel.settingsModel.triggerDownloadAfterGen(mainModel);
+    console.log(e);
+    this.setState({"generateAndDownload": e});
   };
 
   handleChangeRule = (option) => {

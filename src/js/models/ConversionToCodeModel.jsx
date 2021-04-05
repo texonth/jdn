@@ -8,6 +8,7 @@ function varName(name) {
 }
 
 function getClassName(name) {
+  console.log(name);
   let words = name.split(/\W/);
   return words.map((word) => word[0].toUpperCase() + word.slice(1)).join("");
 }
