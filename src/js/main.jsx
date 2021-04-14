@@ -2,10 +2,10 @@ import React from "react";
 import ReactDOM from "react-dom";
 import injectSheet from "react-jss";
 import {inject, observer, Provider} from "mobx-react";
-import {computed, observable} from "mobx";
+import {action, computed, observable} from "mobx";
 
-import GenerateResultsWrapper from "./blocks/generate/GenerateResults";
-import GeneralSettingsWrapper from "./blocks/generate/GeneralSettings";
+import GenerateResults from "./blocks/generate/GenerateResults";
+import GeneralSettings from "./blocks/generate/GeneralSettings";
 import { RulesBlock } from "./blocks/rules/RulesBlock";
 
 import GenerateBlock from "./blocks/generate/GenerateBlock";
@@ -50,9 +50,16 @@ class App extends React.Component {
     this.setState({tab: e.key});
   };
 
+  @action
   handleGenerate = (mainModel) => {
     mainModel.generateBlockModel.generate(mainModel);
-    this.handleClick({key: "results"});
+    this.setState({mainModel: mainModel});
+
+    console.log(mainModel)
+
+    setTimeout(() => {
+      this.forceUpdate();
+    }, 1000)
   };
 
   @computed get tab() {
@@ -75,7 +82,7 @@ class App extends React.Component {
             <Menu.Item key="urls">URLs</Menu.Item>
             <Menu.Item key="results">Results</Menu.Item>
             <Menu.Item disabled={true}>
-              <Button  onClick={() => {this.handleGenerate(this.mainModel)}} size={"small"} type="primary">
+              <Button onClick={() => {this.handleGenerate(this.mainModel)}} size={"small"} type="primary">
                 GENERATE
               </Button>
             </Menu.Item>
@@ -86,7 +93,7 @@ class App extends React.Component {
             <div key="settings">
               <Row>
                 <Col span={8}>
-                  <GeneralSettingsWrapper></GeneralSettingsWrapper>
+                  <GeneralSettings></GeneralSettings>
                 </Col>
                 <Col
                   span={16}
@@ -110,7 +117,7 @@ class App extends React.Component {
 
           {this.tab === "results" && (
             <div key="results">
-              <GenerateResultsWrapper></GenerateResultsWrapper>
+              <GenerateResults></GenerateResults>
             </div>
           )}
 
