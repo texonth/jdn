@@ -5,22 +5,9 @@ import { Rules, Languages, Frameworks } from "../../json/settings";
 import { Select, Radio, Checkbox, Button } from "antd";
 const { Option } = Select;
 
-const styles = {
-  generateStyle: {
-    margin: "10px 10px 10px 10px",
-  },
-  checkboxWrapper: {
-    margin: "10px 0",
-  },
-  selectWrapper: {
-    margin: "2px 0",
-    display: "flex",
-  },
-};
-
 @inject("mainModel")
 @observer
-class GeneralSettings extends React.Component {
+export default class GeneralSettings extends React.Component {
   handleCheckboxChange = (e) => {
     const { mainModel } = this.props;
 
@@ -66,8 +53,8 @@ class GeneralSettings extends React.Component {
     // TODO: Use for default value of Rule or delete that property
     // {mainModel.ruleBlockModel.ruleName}
     return (
-      <div className={classes.generateStyle}>
-        <div className={classes.selectWrapper}>
+      <div className={'generate-style'}>
+        <div className={'select-wrapper'}>
           <span style={{ margin: "0 10px 0 0" }}>Rules:</span>
           <Select
             size="small"
@@ -78,7 +65,7 @@ class GeneralSettings extends React.Component {
             options={Rules}
           ></Select>
         </div>
-        <div className={classes.selectWrapper}>
+        <div className={"select-wrapper"}>
           <span style={{ margin: "0 10px 0 0" }}>Language:</span>
           <Select
             size="small"
@@ -89,7 +76,7 @@ class GeneralSettings extends React.Component {
             options={Languages}
           ></Select>
         </div>
-        <div className={classes.selectWrapper}>
+        <div className={"select-wrapper"}>
           <span style={{ margin: "0 10px 0 0" }}>Frameworks:</span>
           <Select
             size="small"
@@ -100,7 +87,7 @@ class GeneralSettings extends React.Component {
             options={Frameworks}
           ></Select>
         </div>
-        <div className={classes.checkboxWrapper}>
+        <div className={"checkbox-wrapper"}>
           <Checkbox
             checked={mainModel.settingsModel.downloadAfterGeneration}
             onChange={this.handleCheckboxChange}
@@ -112,9 +99,3 @@ class GeneralSettings extends React.Component {
     );
   }
 }
-
-GeneralSettings.propTypes = {};
-
-const GeneralSettingsWrapper = injectSheet(styles)(GeneralSettings);
-
-export default GeneralSettingsWrapper;
