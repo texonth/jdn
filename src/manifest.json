@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "JDN",
   "description": "",
-  "devtools_page": "index.html",
+  // "devtools_page": "index.html",
   "version": "2.2.1",
   "permissions": [
     "activeTab",
@@ -13,6 +13,9 @@
     "http://*/*",
     "https://*/*"
   ],
+  "background": {
+    "service_worker": "window.onload = () => { chrome.devtools.panels.create('JDN', 'icon.png', 'panel.html')};"
+  },
   "content_scripts": [
     {
       "matches": [
