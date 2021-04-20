@@ -935,7 +935,6 @@ export default class GenerateBlockModel {
       // 	await getDOMByUrl(mainModel, urlList[index], index);
       // }
     };
-    debugger;
 
     getDOMByUrl(mainModel, urlList[0], 0);
 
