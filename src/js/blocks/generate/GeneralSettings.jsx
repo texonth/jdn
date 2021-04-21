@@ -19,13 +19,12 @@ export default class GeneralSettings extends React.Component {
   handleChangeRule = (option) => {
     const { mainModel } = this.props;
 
-    mainModel.settingsModel.changeLanguage(option);
+    mainModel.settingsModel.changeRule(option);
     mainModel.generateBlockModel.clearGeneration();
   };
 
   handleChangeLanguage = (option) => {
     const { mainModel } = this.props;
-    console.log(option);
 
     mainModel.settingsModel.changeLanguage(option);
     mainModel.generateBlockModel.clearGeneration();
