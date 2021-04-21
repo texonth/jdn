@@ -3,7 +3,7 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-module.exports = {
+const mainConfig = {
   devtool: "inline-cheap-module-source-map",
   mode: "development",
   entry: ["./src/js/main.jsx", "./src/manifest.json"],
@@ -115,12 +115,17 @@ module.exports = {
         test: /\.(woff|woff2|eot|ttf|otf)$/,
         use: ["file-loader", "url-loader"],
       },
-      {
-        test: "/background.js/",
-        use: {
-          loader: "babel-loader"
-        },
-      },
     ],
   },
 };
+
+const indexConfig = {
+  entry: './src/loadPanel.js',
+  output: {
+    path: path.join(__dirname, "dist"),
+    filename: "loadPanel.js",
+    publicPath: "./",
+  },
+}
+
+module.exports = [mainConfig, indexConfig];
