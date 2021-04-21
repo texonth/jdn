@@ -121,11 +121,12 @@ const mainConfig = {
 
 const indexConfig = {
   entry: './src/loadPanel.js',
+  mode: "development",
   output: {
     path: path.join(__dirname, "dist"),
     filename: "loadPanel.js",
     publicPath: "./",
   },
-}
+};
 
 module.exports = [mainConfig, indexConfig];
