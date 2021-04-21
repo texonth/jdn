@@ -121,7 +121,7 @@ const mainConfig = {
 
 const indexConfig = {
   entry: './src/loadPanel.js',
-  mode: "development",
+  mode: "production",
   output: {
     path: path.join(__dirname, "dist"),
     filename: "loadPanel.js",
