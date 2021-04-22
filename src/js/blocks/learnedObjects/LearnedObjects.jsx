@@ -6,8 +6,8 @@ const LearnedObjects = () => {
     const data = getElements(updateElements);
   };
 
-  const updateElements = async (result) => {
-    const elements = await result;
+  const updateElements = (result) => {
+    const elements = result;
     console.log(elements);  
   }
 
