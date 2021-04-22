@@ -11,9 +11,11 @@ export const uploadElements = callback => async (elements) => {
   });
 
   if (response.ok) {
-    callback(response.json());
-  }
-  throw new Error(response);
+    const r = await response.json();
+    callback(r);
+  } else {
+    throw new Error(response);
+  }  
 };
 
 const getPageId = callback => {
