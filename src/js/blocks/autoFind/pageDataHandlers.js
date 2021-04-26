@@ -57,6 +57,8 @@ function drawRectangles() {
       div.style.top = `${y}px`;
       div.style.height = `${height}px`;
       div.style.width = `${width}px`;
+      div.textContent = predicted_label;
+      div.style.color = 'red';
       document.body.appendChild(div);
     });
   };
