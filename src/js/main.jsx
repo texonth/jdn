@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import injectSheet from "react-jss";
-import {inject, observer, Provider} from "mobx-react";
-import {action, computed, observable} from "mobx";
+import { inject, observer, Provider } from "mobx-react";
+import { action, computed, observable } from "mobx";
 
 import GenerateResults from "./blocks/generate/GenerateResults";
 import GeneralSettings from "./blocks/generate/GeneralSettings";
@@ -19,6 +19,8 @@ import "antd/lib/style/themes/default.less";
 import "antd/dist/antd.less";
 import "../css/main.less";
 import LogComponentWrapper from "./blocks/log/LogComponent";
+import AutoFind from "./blocks/autoFind/AutoFind";
+
 const styles = {
   commonContainer: {
     position: "relative",
@@ -47,19 +49,19 @@ class App extends React.Component {
   handleClick = (e) => {
     console.log(e.key);
     this.mainModel.setTab(e.key);
-    this.setState({tab: e.key});
+    this.setState({ tab: e.key });
   };
 
   @action
   handleGenerate = (mainModel) => {
     mainModel.generateBlockModel.generate(mainModel);
-    this.setState({mainModel: mainModel});
+    this.setState({ mainModel: mainModel });
 
-    console.log(mainModel)
+    console.log(mainModel);
 
     setTimeout(() => {
       this.forceUpdate();
-    }, 1000)
+    }, 1000);
   };
 
   @computed get tab() {
@@ -82,10 +84,17 @@ class App extends React.Component {
             <Menu.Item key="urls">URLs</Menu.Item>
             <Menu.Item key="results">Results</Menu.Item>
             <Menu.Item disabled={true}>
-              <Button onClick={() => {this.handleGenerate(this.mainModel)}} size={"small"} type="primary">
+              <Button
+                onClick={() => {
+                  this.handleGenerate(this.mainModel);
+                }}
+                size={"small"}
+                type="primary"
+              >
                 GENERATE
               </Button>
             </Menu.Item>
+            <Menu.Item key="auto_find">Auto Find Objects</Menu.Item>
             <Menu.Item key="warnings">Warnings</Menu.Item>
           </Menu>
 
@@ -118,6 +127,12 @@ class App extends React.Component {
           {this.tab === "results" && (
             <div key="results">
               <GenerateResults></GenerateResults>
+            </div>
+          )}
+
+          {this.tab === "auto_find" && (
+            <div key="auto_find">
+              <AutoFind />
             </div>
           )}
 
