@@ -19,7 +19,7 @@ import "antd/lib/style/themes/default.less";
 import "antd/dist/antd.less";
 import "../css/main.less";
 import LogComponentWrapper from "./blocks/log/LogComponent";
-import LearnedObjects from "./blocks/learnedObjects/LearnedObjects";
+import AutoFind from "./blocks/autoFind/AutoFind";
 
 const styles = {
   commonContainer: {
@@ -94,7 +94,7 @@ class App extends React.Component {
                 GENERATE
               </Button>
             </Menu.Item>
-            <Menu.Item key="learned_objects">Learned Objects</Menu.Item>
+            <Menu.Item key="auto_find">Auto Find Objects</Menu.Item>
             <Menu.Item key="warnings">Warnings</Menu.Item>
           </Menu>
 
@@ -130,9 +130,9 @@ class App extends React.Component {
             </div>
           )}
 
-          {this.tab === "learned_objects" && (
-            <div key="learned_objects">
-              <LearnedObjects />
+          {this.tab === "auto_find" && (
+            <div key="auto_find">
+              <AutoFind />
             </div>
           )}
 
