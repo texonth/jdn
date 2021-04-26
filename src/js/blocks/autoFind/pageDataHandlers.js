@@ -32,7 +32,6 @@ const getPageId = (callback) => {
 };
 
 const runPageScript = (script, callback) => (tabId) => {
-  console.log(script);
   chrome.scripting.executeScript(
     { target: { tabId }, function: script },
     (invoked) => {
@@ -43,6 +42,9 @@ const runPageScript = (script, callback) => (tabId) => {
   );
 };
 
+/*
+  WARNING: this function runs in a context of the target page, be careful with any application context calls
+*/
 function drawRectangles() {
   const f = ({ JDN_elements }) => {
     JDN_elements.forEach(({ x, y, width, height, predicted_label }) => {
@@ -55,7 +57,6 @@ function drawRectangles() {
       div.style.top = `${y}px`;
       div.style.height = `${height}px`;
       div.style.width = `${width}px`;
-      console.log(div.style);
       document.body.appendChild(div);
     });
   };
