@@ -88,9 +88,13 @@ export default class GenerateBlock extends React.Component {
               Export URLs
             </Button>
           </div>
+          <ul>
           {urlsList.map((url) => (
-            <a>{url}</a>
+            <li>
+              <a>{url}</a>
+            </li>
           ))}
+          </ul>
         </div>
       </div>
     );

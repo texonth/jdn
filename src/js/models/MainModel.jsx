@@ -12,8 +12,8 @@ export default class MainModel {
   @observable ruleBlockModel;
   @observable tab = "settings";
   @observable currentPageId;
+  @observable generationId = 0;
   @observable applicationLog = [];
-  @observable showLog = false;
 
   constructor() {
     this.generateBlockModel = new GenerateBlockModel();
@@ -34,10 +34,5 @@ export default class MainModel {
   @action
   fillLog(log) {
     this.applicationLog = log.slice().reverse();
-  }
-
-  @action
-  triggerShowLog() {
-    this.showLog = !this.showLog;
   }
 }

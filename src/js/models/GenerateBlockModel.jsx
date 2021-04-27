@@ -777,7 +777,7 @@ export default class GenerateBlockModel {
   }
 
   @action
-  generate(mainModel) {
+  generate(mainModel, callback) {
     this.page = {
       id: "",
       name: "",
@@ -789,8 +789,14 @@ export default class GenerateBlockModel {
 
     this.log.clearLog();
 
+    let pageComplete = 0;
+
     chrome.devtools.inspectedWindow.eval("document.location", (r, err) => {
       getLocationCallBack({ mainModel }, r, err);
+      pageComplete++;
+      if (pageComplete === 2) {
+        callback();
+      }
     });
 
     // chrome.devtools.inspectedWindow.eval('document.domain', (r, err) => {
@@ -805,6 +811,10 @@ export default class GenerateBlockModel {
       "document.lastChild.outerHTML",
       (r, err) => {
         generationCallBack({ mainModel }, r, err);
+        pageComplete++;
+        if (pageComplete === 2) {
+          callback();
+        }
       }
     );
   }

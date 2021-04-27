@@ -10,6 +10,9 @@ import {computed, toJS} from "mobx";
 @inject("mainModel")
 @observer
 export default class GenerateResults extends React.Component {
+
+  generateBlockModel;
+
   @computed get result() {
     const { mainModel } = this.props;
     return mainModel.generateBlockModel.pages;
@@ -17,10 +20,8 @@ export default class GenerateResults extends React.Component {
 
   handleDownloadSiteCode = () => {
     const { mainModel } = this.props;
-
     mainModel.conversionModel.clearOldConversion();
     mainModel.generateBlockModel.pages.forEach((p) => {
-      console.log(p);
       mainModel.conversionModel.genPageCode(p, mainModel);
     });
     mainModel.conversionModel.zipAllCode(mainModel);
@@ -28,7 +29,6 @@ export default class GenerateResults extends React.Component {
 
   handleDownloadPageCode = (page, index) => {
     const { mainModel } = this.props;
-    console.log(page);
     mainModel.conversionModel.genPageCode(page, mainModel);
     // mainModel.conversionModel.setCurrentPageCode(index);
     mainModel.conversionModel.downloadPageCode(
@@ -39,19 +39,24 @@ export default class GenerateResults extends React.Component {
 
   clearGenResults = () => {
     const { mainModel } = this.props;
-
     mainModel.generateBlockModel.clearGeneration();
+    this.setState({generateBlockModel: mainModel.generateBlockModel});
   };
+
+  constructor(props){
+    super(props);
+  }
 
   /*eslint complexity: ["error", 6]*/
   render() {
-    const { classes, mainModel } = this.props;
+    const { mainModel } = this.props;
+    console.log(this.props.mainModel.generateBlockModel.pages);
 
     return (
       <div className={"controls-container"}>
         <div key={mainModel.generateBlockModel} className={"button-container"}>
           {
-            (mainModel.generateBlockModel) && (
+            (mainModel.generateBlockModel) && this.result.length ? (
               <div key={mainModel.generateBlockModel.siteInfo.siteTitle}>
                 <Button
                   size={"small"}
@@ -72,10 +77,10 @@ export default class GenerateResults extends React.Component {
                   <span>{`Download site ${mainModel.generateBlockModel.siteInfo.siteTitle}`}</span>
                 </Button>
               </div>
-            )
+            ) : ''
           }
           {
-            this.result.map((page, index) => (
+            this.result.length ? this.result.map((page, index) => (
               <div key={page.id}>
                 <Button
                   size={"small"}
@@ -98,7 +103,7 @@ export default class GenerateResults extends React.Component {
                   <span>{`Download page ${page.name}`}</span>
                 </Button>
               </div>
-            ))
+            )) : ''
           }
         </div>
         <div>
