@@ -548,7 +548,7 @@ export const getTitleCallBack = ({ mainModel }, r, err) => {
   }
 };
 
-export const generationCallBack = ({ mainModel }, r, err) => {
+export const generationCallBack = ({ mainModel }, r, err, generateSeveralPages) => {
   const parser = new DOMParser();
   const rDom = parser.parseFromString(r, "text/html");
 
@@ -663,12 +663,9 @@ export const generationCallBack = ({ mainModel }, r, err) => {
         ...generateBlockModel.pages,
         { ...generateBlockModel.page },
       ];
-      // console.log(generateBlockModel.pages);
-      // generateBlockModel.pages.push(generateBlockModel.page);
-      // mainModel.conversionModel.siteCodeReady = true;
       conversionModel.genPageCode(generateBlockModel.page, mainModel);
 
-      if (settingsModel.downloadAfterGeneration) {
+      if (settingsModel.downloadAfterGeneration && !generateSeveralPages) {
         conversionModel.downloadPageCode(
           generateBlockModel.page,
           mainModel.settingsModel.extension
@@ -682,13 +679,6 @@ export const generationCallBack = ({ mainModel }, r, err) => {
     }
     // TODO create beautiful popup
   }
-
-  // console.log(this.page.elements)
-  // console.log(this.sections)
-
-  // map = drawMap(page.elements, objCopy.sections, new Map());
-  // objCopy.pageMap = map;
-  // objCopy.resultTree = getChildren(map, null);
 };
 
 export const getLocationCallBack = ({ mainModel }, r, err) => {
@@ -699,8 +689,6 @@ export const getLocationCallBack = ({ mainModel }, r, err) => {
       message: `Error, getting location from active page! ${err}`,
       type: "error",
     });
-    // objCopy.warningLog = [...objCopy.warningLog, getLog()];
-    // document.querySelector('#refresh').click();
   }
 
   if (r) {
@@ -798,14 +786,6 @@ export default class GenerateBlockModel {
         callback();
       }
     });
-
-    // chrome.devtools.inspectedWindow.eval('document.domain', (r, err) => {
-    // 	getDomainCallBack({ mainModel }, r, err);
-    // });
-
-    // chrome.devtools.inspectedWindow.eval('document.title', (r, err) => {
-    // 	getTitleCallBack({ mainModel }, r, err);
-    // });
 
     chrome.devtools.inspectedWindow.eval(
       "document.lastChild.outerHTML",
@@ -933,10 +913,12 @@ export default class GenerateBlockModel {
         chrome.devtools.inspectedWindow.eval(
           "document.lastChild.outerHTML",
           (r, err) => {
-            generationCallBack({ mainModel }, r, err);
+            generationCallBack({ mainModel }, r, err, true);
             index++;
             if (index < urlList.length) {
               getDOMByUrl(mainModel, urlList[index], index);
+            } else {
+              mainModel.conversionModel.zipAllCode(mainModel);
             }
           }
         );
