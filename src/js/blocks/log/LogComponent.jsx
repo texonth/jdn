@@ -40,8 +40,7 @@ const styles = {
     height: "35px",
   },
   logItemContainer: {
-    display: "flex",
-    padding: "10px",
+    display: "flex"
   },
   logItem: {
     marginLeft: "10px",
@@ -100,20 +99,12 @@ class LogComponent extends React.Component {
 
   render() {
     const { classes, mainModel } = this.props;
-    const classContainer = mainModel.showLog
-      ? classes.logContainerExpand
-      : classes.logContainer;
 
     return (
-      <div className={classContainer} onClick={this.triggerShow}>
-        {!mainModel.showLog && <div>{this.displayLogIcon()}</div>}
-        {mainModel.showLog && (
-          <div>
-            {mainModel.applicationLog.map((item, index) => (
-              <div key={item.message + index}>{this.displayLogItem(item)}</div>
-            ))}
-          </div>
-        )}
+      <div className={classes.logContainerExpand} onClick={this.triggerShow}>
+        {mainModel.applicationLog.map((item, index) => (
+          <div key={item.message + index}>{this.displayLogItem(item)}</div>
+        ))}
       </div>
     );
   }

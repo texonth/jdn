@@ -141,15 +141,9 @@ export default class RulesBlockModel {
   }
 
   @action
-  handleAddRuleItem(event, { ruleSet, title, index }) {
-    console.log(this.rules, ruleSet, title, index);
-    console.log(this.rules[ruleSet][title]);
-
+  handleAddRuleItem(value, { ruleSet, title, index }) {
     const currentRules = this.rules[ruleSet][title].slice();
-    console.log(currentRules);
     const rule = currentRules.slice(-1)[0];
-    console.log(rule);
-
     const newRule = {};
 
     if (rule.Locator || rule.Root) {
@@ -164,8 +158,7 @@ export default class RulesBlockModel {
   }
 
   @action
-  handleDeleteRuleItem(event, { ruleSet, title, index }) {
-    console.log(this.rules[ruleSet], title, index);
+  handleDeleteRuleItem(value, { ruleSet, title, index }) {
     const currentRules = this.rules[ruleSet][title].slice();
     if (currentRules.length > 1) {
       currentRules.splice(index, 1);
@@ -176,10 +169,8 @@ export default class RulesBlockModel {
 
   @action
   handleEditRuleName(value, { ruleSet, title, field, index }) {
-    console.log(this.rules[ruleSet], title, field);
     const currentRules = this.rules[ruleSet][title].slice();
     currentRules[index][field] = value;
-    console.log(currentRules[index][field], value);
     this.rules[ruleSet][title][field] = currentRules.slice();
     this.updateRules();
   }

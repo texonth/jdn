@@ -47,21 +47,16 @@ class App extends React.Component {
   @observable mainModel = new MainModel();
 
   handleClick = (e) => {
-    console.log(e.key);
     this.mainModel.setTab(e.key);
-    this.setState({ tab: e.key });
+    this.setState({tab: e.key});
   };
 
   @action
   handleGenerate = (mainModel) => {
-    mainModel.generateBlockModel.generate(mainModel);
-    this.setState({ mainModel: mainModel });
-
-    console.log(mainModel);
-
-    setTimeout(() => {
-      this.forceUpdate();
-    }, 1000);
+    mainModel.generateBlockModel.generate(mainModel, () => {
+      this.handleClick({key: 'results'});
+      this.mainModel.generationId++;
+    });
   };
 
   @computed get tab() {
@@ -70,8 +65,6 @@ class App extends React.Component {
 
   render() {
     const { classes } = this.props;
-    console.log(this.props);
-    console.log(this.mainModel);
     return (
       <Provider mainModel={this.mainModel}>
         <div className={classes.commonContainer}>
@@ -119,29 +112,20 @@ class App extends React.Component {
           )}
 
           {this.tab === "urls" && (
-            <div key="urls">
-              <GenerateBlock></GenerateBlock>
-            </div>
+            <GenerateBlock key="urls"></GenerateBlock>
           )}
 
           {this.tab === "results" && (
-            <div key="results">
-              <GenerateResults></GenerateResults>
-            </div>
-          )}
-
-          {this.tab === "auto_find" && (
-            <div key="auto_find">
-              <AutoFind />
-            </div>
+            <GenerateResults key={this.mainModel.generationId}></GenerateResults>
           )}
 
           {this.tab === "warnings" && (
-            <div key="warnings">
-              <LogComponentWrapper />
-            </div>
+            <LogComponentWrapper key={this.mainModel.showLog} />
           )}
-          {this.mainModel.showLog}
+
+          {this.tab === "auto_find" && (
+            <AutoFind key="auto_find" />
+          )}
         </div>
       </Provider>
     );
