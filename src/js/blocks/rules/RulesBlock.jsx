@@ -19,13 +19,11 @@ class ListOfHiddenItems extends React.Component {
   handleShowList = () => {
     this.show = !this.show;
     this.setState({show: this.show});
-    console.log(this.show)
   };
 
   render() {
     const { name, list, className, linkClass, ruleSet } = this.props;
 
-    console.log(ruleSet);
 
     return (
       <li>
@@ -77,7 +75,6 @@ export class RulesBlock extends React.Component {
 
   render() {
     const { classes, mainModel } = this.props;
-    console.log(toJS(mainModel.ruleBlockModel.rules));
     const simpleRules =
       Object.keys(mainModel.ruleBlockModel.rules.SimpleRules) || [];
     const complexRules =

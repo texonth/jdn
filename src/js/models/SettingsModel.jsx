@@ -77,8 +77,6 @@ export default class SettingsModel {
   setTemplate() {
     const settingsStorage = window.localStorage;
 
-    console.log([this.extension, this.framework]);
-
     if (this.extension === ".java" && this.framework === "jdiUI") {
       const defaultTemplate = settingsStorage.getItem("DefaultTemplateJdiUI");
       if (defaultTemplate) {

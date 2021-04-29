@@ -43,6 +43,10 @@ export default class GenerateResults extends React.Component {
     this.setState({generateBlockModel: mainModel.generateBlockModel});
   };
 
+  constructor(props){
+    super(props);
+  }
+
   /*eslint complexity: ["error", 6]*/
   render() {
     const { mainModel } = this.props;

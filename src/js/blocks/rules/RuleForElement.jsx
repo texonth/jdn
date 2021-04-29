@@ -29,7 +29,6 @@ export class RuleForElement extends React.Component {
 
   getCurrentRuleFields = (rules, index) => {
     if (rules && rules.length) {
-      console.log(rules[index]);
       return Object.keys(rules[index]);
     }
     return [];
@@ -53,7 +52,7 @@ export class RuleForElement extends React.Component {
   };
 
   handleEditRule = (value, { ruleSet, title, field, index }) => {
-    this.props.mainModel.ruleBlockModel.handleEditRuleName(value, {
+    this.props.mainModel.ruleBlockModel.handleEditRuleName(value.target.value, {
       ruleSet, title, field, index
     });
   };
