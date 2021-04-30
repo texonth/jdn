@@ -1,34 +1,17 @@
-import React, { useState } from "react";
-import { getElements, highlightElements } from "./pageDataHandlers";
-
-const autoFindStatus = {
-  noStatus: "",
-  loading: "Loading...",
-  success: "Successful!",
-  error: "An error occured",
-};
+import React from "react";
+import { useAutoFind } from "./autoFindProvider/AutoFindProvider";
 
 const AutoFind = () => {
-  const [status, setStatus] = useState(autoFindStatus.noStatus);
+  const [data, {identifyElements}] = useAutoFind();  
 
   const handleGetElements = () => {
-    setStatus(autoFindStatus.loading);
-    getElements(updateElements);
-  };
-
-  const updateElements = (result) => {
-    highlightElements(result, callback);
-  };
-
-  const callback = () => {
-    setStatus(autoFindStatus.success);
-    console.log("successful");
+    identifyElements();
   };
 
   return (
-    <div>      
+    <div>
       <button onClick={handleGetElements}>Idetify</button>
-      <label>{status}</label>
+      <label>{data.status}</label>
     </div>
   );
 };
