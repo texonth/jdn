@@ -11,6 +11,10 @@ export const highlightElements = (elements, callback) => {
   );
 };
 
+export const removeHighlighted = (callback) => {
+  getPageId(runPageScript(removeRectangles, callback));
+};
+
 const uploadElements = (callback) => async (res) => {
   const response = await fetch("http:localhost:5000/predict", {
     method: "POST",
@@ -47,20 +51,33 @@ const runPageScript = (script, callback) => (tabId) => {
 */
 function drawRectangles() {
   const f = ({ JDN_elements }) => {
-    JDN_elements.forEach(({ x, y, width, height, predicted_label }) => {
-      var div = document.createElement("div");
-      div.style.position = "absolute";
-      div.style.background = "rgba(74, 207, 237, 0.5)";
-      div.style.zIndex = 5000;
-      div.style.border = "3px solid rgba(74, 207, 237)";
-      div.style.left = `${x}px`;
-      div.style.top = `${y}px`;
-      div.style.height = `${height}px`;
-      div.style.width = `${width}px`;
-      div.textContent = predicted_label;
-      div.style.color = 'red';
-      document.body.appendChild(div);
+    JDN_elements.forEach(
+      ({ x, y, width, height, predicted_label, element_id }) => {
+        var div = document.createElement("div");
+        div.id = element_id;
+        div.style.position = "absolute";
+        div.style.background = "rgba(74, 207, 237, 0.5)";
+        div.style.zIndex = 5000;
+        div.style.border = "3px solid rgba(74, 207, 237)";
+        div.style.left = `${x}px`;
+        div.style.top = `${y}px`;
+        div.style.height = `${height}px`;
+        div.style.width = `${width}px`;
+        div.textContent = predicted_label;
+        div.style.color = "red";
+        document.body.appendChild(div);
+      }
+    );
+  };
+  chrome.storage.local.get("JDN_elements", f);
+}
+
+function removeRectangles() {
+  const f = ({ JDN_elements }) => {
+    JDN_elements.forEach(({ element_id }) => {
+      document.getElementById(element_id).remove();
     });
   };
+
   chrome.storage.local.get("JDN_elements", f);
 }

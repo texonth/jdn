@@ -2,16 +2,21 @@ import React from "react";
 import { useAutoFind } from "./autoFindProvider/AutoFindProvider";
 
 const AutoFind = () => {
-  const [data, {identifyElements}] = useAutoFind();  
+  const [{status}, { identifyElements, removeHighlighs }] = useAutoFind();
 
   const handleGetElements = () => {
     identifyElements();
   };
 
+  const handleRemove = () => {
+    removeHighlighs();
+  };
+
   return (
     <div>
       <button onClick={handleGetElements}>Idetify</button>
-      <label>{data.status}</label>
+      <button onClick={handleRemove}>Remove</button>
+      <label>{status}</label>
     </div>
   );
 };
