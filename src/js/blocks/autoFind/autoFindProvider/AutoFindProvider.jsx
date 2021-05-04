@@ -27,9 +27,10 @@ const AutoFindProvider = ({ children }) => {
     const callback = () => {
       setStatus(autoFindStatus.success);
     };
-    const updateElements = (result) => {
-      setPredictedElements(result);
-      highlightElements(result, callback);
+    const updateElements = ([predicted, page]) => {
+      setPredictedElements(predicted);
+      setPageElements(page);
+      highlightElements(predicted, callback);
     };
 
     getElements(updateElements);

@@ -1,14 +1,15 @@
 import { getPageData } from "./pageData";
 
-const uploadElements = (callback) => async (res) => {
+const uploadElements = (callback) => async ([{result}]) => {
+  const [payload, length] = result;
   const response = await fetch("http:localhost:5000/predict", {
     method: "POST",
-    body: res[0].result,
+    body: payload,
   });
 
   if (response.ok) {
     const r = await response.json();
-    callback(r);
+    callback([r, length]);
   } else {
     throw new Error(response);
   }
