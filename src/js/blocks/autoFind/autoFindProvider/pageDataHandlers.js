@@ -75,9 +75,9 @@ function drawRectangles() {
 }
 
 function removeRectangles() {
-  const f = ({ JDN_elements }) => {
-    JDN_elements.forEach(({ element_id }) => {
-      document.getElementById(element_id).remove();
+  const f = ({ JDN_elements: JDNelements }) => {
+    JDNelements.forEach(({ element_id: elementId }) => {
+      document.getElementById(elementId).remove();
     });
   };
 
