@@ -24,12 +24,12 @@ const AutoFindProvider = ({ children }) => {
   const identifyElements = () => {
     setStatus(autoFindStatus.loading);
 
+    const callback = () => {
+      setStatus(autoFindStatus.success);
+    };
     const updateElements = (result) => {
       setPredictedElements(result);
       highlightElements(result, callback);
-    };
-    const callback = () => {
-      setStatus(autoFindStatus.success);
     };
 
     getElements(updateElements);
@@ -62,7 +62,7 @@ const AutoFindProvider = ({ children }) => {
 
 const useAutoFind = () => {
   const context = useContext(AutoFindContext);
-  if (context === undefined) {
+  if (context === void(0)) {
     throw new Error("useAutoFind can only be used inside AutoFindProvider");
   }
   return context;

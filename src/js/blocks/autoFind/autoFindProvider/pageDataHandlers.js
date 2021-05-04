@@ -1,20 +1,5 @@
 import { getPageData } from "./pageData";
 
-export const getElements = (callback) => {
-  getPageId(runPageScript(getPageData, uploadElements(callback)));
-};
-
-export const highlightElements = (elements, callback) => {
-  chrome.storage.local.set(
-    { JDN_elements: elements },
-    getPageId(runPageScript(drawRectangles, callback))
-  );
-};
-
-export const removeHighlighted = (callback) => {
-  getPageId(runPageScript(removeRectangles, callback));
-};
-
 const uploadElements = (callback) => async (res) => {
   const response = await fetch("http:localhost:5000/predict", {
     method: "POST",
@@ -46,15 +31,30 @@ const runPageScript = (script, callback) => (tabId) => {
   );
 };
 
+export const getElements = (callback) => {
+  getPageId(runPageScript(getPageData, uploadElements(callback)));
+};
+
+export const highlightElements = (elements, callback) => {
+  chrome.storage.local.set(
+    { JDN_elements: elements },
+    getPageId(runPageScript(drawRectangles, callback))
+  );
+};
+
+export const removeHighlighted = (callback) => {
+  getPageId(runPageScript(removeRectangles, callback));
+};
+
 /*
   WARNING: this function runs in a context of the target page, be careful with any application context calls
 */
 function drawRectangles() {
-  const f = ({ JDN_elements }) => {
-    JDN_elements.forEach(
-      ({ x, y, width, height, predicted_label, element_id }) => {
+  const f = ({ JDN_elements: JDNelements }) => {
+    JDNelements.forEach(
+      ({ x, y, width, height, predicted_label: predictedLabel, element_id: elementId }) => {
         var div = document.createElement("div");
-        div.id = element_id;
+        div.id = elementId;
         div.style.position = "absolute";
         div.style.background = "rgba(74, 207, 237, 0.5)";
         div.style.zIndex = 5000;
@@ -63,12 +63,13 @@ function drawRectangles() {
         div.style.top = `${y}px`;
         div.style.height = `${height}px`;
         div.style.width = `${width}px`;
-        div.textContent = predicted_label;
+        div.textContent = predictedLabel;
         div.style.color = "red";
         document.body.appendChild(div);
       }
     );
   };
+  /*global chrome*/
   chrome.storage.local.get("JDN_elements", f);
 }
 
