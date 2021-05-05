@@ -20,6 +20,7 @@ import "antd/dist/antd.less";
 import "../css/main.less";
 import LogComponentWrapper from "./blocks/log/LogComponent";
 import AutoFind from "./blocks/autoFind/AutoFind";
+import { AutoFindProvider } from "./blocks/autoFind/autoFindProvider/AutoFindProvider";
 
 const styles = {
   commonContainer: {
@@ -67,6 +68,7 @@ class App extends React.Component {
     const { classes } = this.props;
     return (
       <Provider mainModel={this.mainModel}>
+        <AutoFindProvider>
         <div className={classes.commonContainer}>
           <Menu
             onClick={this.handleClick}
@@ -127,6 +129,7 @@ class App extends React.Component {
             <AutoFind key="auto_find" />
           )}
         </div>
+        </AutoFindProvider>
       </Provider>
     );
   }
