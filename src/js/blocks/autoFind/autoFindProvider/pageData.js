@@ -61,5 +61,5 @@ export const getPageData = () => {
     IMPORTANT! stringify them right here for not to change fiels order.
     Otherwise 500 server error occurs
   */
-  return JSON.stringify(res);
+  return [JSON.stringify(res), res.length];
 };
