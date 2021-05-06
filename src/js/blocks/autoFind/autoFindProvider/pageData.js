@@ -3,12 +3,15 @@
 */
 
 export const getPageData = () => {
+  const hashAttribute = 'jdn-hash';
   function gen_uuid(e) {
-    if (e["uuid"] == undefined) {
-      e["uuid"] =
+    let hashValue = e.getAttribute(hashAttribute);
+    if (hashValue == undefined) {
+      hashValue =
         Math.random().toString().substring(2, 12) +
         Date.now().toString().substring(5) +
         Math.random().toString().substring(2, 12);
+        e.setAttribute(hashAttribute, hashValue);
       return e;
     } else {
       return e;
@@ -39,8 +42,8 @@ export const getPageData = () => {
 
       return {
         tag_name: el.tagName,
-        element_id: el.uuid,
-        parent_id: el.parentElement == null ? null : el.parentElement.uuid,
+        element_id: el.getAttribute(hashAttribute),
+        parent_id: el.parentElement == null ? null : el.parentElement.getAttribute(hashAttribute),
         x: _x,
         y: _y,
         width: _width,
