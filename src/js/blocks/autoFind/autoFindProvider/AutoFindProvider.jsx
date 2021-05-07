@@ -14,6 +14,10 @@ const autoFindStatus = {
   error: "An error occured",
 };
 
+const stateButton = {
+  disabled: false,
+}
+
 const AutoFindContext = React.createContext();
 
 const AutoFindProvider = ({ children }) => {
@@ -22,6 +26,7 @@ const AutoFindProvider = ({ children }) => {
   const [status, setStatus] = useState(autoFindStatus.noStatus);
 
   const identifyElements = () => {
+    toggleDisabledButton();
     setStatus(autoFindStatus.loading);
 
     const callback = () => {
@@ -37,6 +42,7 @@ const AutoFindProvider = ({ children }) => {
   };
 
   const removeHighlighs = () => {
+    toggleDisabledButton();
     const callback = () => {
       setStatus(autoFindStatus.removed);
     };
@@ -44,11 +50,16 @@ const AutoFindProvider = ({ children }) => {
     removeHighlighted(callback);
   };
 
+  const toggleDisabledButton = () => {
+    stateButton.disabled = !stateButton.disabled;
+  };
+
   const data = [
     {
       pageElements,
       predictedElements,
       status,
+      stateButton
     },
     {
       identifyElements,
