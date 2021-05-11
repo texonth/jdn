@@ -4,16 +4,14 @@ import { useAutoFind } from "./autoFindProvider/AutoFindProvider";
 const AutoFind = () => {
   const [
     { status, predictedElements, pageElements, allowIdetifyElements, allowRemoveElements },
-    { identifyElements, removeHighlighs, setAllowIdetifyElements },
+    { identifyElements, removeHighlighs },
   ] = useAutoFind();
 
   const handleGetElements = () => {
-    setAllowIdetifyElements(!allowIdetifyElements);
     identifyElements();
   };
 
   const handleRemove = () => {
-    setAllowIdetifyElements(!allowIdetifyElements);
     removeHighlighs();
   };
 

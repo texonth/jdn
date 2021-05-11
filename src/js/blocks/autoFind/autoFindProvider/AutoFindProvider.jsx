@@ -25,6 +25,7 @@ const AutoFindProvider = ({ children }) => {
 
 
   const identifyElements = () => {
+    setAllowIdetifyElements(!allowIdetifyElements);
     setStatus(autoFindStatus.loading);
 
     const callback = () => {
@@ -41,6 +42,7 @@ const AutoFindProvider = ({ children }) => {
   };
 
   const removeHighlighs = () => {
+    setAllowIdetifyElements(!allowIdetifyElements);
     const callback = () => {
       setStatus(autoFindStatus.removed);
     };
@@ -60,7 +62,6 @@ const AutoFindProvider = ({ children }) => {
     {
       identifyElements,
       removeHighlighs,
-      setAllowIdetifyElements,
     },
   ];
 
