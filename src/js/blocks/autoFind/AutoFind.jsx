@@ -3,22 +3,24 @@ import { useAutoFind } from "./autoFindProvider/AutoFindProvider";
 
 const AutoFind = () => {
   const [
-    { status, predictedElements, pageElements, stateButton },
-    { identifyElements, removeHighlighs },
+    { status, predictedElements, pageElements, allowIdetifyElements, allowRemoveElements },
+    { identifyElements, removeHighlighs, setAllowIdetifyElements },
   ] = useAutoFind();
 
   const handleGetElements = () => {
+    setAllowIdetifyElements(!allowIdetifyElements);
     identifyElements();
   };
 
   const handleRemove = () => {
+    setAllowIdetifyElements(!allowIdetifyElements);
     removeHighlighs();
   };
 
   return (
     <div>
-      <button disabled={stateButton.disabled} onClick={handleGetElements}>Idetify</button>
-      <button disabled={!stateButton.disabled} onClick={handleRemove}>Remove</button>
+      <button disabled={!allowIdetifyElements} onClick={handleGetElements}>Idetify</button>
+      <button disabled={!allowRemoveElements} onClick={handleRemove}>Remove</button>
       <br></br>
       <label>{status}</label>
       <br></br>

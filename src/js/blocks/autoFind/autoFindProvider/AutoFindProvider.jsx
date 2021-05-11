@@ -14,19 +14,17 @@ const autoFindStatus = {
   error: "An error occured",
 };
 
-const stateButton = {
-  disabled: false,
-}
-
 const AutoFindContext = React.createContext();
 
 const AutoFindProvider = ({ children }) => {
   const [pageElements, setPageElements] = useState(null);
   const [predictedElements, setPredictedElements] = useState(null);
   const [status, setStatus] = useState(autoFindStatus.noStatus);
+  const [allowIdetifyElements, setAllowIdetifyElements] = useState(true);
+  const [allowRemoveElements, setAllowRemoveElements] = useState(false);
+
 
   const identifyElements = () => {
-    toggleDisabledButton();
     setStatus(autoFindStatus.loading);
 
     const callback = () => {
@@ -36,22 +34,19 @@ const AutoFindProvider = ({ children }) => {
       setPredictedElements(predicted);
       setPageElements(page);
       highlightElements(predicted, callback);
+      setAllowRemoveElements(!allowRemoveElements);
     };
 
     getElements(updateElements);
   };
 
   const removeHighlighs = () => {
-    toggleDisabledButton();
     const callback = () => {
       setStatus(autoFindStatus.removed);
     };
 
     removeHighlighted(callback);
-  };
-
-  const toggleDisabledButton = () => {
-    stateButton.disabled = !stateButton.disabled;
+    setAllowRemoveElements(!allowRemoveElements);
   };
 
   const data = [
@@ -59,11 +54,13 @@ const AutoFindProvider = ({ children }) => {
       pageElements,
       predictedElements,
       status,
-      stateButton
+      allowIdetifyElements,
+      allowRemoveElements,
     },
     {
       identifyElements,
       removeHighlighs,
+      setAllowIdetifyElements,
     },
   ];
 
