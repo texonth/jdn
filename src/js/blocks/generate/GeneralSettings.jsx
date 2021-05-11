@@ -40,7 +40,7 @@ export default class GeneralSettings extends React.Component {
   render() {
     const { classes, mainModel } = this.props;
     const defaultRule = Rules.find(
-      (lang) => lang.value === mainModel.settingsModel.rules
+      (lang) => lang.value === mainModel.settingsModel.rule
     );
     const defaultLanguage = Languages.find(
       (lang) => lang.value === mainModel.settingsModel.extension
