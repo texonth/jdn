@@ -21,6 +21,7 @@ export default class SettingsModel {
     this.log = new Log();
     this.downloadAfterGeneration =
       settingsStorage.getItem("DownloadAfterGeneration") === "true";
+    this.rule = settingsStorage.getItem("DefaultRule") || "angular";
     this.extension = settingsStorage.getItem("DefaultLanguage") || ".java";
     this.framework = settingsStorage.getItem("DefaultFramework") || "jdiLight";
 

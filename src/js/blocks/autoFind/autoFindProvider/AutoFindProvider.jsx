@@ -20,8 +20,12 @@ const AutoFindProvider = ({ children }) => {
   const [pageElements, setPageElements] = useState(null);
   const [predictedElements, setPredictedElements] = useState(null);
   const [status, setStatus] = useState(autoFindStatus.noStatus);
+  const [allowIdetifyElements, setAllowIdetifyElements] = useState(true);
+  const [allowRemoveElements, setAllowRemoveElements] = useState(false);
+
 
   const identifyElements = () => {
+    setAllowIdetifyElements(!allowIdetifyElements);
     setStatus(autoFindStatus.loading);
 
     const callback = () => {
@@ -31,17 +35,20 @@ const AutoFindProvider = ({ children }) => {
       setPredictedElements(predicted);
       setPageElements(page);
       highlightElements(predicted, callback);
+      setAllowRemoveElements(!allowRemoveElements);
     };
 
     getElements(updateElements);
   };
 
   const removeHighlighs = () => {
+    setAllowIdetifyElements(!allowIdetifyElements);
     const callback = () => {
       setStatus(autoFindStatus.removed);
     };
 
     removeHighlightFromPage(callback);
+    setAllowRemoveElements(!allowRemoveElements);
   };
 
   const data = [
@@ -49,6 +56,8 @@ const AutoFindProvider = ({ children }) => {
       pageElements,
       predictedElements,
       status,
+      allowIdetifyElements,
+      allowRemoveElements,
     },
     {
       identifyElements,
