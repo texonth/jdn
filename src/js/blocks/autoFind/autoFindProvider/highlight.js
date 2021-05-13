@@ -98,7 +98,7 @@ export const highlightOnPage = () => {
   };
 
   const disconnectHandler = () => {
-    removeHighlight(() => console.log("JDN highlight has been killed"));
+    removeHighlight(() => console.log("JDN highlight has been killed"))();
   };
 
   findAndHighlight();
