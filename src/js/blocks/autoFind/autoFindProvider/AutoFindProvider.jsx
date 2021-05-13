@@ -3,7 +3,7 @@ import { useContext } from "react";
 import {
   getElements,
   highlightElements,
-  removeHighlighted,
+  removeHighlightFromPage,
 } from "./pageDataHandlers";
 
 const autoFindStatus = {
@@ -41,7 +41,7 @@ const AutoFindProvider = ({ children }) => {
       setStatus(autoFindStatus.removed);
     };
 
-    removeHighlighted(callback);
+    removeHighlightFromPage(callback);
   };
 
   const data = [
