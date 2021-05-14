@@ -6,16 +6,14 @@ export const getPageData = () => {
   const hashAttribute = 'jdn-hash';
   function gen_uuid(e) {
     let hashValue = e.getAttribute(hashAttribute);
-    if (hashValue == undefined) {
+    if (!hashValue) {
       hashValue =
         Math.random().toString().substring(2, 12) +
         Date.now().toString().substring(5) +
         Math.random().toString().substring(2, 12);
-        e.setAttribute(hashAttribute, hashValue);
-      return e;
-    } else {
-      return e;
+      e.setAttribute(hashAttribute, hashValue);
     }
+    return e;
   }
 
   function assign_uuid() {
