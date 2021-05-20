@@ -4,7 +4,7 @@ import { useAutoFind } from "./autoFindProvider/AutoFindProvider";
 const AutoFind = () => {
   const [
     { status, predictedElements, pageElements, allowIdetifyElements, allowRemoveElements },
-    { identifyElements, removeHighlighs },
+    { identifyElements, removeHighlighs, generateAndDownload },
   ] = useAutoFind();
 
   const handleGetElements = () => {
@@ -15,10 +15,15 @@ const AutoFind = () => {
     removeHighlighs();
   };
 
+  const handleGenerate = () => {
+    generateAndDownload();
+  }
+
   return (
     <div>
       <button disabled={!allowIdetifyElements} onClick={handleGetElements}>Idetify</button>
       <button disabled={!allowRemoveElements} onClick={handleRemove}>Remove</button>
+      <button onClick={handleGenerate}>Generate And Download</button>
       <br></br>
       <label>{status}</label>
       <br></br>
