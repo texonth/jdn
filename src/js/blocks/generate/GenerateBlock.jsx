@@ -1,7 +1,7 @@
 import React from "react";
 import injectSheet from "react-jss";
 import { inject, observer } from "mobx-react";
-import { Button } from "antd";
+import { Button, Checkbox } from "antd";
 
 import { exportIcon, importIcon, settings } from "../../../icons";
 import ReactFileReader from "react-file-reader";
@@ -9,6 +9,14 @@ import ReactFileReader from "react-file-reader";
 @inject("mainModel")
 @observer
 export default class GenerateBlock extends React.Component {
+
+  state = {
+    checkboxState: {
+      checked: true,
+      disabled: false,
+    }
+  };
+
   handleGenerateSeveral = () => {
     const { mainModel } = this.props;
 
@@ -31,10 +39,20 @@ export default class GenerateBlock extends React.Component {
     mainModel.generateBlockModel.downloadUrlsList();
   };
 
+  onChange = (e, url) => {
+    this.setState(() => {
+      return { checkboxState: e.target.checked }
+    });
+    const { mainModel } = this.props;
+
+    mainModel.generateBlockModel.addToExportUrlsList(url);
+  };
+
   render() {
     const { classes, mainModel } = this.props;
     const urlsList = mainModel.generateBlockModel.urlsList;
-    const isEnabled = (urlsList || []).length;
+    const exportUrlsList = mainModel.generateBlockModel.exportUrlsList;
+    const isEnabled = (exportUrlsList || []).length;
 
 
     return (
@@ -73,7 +91,12 @@ export default class GenerateBlock extends React.Component {
                 </Button>
               </ReactFileReader>
             </div>
-            <Button className={`inlineBtn`} size={"small"} onClick={this.handleExportUrlsListJSON}>
+            <Button
+              disabled={!isEnabled}
+              className={`inlineBtn`} 
+              size={"small"} 
+              onClick={this.handleExportUrlsListJSON}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -88,12 +111,16 @@ export default class GenerateBlock extends React.Component {
               Export URLs
             </Button>
           </div>
-          <ul>
-          {urlsList.map((url) => (
-            <li>
-              <a>{url}</a>
+          <ul className="urls-list">
+          {urlsList.map((url) => 
+            <li key={url}>
+              <Checkbox
+                onChange={(e) => {
+                  this.onChange(e, url)
+                }}
+              >{url}</Checkbox>
             </li>
-          ))}
+          )}
           </ul>
         </div>
       </div>

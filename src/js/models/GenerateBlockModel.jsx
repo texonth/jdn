@@ -746,6 +746,7 @@ export default class GenerateBlockModel {
   @observable siteInfo = {};
   @observable currentPageId;
   @observable urlsList = [];
+  @observable exportUrlsList = [];
 
   constructor() {
     this.log = new Log();
@@ -761,6 +762,15 @@ export default class GenerateBlockModel {
     } else {
       this.urlsList = SiteUrls.urlList;
       generateStorage.setItem("SiteMapUrlsList", JSON.stringify(this.urlsList));
+    }
+    this.exportUrlsList = [];
+  }
+
+  addToExportUrlsList(e) {
+    if (this.exportUrlsList.indexOf(e) >= 0) {
+      this.exportUrlsList = this.exportUrlsList.filter((url) => url !== e);
+    } else {
+      this.exportUrlsList.push(e);
     }
   }
 
@@ -819,7 +829,7 @@ export default class GenerateBlockModel {
     const objToSave = {
       content: JSON.stringify(
         {
-          urlsList: this.urlsList,
+          urlsList: this.exportUrlsList,
         },
         null,
         "\t"
