@@ -9,6 +9,14 @@ import ReactFileReader from "react-file-reader";
 @inject("mainModel")
 @observer
 export default class GenerateBlock extends React.Component {
+
+  state = {
+    checkboxState: {
+      checked: true,
+      disabled: false,
+    }
+  };
+
   handleGenerateSeveral = () => {
     const { mainModel } = this.props;
 
@@ -31,9 +39,13 @@ export default class GenerateBlock extends React.Component {
     mainModel.generateBlockModel.downloadUrlsList();
   };
 
-  onChange = (e) => {
+  onChange = (e, url) => {
+    this.setState(() => {
+      return { checkboxState: e.target.checked }
+    });
     const { mainModel } = this.props;
-    mainModel.generateBlockModel.addToExportUrlsList(e);
+
+    mainModel.generateBlockModel.addToExportUrlsList(url);
   };
 
   render() {
@@ -103,9 +115,8 @@ export default class GenerateBlock extends React.Component {
           {urlsList.map((url) => 
             <li key={url}>
               <Checkbox
-                onChange={() => {
-                  this.onChange(url);
-                  this.forceUpdate();
+                onChange={(e) => {
+                  this.onChange(e, url)
                 }}
               >{url}</Checkbox>
             </li>
