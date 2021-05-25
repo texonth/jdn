@@ -1,7 +1,8 @@
 import { JDIclasses } from "./classesMap";
 
 const predictedToConvert = (elements) => {
-  return elements.map((e) => {
+  const f = elements.filter((el) => !el.skipGeneration);
+  return f.map((e) => {
     return {
       ...e,
       Locator: `[jdn-hash]=${e.element_id}`,
@@ -23,4 +24,3 @@ export const generatePageObject = (elements, mainModel) => {
   mainModel.conversionModel.genPageCode(page, mainModel);
   mainModel.conversionModel.downloadPageCode(page, ".java");
 };
-

@@ -16,24 +16,58 @@ export const highlightOnPage = () => {
     return val;
   };
 
+  const toggleElement = (id) => {
+    port.postMessage({ message: "TOGGLE_ELEMENT", id });
+  };
+
   const drawRectangle = (element, { element_id, predicted_label }) => {
-    const rect = element.getBoundingClientRect();
+    const primaryColor = `rgba(74, 207, 237, 0.5)`;
+    const secondaryColor = `rgba(250, 238, 197, 0.5)`;
+
+    const divPrimaryStyle = {
+      backgroundColor: primaryColor,
+    };
+
+    const divSecondaryStyle = {
+      backgroundColor: secondaryColor,
+    };
+
+    const divDefaultStyle = (rect) => {
+      const { top, left, height, width } = rect || {};
+      const coords = rect
+        ? {
+            left: `${left + window.pageXOffset}px`,
+            top: `${top + window.pageYOffset}px`,
+            height: `${height}px`,
+            width: `${width}px`,
+          }
+        : {};
+      return {
+        ...coords,
+        ...divPrimaryStyle,
+        position: "absolute",
+        border: `3px solid ${primaryColor}`,
+        zIndex: 5000,
+        color: "red",
+      };
+    };
+
     var div = document.createElement("div");
     div.id = element_id;
-    div.style.position = "absolute";
-    div.style.background = "rgba(74, 207, 237, 0.5)";
-    div.style.zIndex = 5000;
-    div.style.border = "3px solid rgba(74, 207, 237)";
-    div.style.left = `${rect.left + window.pageXOffset}px`;
-    div.style.top = `${rect.top + window.pageYOffset}px`;
-    div.style.height = `${rect.height}px`;
-    div.style.width = `${rect.width}px`;
     div.textContent = predicted_label;
-    div.style.color = "red";
+    Object.assign(div.style, divDefaultStyle(element.getBoundingClientRect()));
+
+    div.onclick = () => {
+      toggleElement(element_id);
+      element.skipGeneration = !element.skipGeneration;
+      if (element.skipGeneration) Object.assign(div.style, divSecondaryStyle);
+      else Object.assign(div.style, divPrimaryStyle);
+    };
+
     document.body.appendChild(div);
   };
 
-  let nodes; // not to run query on every scroll/resize
+  let nodes; // not to run querySelector() on every scroll/resize
   const findAndHighlight = () => {
     const getElementToHighlight = (callback) => (storage) => {
       if (!nodes) {
@@ -57,7 +91,10 @@ export const highlightOnPage = () => {
       });
     };
 
-    chrome.storage.local.get("JDN_elements", getElementToHighlight(drawRectangle));
+    chrome.storage.local.get(
+      "JDN_elements",
+      getElementToHighlight(drawRectangle)
+    );
   };
 
   let timer;
