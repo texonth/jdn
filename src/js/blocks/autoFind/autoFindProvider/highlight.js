@@ -17,7 +17,6 @@ export const highlightOnPage = () => {
   };
 
   const toggleElement = (id) => {
-    console.log("toggle");
     port.postMessage({ message: "TOGGLE_ELEMENT", id });
   };
 
