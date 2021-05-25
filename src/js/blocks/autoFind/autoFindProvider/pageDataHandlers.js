@@ -37,7 +37,7 @@ let port;
 const setListeners = (toggleListenerCallback) => (p) => {
   port = p;
   port.onMessage.addListener(({ message, id }) => {
-    if (message == "TOGGLE_ELEMENT") {
+    if (message === "TOGGLE_ELEMENT") {
       toggleListenerCallback(id);
     }
   });

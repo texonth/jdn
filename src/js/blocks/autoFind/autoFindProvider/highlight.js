@@ -24,6 +24,14 @@ export const highlightOnPage = () => {
     const primaryColor = `rgba(74, 207, 237, 0.5)`;
     const secondaryColor = `rgba(250, 238, 197, 0.5)`;
 
+    const divPrimaryStyle = {
+      backgroundColor: primaryColor,
+    };
+
+    const divSecondaryStyle = {
+      backgroundColor: secondaryColor,
+    };
+
     const divDefaultStyle = (rect) => {
       const { top, left, height, width } = rect || {};
       const coords = rect
@@ -36,16 +44,12 @@ export const highlightOnPage = () => {
         : {};
       return {
         ...coords,
+        ...divPrimaryStyle,
         position: "absolute",
-        background: primaryColor,
         border: `3px solid ${primaryColor}`,
         zIndex: 5000,
         color: "red",
       };
-    };
-
-    const divSecondaryStyle = {
-      backgroundColor: secondaryColor,
     };
 
     var div = document.createElement("div");
@@ -57,7 +61,7 @@ export const highlightOnPage = () => {
       toggleElement(element_id);
       element.skipGeneration = !element.skipGeneration;
       if (element.skipGeneration) Object.assign(div.style, divSecondaryStyle);
-      else Object.assign(div.style, divDefaultStyle());
+      else Object.assign(div.style, divPrimaryStyle);
     };
 
     document.body.appendChild(div);
