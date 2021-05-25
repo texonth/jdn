@@ -33,13 +33,22 @@ const uploadElements = (callback) => async ([{ result }]) => {
   }
 };
 
+let port;
+const setListeners = (toggleListenerCallback) => (p) => {
+  port = p;
+  port.onMessage.addListener(({ message, id }) => {
+    if (message == "TOGGLE_ELEMENT") {
+      toggleListenerCallback(id);
+    }
+  });
+};
+
 export const getElements = (callback) => {
   getPageId(runPageScript(getPageData, uploadElements(callback)));
 };
 
-let port;
-export const highlightElements = (elements, callback) => {
-  chrome.runtime.onConnect.addListener((p) => (port = p));
+export const highlightElements = (elements, callback, toggleListenerCallback) => {
+  chrome.runtime.onConnect.addListener(setListeners(toggleListenerCallback));
   chrome.storage.local.set(
     { JDN_elements: elements },
     getPageId(runPageScript(highlightOnPage, callback))
