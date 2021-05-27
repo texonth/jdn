@@ -1,5 +1,6 @@
 import { highlightOnPage } from "./highlight";
 import { getPageData } from "./pageData";
+import { getPageElements } from "./pageElements";
 
 const getPageId = (callback) => {
   chrome.tabs.query({ active: true, currentWindow: true }, (res) => {
@@ -35,6 +36,10 @@ const uploadElements = (callback) => async ([{ result }]) => {
 
 export const getElements = (callback) => {
   getPageId(runPageScript(getPageData, uploadElements(callback)));
+};
+
+export const getIdPredictedElements = (callback) => {
+  getPageId(runPageScript(getPageElements, callback));
 };
 
 let port;
