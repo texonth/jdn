@@ -1,7 +1,6 @@
 import { JDIclasses } from "./classesMap";
 
 export const predictedToConvert = (elements) => {
-  console.log(elements);
   const f = elements.filter((el) => !el.skipGeneration);
   return f.map((e) => {
     return {

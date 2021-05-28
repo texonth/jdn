@@ -204,7 +204,7 @@ export const highlightOnPage = () => {
           paths.splice(0, 0, tagName + pathIndex);
         }
 
-        return  paths.length ? "/" + paths.join("/") : null;
+        return paths.length ? "/" + paths.join("/") : null;
         /*
         <---
         */
@@ -224,8 +224,12 @@ export const highlightOnPage = () => {
     const xpathCallback = (elements) =>
       port.postMessage({ message: "XPATH_GENERATED", param: elements });
 
-    if (message === "KILL_HIGHLIGHT") removeHighlight(removedCallback)();
-    if (message === "GENERATE_XPATHES") generateXpathes(param, xpathCallback);
+    if (message === "KILL_HIGHLIGHT") {
+      removeHighlight(removedCallback)();
+    }
+    if (message === "GENERATE_XPATHES") {
+      generateXpathes(param, xpathCallback);
+    }
   };
 
   const disconnectHandler = () => {

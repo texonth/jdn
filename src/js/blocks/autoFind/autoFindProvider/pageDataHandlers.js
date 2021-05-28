@@ -1,4 +1,4 @@
-import { highlightOnPage } from "./highlight";
+import { highlightOnPage } from "./contentScripts/highlight";
 import { getPageData } from "./pageData";
 import { getPage, predictedToConvert } from "./pageObject";
 
