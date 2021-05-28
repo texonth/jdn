@@ -1,11 +1,11 @@
 import { JDIclasses } from "./classesMap";
 
-const predictedToConvert = (elements) => {
+export const predictedToConvert = (elements) => {
   const f = elements.filter((el) => !el.skipGeneration);
   return f.map((e) => {
     return {
       ...e,
-      Locator: `[jdn-hash]=${e.element_id}`,
+      Locator: e.xpath,
       Name: `${JDIclasses[e.predicted_label]}_${e.element_id}`,
       Type: JDIclasses[e.predicted_label],
       parent: null,
@@ -15,12 +15,9 @@ const predictedToConvert = (elements) => {
   });
 };
 
-export const generatePageObject = (elements, mainModel) => {
-  const elToConvert = predictedToConvert(elements);
-  const page = {
+export const getPage = (elToConvert) => {
+  return {
     elements: elToConvert,
     name: "AnyPage",
   };
-  mainModel.conversionModel.genPageCode(page, mainModel);
-  mainModel.conversionModel.downloadPageCode(page, ".java");
 };

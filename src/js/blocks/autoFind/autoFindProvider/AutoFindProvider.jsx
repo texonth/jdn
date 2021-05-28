@@ -6,7 +6,7 @@ import {
   highlightElements,
   removeHighlightFromPage,
 } from "./pageDataHandlers";
-import { generatePageObject } from "./pageObject";
+import { generatePageObject } from "./pageDataHandlers";
 
 const autoFindStatus = {
   noStatus: "",

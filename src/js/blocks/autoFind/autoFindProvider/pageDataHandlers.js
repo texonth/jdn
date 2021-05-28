@@ -1,5 +1,6 @@
-import { highlightOnPage } from "./highlight";
+import { highlightOnPage } from "./contentScripts/highlight";
 import { getPageData } from "./pageData";
+import { getPage, predictedToConvert } from "./pageObject";
 
 const getPageId = (callback) => {
   chrome.tabs.query({ active: true, currentWindow: true }, (res) => {
@@ -47,7 +48,11 @@ export const getElements = (callback) => {
   getPageId(runPageScript(getPageData, uploadElements(callback)));
 };
 
-export const highlightElements = (elements, callback, toggleListenerCallback) => {
+export const highlightElements = (
+  elements,
+  callback,
+  toggleListenerCallback
+) => {
   chrome.runtime.onConnect.addListener(setListeners(toggleListenerCallback));
   chrome.storage.local.set(
     { JDN_elements: elements },
@@ -59,5 +64,19 @@ export const removeHighlightFromPage = (callback) => {
   port.postMessage({ message: "KILL_HIGHLIGHT" });
   port.onMessage.addListener(({ message }) => {
     if (message == "HIGHLIGHT_REMOVED") callback();
+  });
+};
+
+export const generatePageObject = (elements, mainModel) => {
+  const onXpathGenerated = (xpathElements) => {
+    const elToConvert = predictedToConvert(xpathElements);
+    const page = getPage(elToConvert);
+    mainModel.conversionModel.genPageCode(page, mainModel);
+    mainModel.conversionModel.downloadPageCode(page, ".java");
+  };
+
+  port.postMessage({ message: "GENERATE_XPATHES", param: elements});
+  port.onMessage.addListener(({ message, param }) => {
+    if (message === "XPATH_GENERATED") onXpathGenerated(param);
   });
 };

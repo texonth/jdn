@@ -1,7 +1,3 @@
-/*
-    origin from https://gitlab.com/vfuga/jdi-qasp-ml/-/blob/v.0.1/js/build-dataset.js
-*/
-
 export const getPageData = () => {
   const hashAttribute = 'jdn-hash';
   function gen_uuid(e) {
