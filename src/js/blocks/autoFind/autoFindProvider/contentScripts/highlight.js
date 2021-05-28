@@ -20,7 +20,7 @@ export const highlightOnPage = () => {
     port.postMessage({ message: "TOGGLE_ELEMENT", id });
   };
 
-  const drawRectangle = (element, { element_id, predicted_label }) => {
+  const drawRectangle = (element, { element_id, predicted_label, predicted_probability }) => {
     const primaryColor = `rgba(74, 207, 237, 0.5)`;
     const secondaryColor = `rgba(250, 238, 197, 0.5)`;
 
@@ -54,7 +54,9 @@ export const highlightOnPage = () => {
 
     var div = document.createElement("div");
     div.id = element_id;
-    div.textContent = predicted_label;
+    div.textContent = `${predicted_label}: ${
+      Math.round(predicted_probability * 100) / 100
+    }`;
     Object.assign(div.style, divDefaultStyle(element.getBoundingClientRect()));
 
     div.onclick = () => {
