@@ -39,7 +39,7 @@ const AutoFind = () => {
       <button disabled={!allowRemoveElements} onClick={handleRemove}>
         Remove
       </button>
-      <button disabled={allowIdetifyElements} onClick={handleGenerate}>Generate And Download</button>
+      <button disabled={!allowRemoveElements} onClick={handleGenerate}>Generate And Download</button>
       <br></br>
       <label>Perception treshold: {perception}</label>
       <Row>
@@ -58,7 +58,7 @@ const AutoFind = () => {
       <label>{status}</label>
       <br></br>
       <label>
-        {predictedElements && !allowIdetifyElements ? predictedElements.length : 0} of{" "}
+        {predictedElements && allowRemoveElements ? predictedElements.length : 0} of{" "}
         {pageElements || 0} page elements are predicted for test.
       </label>
     </div>
