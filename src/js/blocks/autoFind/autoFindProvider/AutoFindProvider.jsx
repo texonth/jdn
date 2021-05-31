@@ -41,7 +41,7 @@ const AutoFindProvider = inject("mainModel")(
       setStatus(autoFindStatus.loading);
 
       const callback = () => {
-        setStatus(autoFindStatus.success);        
+        setStatus(autoFindStatus.success);
       };
       const updateElements = ([predicted, page]) => {
         setPredictedElements(predicted);
@@ -63,8 +63,8 @@ const AutoFindProvider = inject("mainModel")(
       removeHighlightFromPage(callback);
     };
 
-    const generateAndDownload = () => {
-      generatePageObject(predictedElements, mainModel);
+    const generateAndDownload = (perception) => {
+      generatePageObject(predictedElements, perception, mainModel);
     };
 
     const data = [

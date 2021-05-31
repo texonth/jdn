@@ -67,9 +67,9 @@ export const removeHighlightFromPage = (callback) => {
   });
 };
 
-export const generatePageObject = (elements, mainModel) => {
+export const generatePageObject = (elements, perception, mainModel) => {
   const onXpathGenerated = (xpathElements) => {
-    const elToConvert = predictedToConvert(xpathElements);
+    const elToConvert = predictedToConvert(xpathElements, perception);
     const page = getPage(elToConvert);
     mainModel.conversionModel.genPageCode(page, mainModel);
     mainModel.conversionModel.downloadPageCode(page, ".java");
