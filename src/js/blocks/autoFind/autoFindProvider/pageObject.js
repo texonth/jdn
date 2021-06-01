@@ -1,7 +1,7 @@
 import { JDIclasses } from "./classesMap";
 
-export const predictedToConvert = (elements) => {
-  const f = elements.filter((el) => !el.skipGeneration);
+export const predictedToConvert = (elements, perception) => {
+  const f = elements.filter((el) => !el.skipGeneration && el.predicted_probability >= perception);
   return f.map((e) => {
     return {
       ...e,
