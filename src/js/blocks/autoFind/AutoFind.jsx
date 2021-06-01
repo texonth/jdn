@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useAutoFind } from "./autoFindProvider/AutoFindProvider";
-import { Slider, InputNumber, Row, Col } from "antd";
+import { Slider, Row } from "antd";
 
 const AutoFind = () => {
   const [
@@ -54,7 +54,6 @@ const AutoFind = () => {
         />
         <label>1</label>
       </Row>
-      <br></br>
       <label>{status}</label>
       <br></br>
       <label>
