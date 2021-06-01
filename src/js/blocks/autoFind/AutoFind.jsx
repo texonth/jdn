@@ -50,7 +50,7 @@ const AutoFind = () => {
           max={1}
           step={0.01}
           onChange={handlePerceptionChange}
-          value={typeof perception === "number" ? perception : 0}
+          value={perception}
         />
         <label>1</label>
       </Row>
