@@ -21,7 +21,9 @@ export const highlightOnPage = () => {
   };
 
   const camelCase = (string) => {
-    return string.replace(/-([a-z])/g, (m, w) => w.toUpperCase());
+    const regex = /(_|-)([a-z])/g;
+    const toCamelCase = string => string[1].toUpperCase();
+    return string.toLowerCase().replace(regex, toCamelCase);
   }
 
   const drawRectangle = (element, { element_id, predicted_label, predicted_probability }) => {
@@ -139,6 +141,7 @@ export const highlightOnPage = () => {
         `[jdn-hash='${predictedElement.element_id}']`
       );
       predictedElement.attrId = element.id ? camelCase(element.id) : '';
+      predictedElement.tagName = element.tagName.toLowerCase();
 
       /*
       Software License Agreement (BSD License)
