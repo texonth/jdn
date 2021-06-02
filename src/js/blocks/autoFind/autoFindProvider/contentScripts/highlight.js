@@ -20,6 +20,12 @@ export const highlightOnPage = () => {
     port.postMessage({ message: "TOGGLE_ELEMENT", id });
   };
 
+  const camelCase = (string) => {
+    const regex = /(_|-)([a-z])/g;
+    const toCamelCase = string => string[1].toUpperCase();
+    return string.toLowerCase().replace(regex, toCamelCase);
+  }
+
   const drawRectangle = (element, { element_id, predicted_label, predicted_probability }) => {
     const primaryColor = `rgba(74, 207, 237, 0.5)`;
     const secondaryColor = `rgba(250, 238, 197, 0.5)`;
@@ -134,6 +140,8 @@ export const highlightOnPage = () => {
       let element = document.querySelector(
         `[jdn-hash='${predictedElement.element_id}']`
       );
+      predictedElement.attrId = element.id ? camelCase(element.id) : '';
+      predictedElement.tagName = element.tagName.toLowerCase();
 
       /*
       Software License Agreement (BSD License)
