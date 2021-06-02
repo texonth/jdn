@@ -1,7 +1,3 @@
-const camelCase = (string) => {
-  return string.replace(/-([a-z])/g, (m, w) => w.toUpperCase());
-}
-
 const genRand = (name) => {
   return (
     name +
@@ -122,4 +118,4 @@ const cssToXPath = (css) => {
   return result;
 };
 
-export { camelCase, genRand, cssToXPath };
+export { genRand, cssToXPath };

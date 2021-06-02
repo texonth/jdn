@@ -1,6 +1,6 @@
-import { highlightOnPage } from "./highlight";
+import { highlightOnPage } from "./contentScripts/highlight";
 import { getPageData } from "./pageData";
-import { getPageElements } from "./pageElements";
+import { getPage, predictedToConvert } from "./pageObject";
 
 const getPageId = (callback) => {
   chrome.tabs.query({ active: true, currentWindow: true }, (res) => {
@@ -34,17 +34,26 @@ const uploadElements = (callback) => async ([{ result }]) => {
   }
 };
 
+let port;
+const setListeners = (toggleListenerCallback) => (p) => {
+  port = p;
+  port.onMessage.addListener(({ message, id }) => {
+    if (message === "TOGGLE_ELEMENT") {
+      toggleListenerCallback(id);
+    }
+  });
+};
+
 export const getElements = (callback) => {
   getPageId(runPageScript(getPageData, uploadElements(callback)));
 };
 
-export const getIdPredictedElements = (callback) => {
-  getPageId(runPageScript(getPageElements, callback));
-};
-
-let port;
-export const highlightElements = (elements, callback) => {
-  chrome.runtime.onConnect.addListener((p) => (port = p));
+export const highlightElements = (
+  elements,
+  callback,
+  toggleListenerCallback
+) => {
+  chrome.runtime.onConnect.addListener(setListeners(toggleListenerCallback));
   chrome.storage.local.set(
     { JDN_elements: elements },
     getPageId(runPageScript(highlightOnPage, callback))
@@ -55,5 +64,19 @@ export const removeHighlightFromPage = (callback) => {
   port.postMessage({ message: "KILL_HIGHLIGHT" });
   port.onMessage.addListener(({ message }) => {
     if (message == "HIGHLIGHT_REMOVED") callback();
+  });
+};
+
+export const generatePageObject = (elements, perception, mainModel) => {
+  const onXpathGenerated = (xpathElements) => {
+    const elToConvert = predictedToConvert(xpathElements, perception);
+    const page = getPage(elToConvert);
+    mainModel.conversionModel.genPageCode(page, mainModel);
+    mainModel.conversionModel.downloadPageCode(page, ".java");
+  };
+
+  port.postMessage({ message: "GENERATE_XPATHES", param: elements});
+  port.onMessage.addListener(({ message, param }) => {
+    if (message === "XPATH_GENERATED") onXpathGenerated(param);
   });
 };

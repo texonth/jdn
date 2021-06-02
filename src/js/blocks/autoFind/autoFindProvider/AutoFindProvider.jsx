@@ -6,7 +6,7 @@ import {
   highlightElements,
   removeHighlightFromPage,
 } from "./pageDataHandlers";
-import { generatePageObject } from "./pageObject";
+import { generatePageObject } from "./pageDataHandlers";
 
 const autoFindStatus = {
   noStatus: "",
@@ -19,13 +19,22 @@ const autoFindStatus = {
 const AutoFindContext = React.createContext();
 
 const AutoFindProvider = inject("mainModel")(
-  observer(({mainModel, children}) => {
+  observer(({ mainModel, children }) => {
     const [pageElements, setPageElements] = useState(null);
     const [predictedElements, setPredictedElements] = useState(null);
     const [status, setStatus] = useState(autoFindStatus.noStatus);
     const [allowIdetifyElements, setAllowIdetifyElements] = useState(true);
     const [allowRemoveElements, setAllowRemoveElements] = useState(false);
 
+    const toggleElementGeneration = (id) => {
+      setPredictedElements((previousValue) => {
+        const toggled = previousValue.map((el) => {
+          if (el.element_id === id) el.skipGeneration = !el.skipGeneration;
+          return el;
+        });
+        return toggled;
+      });
+    };
 
     const identifyElements = () => {
       setAllowIdetifyElements(!allowIdetifyElements);
@@ -37,7 +46,7 @@ const AutoFindProvider = inject("mainModel")(
       const updateElements = ([predicted, page]) => {
         setPredictedElements(predicted);
         setPageElements(page);
-        highlightElements(predicted, callback);
+        highlightElements(predicted, callback, toggleElementGeneration);
         setAllowRemoveElements(!allowRemoveElements);
       };
 
@@ -54,8 +63,8 @@ const AutoFindProvider = inject("mainModel")(
       removeHighlightFromPage(callback);
     };
 
-    const generateAndDownload = () => {
-      generatePageObject(predictedElements, mainModel);
+    const generateAndDownload = (perception) => {
+      generatePageObject(predictedElements, perception, mainModel);
     };
 
     const data = [
@@ -83,7 +92,7 @@ const AutoFindProvider = inject("mainModel")(
 
 const useAutoFind = () => {
   const context = useContext(AutoFindContext);
-  if (context === void(0)) {
+  if (context === void 0) {
     throw new Error("useAutoFind can only be used inside AutoFindProvider");
   }
   return context;
