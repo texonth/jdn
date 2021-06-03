@@ -25,6 +25,7 @@ const AutoFindProvider = inject("mainModel")(
     const [status, setStatus] = useState(autoFindStatus.noStatus);
     const [allowIdetifyElements, setAllowIdetifyElements] = useState(true);
     const [allowRemoveElements, setAllowRemoveElements] = useState(false);
+    const [perception, setPerception] = useState(0.5);
 
     const toggleElementGeneration = (id) => {
       setPredictedElements((previousValue) => {
@@ -46,7 +47,12 @@ const AutoFindProvider = inject("mainModel")(
       const updateElements = ([predicted, page]) => {
         setPredictedElements(predicted);
         setPageElements(page);
-        highlightElements(predicted, callback, toggleElementGeneration);
+        highlightElements(
+          predicted,
+          callback,
+          toggleElementGeneration,
+          perception,
+        );
         setAllowRemoveElements(!allowRemoveElements);
       };
 
@@ -67,6 +73,18 @@ const AutoFindProvider = inject("mainModel")(
       generatePageObject(predictedElements, perception, mainModel);
     };
 
+    const onChangePerception = (value) => {
+      setPerception(value);
+      if (predictedElements) {
+        highlightElements(
+          predictedElements,
+          () => {},
+          toggleElementGeneration,
+          perception,
+        );
+      }
+    };
+
     const data = [
       {
         pageElements,
@@ -74,11 +92,13 @@ const AutoFindProvider = inject("mainModel")(
         status,
         allowIdetifyElements,
         allowRemoveElements,
+        perception,
       },
       {
         identifyElements,
         removeHighlighs,
         generateAndDownload,
+        onChangePerception,
       },
     ];
 

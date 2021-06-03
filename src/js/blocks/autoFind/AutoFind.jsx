@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import "./slider.less";
+import React from "react";
 import { useAutoFind } from "./autoFindProvider/AutoFindProvider";
 import { Slider, Row } from "antd";
 
@@ -10,11 +11,15 @@ const AutoFind = () => {
       pageElements,
       allowIdetifyElements,
       allowRemoveElements,
+      perception,
     },
-    { identifyElements, removeHighlighs, generateAndDownload },
+    {
+      identifyElements,
+      removeHighlighs,
+      generateAndDownload,
+      onChangePerception,
+    },
   ] = useAutoFind();
-  const [perception, setPerception] = useState(0.5);
-
   const handleGetElements = () => {
     identifyElements();
   };
@@ -28,19 +33,36 @@ const AutoFind = () => {
   };
 
   const handlePerceptionChange = (value) => {
-    setPerception(value);
+    onChangePerception(value);
+  };
+
+  const getAvailableElements = () => {
+    return allowRemoveElements
+      ? (predictedElements || []).filter(
+          (e) => e.predicted_probability >= perception
+        ).length
+      : 0;
+  };
+
+  const getPredictedElements = () => {
+    return predictedElements && allowRemoveElements
+      ? predictedElements.length
+      : 0;
   };
 
   return (
     <div>
-      <button disabled={!allowIdetifyElements} onClick={handleGetElements}>
+      <Row>
+        <button disabled={!allowIdetifyElements} onClick={handleGetElements}>
         Idetify
       </button>
       <button disabled={!allowRemoveElements} onClick={handleRemove}>
         Remove
       </button>
-      <button disabled={!allowRemoveElements} onClick={handleGenerate}>Generate And Download</button>
-      <br></br>
+      <button disabled={!allowRemoveElements} onClick={handleGenerate}>
+        Generate And Download
+      </button>
+      </Row>
       <label>Perception treshold: {perception}</label>
       <Row>
         <label>0.0</label>
@@ -54,12 +76,10 @@ const AutoFind = () => {
         />
         <label>1</label>
       </Row>
-      <label>{status}</label>
-      <br></br>
-      <label>
-        {predictedElements && allowRemoveElements ? predictedElements.length : 0} of{" "}
-        {pageElements || 0} page elements are predicted for test.
-      </label>
+      <div>{status}</div>
+      <div>{pageElements || 0} found on page.</div>
+      <div>{getPredictedElements()} predicted.</div>
+      <div>{getAvailableElements()} available for generation.</div>
     </div>
   );
 };

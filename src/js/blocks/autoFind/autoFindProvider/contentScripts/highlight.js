@@ -20,7 +20,10 @@ export const highlightOnPage = () => {
     port.postMessage({ message: "TOGGLE_ELEMENT", id });
   };
 
-  const drawRectangle = (element, { element_id, predicted_label, predicted_probability }) => {
+  const drawRectangle = (
+    element,
+    { element_id, predicted_label, predicted_probability }
+  ) => {
     const primaryColor = `rgba(74, 207, 237, 0.5)`;
     const secondaryColor = `rgba(250, 238, 197, 0.5)`;
 
@@ -71,12 +74,18 @@ export const highlightOnPage = () => {
 
   let nodes; // not to run querySelector() on every scroll/resize
   const findAndHighlight = () => {
-    const getElementToHighlight = (callback) => (storage) => {
+    const getElementToHighlight = (callback) => ({ JDN_elements }) => {
       if (!nodes) {
         let query = "";
-        storage.JDN_elements.forEach(({ element_id }) => {
-          query += `${!!query.length ? ", " : ""}[jdn-hash='${element_id}']`;
-        });
+        JDN_elements.elements.forEach(
+          ({ element_id, predicted_probability }) => {
+            if (predicted_probability >= JDN_elements.perception ) {
+              query += `${
+                !!query.length ? ", " : ""
+              }[jdn-hash='${element_id}']`;
+            }
+          }
+        );
         nodes = document.querySelectorAll(query);
       }
       nodes.forEach((element) => {
@@ -84,7 +93,7 @@ export const highlightOnPage = () => {
           const hash = element.getAttribute("jdn-hash");
           const isHighlighted = !!document.getElementById(hash);
           if (!isHighlighted) {
-            const predicted = storage.JDN_elements.find(
+            const predicted = JDN_elements.elements.find(
               (e) => e.element_id === hash
             );
             callback(element, predicted);
@@ -109,7 +118,7 @@ export const highlightOnPage = () => {
 
   const removeHighlightElements = (callback) => {
     const f = ({ JDN_elements }) => {
-      JDN_elements.forEach(({ element_id: elementId }) => {
+      JDN_elements.elements.forEach(({ element_id: elementId }) => {
         const el = document.getElementById(elementId);
         if (el) el.remove();
       });
