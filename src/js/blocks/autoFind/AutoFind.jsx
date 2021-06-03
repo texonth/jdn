@@ -1,9 +1,11 @@
 import "./slider.less";
-import React from "react";
+import React, { useState } from "react";
 import { useAutoFind } from "./autoFindProvider/AutoFindProvider";
 import { Slider, Row } from "antd";
 
+let sliderTimer;
 const AutoFind = () => {
+  const [perceptionOutput, setPerceptionOutput] = useState(0.5);
   const [
     {
       status,
@@ -33,7 +35,11 @@ const AutoFind = () => {
   };
 
   const handlePerceptionChange = (value) => {
-    onChangePerception(value);
+    setPerceptionOutput(value);
+    if (sliderTimer) clearTimeout(sliderTimer);
+    sliderTimer = setTimeout(() => {
+      onChangePerception(value);
+    }, 300);
   };
 
   const getAvailableElements = () => {
@@ -54,14 +60,14 @@ const AutoFind = () => {
     <div>
       <Row>
         <button disabled={!allowIdetifyElements} onClick={handleGetElements}>
-        Idetify
-      </button>
-      <button disabled={!allowRemoveElements} onClick={handleRemove}>
-        Remove
-      </button>
-      <button disabled={!allowRemoveElements} onClick={handleGenerate}>
-        Generate And Download
-      </button>
+          Idetify
+        </button>
+        <button disabled={!allowRemoveElements} onClick={handleRemove}>
+          Remove
+        </button>
+        <button disabled={!allowRemoveElements} onClick={handleGenerate}>
+          Generate And Download
+        </button>
       </Row>
       <label>Perception treshold: {perception}</label>
       <Row>
@@ -72,7 +78,7 @@ const AutoFind = () => {
           max={1}
           step={0.01}
           onChange={handlePerceptionChange}
-          value={perception}
+          value={perceptionOutput}
         />
         <label>1</label>
       </Row>

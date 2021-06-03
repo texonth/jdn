@@ -24,7 +24,7 @@ export const highlightOnPage = () => {
     const regex = /(_|-)([a-z])/g;
     const toCamelCase = string => string[1].toUpperCase();
     return string.toLowerCase().replace(regex, toCamelCase);
-  }
+  };
 
   const drawRectangle = (element, { element_id, predicted_label, predicted_probability }) => {
     const primaryColor = `rgba(74, 207, 237, 0.5)`;
@@ -80,26 +80,30 @@ export const highlightOnPage = () => {
     const getElementToHighlight = (callback) => ({ JDN_elements }) => {
       if (!nodes) {
         let query = "";
-        JDN_elements.elements.forEach(
-          ({ element_id, predicted_probability }) => {
-            if (predicted_probability >= JDN_elements.perception ) {
-              query += `${
-                !!query.length ? ", " : ""
-              }[jdn-hash='${element_id}']`;
-            }
-          }
-        );
+        JDN_elements.elements.forEach(({ element_id }) => {
+          query += `${!!query.length ? ", " : ""}[jdn-hash='${element_id}']`;
+        });
         nodes = document.querySelectorAll(query);
       }
       nodes.forEach((element) => {
         if (isInViewport(element)) {
           const hash = element.getAttribute("jdn-hash");
-          const isHighlighted = !!document.getElementById(hash);
-          if (!isHighlighted) {
-            const predicted = JDN_elements.elements.find(
-              (e) => e.element_id === hash
-            );
-            callback(element, predicted);
+          const highlightElement = document.getElementById(hash);
+          const isAbovePerceptionTreshold = JDN_elements.elements.find((e) => {
+            return (hash === e.element_id) &&
+              (e.predicted_probability >= JDN_elements.perception);
+          });
+          if (!!highlightElement) {
+            if (!isAbovePerceptionTreshold) {
+              highlightElement.remove();
+            }
+          } else {
+            if (isAbovePerceptionTreshold) {
+              const predicted = JDN_elements.elements.find(
+                (e) => e.element_id === hash
+              );
+              callback(element, predicted, JDN_elements.perception);
+            }
           }
         }
       });

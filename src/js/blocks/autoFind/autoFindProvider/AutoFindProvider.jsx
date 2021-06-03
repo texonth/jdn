@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { inject, observer } from "mobx-react";
 import { useContext } from "react";
 import {
@@ -80,7 +80,7 @@ const AutoFindProvider = inject("mainModel")(
           predictedElements,
           () => {},
           toggleElementGeneration,
-          perception,
+          value,
         );
       }
     };
