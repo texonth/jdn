@@ -75,7 +75,7 @@ const AutoFindProvider = inject("mainModel")(
 
     const onChangePerception = (value) => {
       setPerception(value);
-      if (predictedElements) {
+      if (predictedElements && allowRemoveElements) {
         highlightElements(
           predictedElements,
           () => {},

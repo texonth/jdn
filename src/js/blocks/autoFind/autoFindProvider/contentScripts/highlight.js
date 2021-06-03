@@ -78,9 +78,11 @@ export const highlightOnPage = () => {
   let nodes; // not to run querySelector() on every scroll/resize
   const findAndHighlight = () => {
     const getElementToHighlight = (callback) => ({ JDN_elements }) => {
+      const predictedElements = JDN_elements.elements;
+      const perception = JDN_elements.perception;
       if (!nodes) {
         let query = "";
-        JDN_elements.elements.forEach(({ element_id }) => {
+        predictedElements.forEach(({ element_id }) => {
           query += `${!!query.length ? ", " : ""}[jdn-hash='${element_id}']`;
         });
         nodes = document.querySelectorAll(query);
@@ -89,21 +91,18 @@ export const highlightOnPage = () => {
         if (isInViewport(element)) {
           const hash = element.getAttribute("jdn-hash");
           const highlightElement = document.getElementById(hash);
-          const isAbovePerceptionTreshold = JDN_elements.elements.find((e) => {
-            return (hash === e.element_id) &&
-              (e.predicted_probability >= JDN_elements.perception);
+          const isAbovePerceptionTreshold = predictedElements.find((e) => {
+            return (
+              hash === e.element_id && e.predicted_probability >= perception
+            );
           });
-          if (!!highlightElement) {
-            if (!isAbovePerceptionTreshold) {
-              highlightElement.remove();
-            }
-          } else {
-            if (isAbovePerceptionTreshold) {
-              const predicted = JDN_elements.elements.find(
-                (e) => e.element_id === hash
-              );
-              callback(element, predicted, JDN_elements.perception);
-            }
+          if (!!highlightElement && !isAbovePerceptionTreshold) {
+            highlightElement.remove();
+          } else if (!highlightElement && isAbovePerceptionTreshold) {
+            const predicted = predictedElements.find(
+              (e) => e.element_id === hash
+            );
+            callback(element, predicted, perception);
           }
         }
       });
