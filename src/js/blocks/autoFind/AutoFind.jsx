@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAutoFind } from "./autoFindProvider/AutoFindProvider";
 import { Slider, Row } from "antd";
+
 import "./slider.less";
 
 let sliderTimer;
