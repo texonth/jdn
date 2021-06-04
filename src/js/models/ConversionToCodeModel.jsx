@@ -8,7 +8,6 @@ function varName(name) {
 }
 
 function getClassName(name) {
-  console.log(name);
   let words = name.split(/\W/);
   return words.map((word) => word[0].toUpperCase() + word.slice(1)).join("");
 }
@@ -56,7 +55,7 @@ function complexCode(type, locator, name, mainModel) {
   return complexTemplate + "\n";
 }
 
-function simpleCode(locatorType, locator, elType, name, mainModel) {
+export function simpleCode(locatorType, locator, elType, name, mainModel) {
   const template = mainModel.settingsModel.template;
   let templatePath = "";
 
@@ -178,7 +177,7 @@ function getElement(el, generateBlockModel) {
     : el;
 }
 
-function genCodeOfElements(parentId, arrOfElements, mainModel) {
+function genCodeOfElements(parentId, arrOfElements, mainModel, isAutoFind) {
   const { ruleBlockModel, generateBlockModel } = mainModel;
   const composites = ruleBlockModel.rules.CompositeRules;
   const complex = ruleBlockModel.rules.ComplexRules;
@@ -189,7 +188,7 @@ function genCodeOfElements(parentId, arrOfElements, mainModel) {
     let el = getElement(arrOfElements[i], generateBlockModel);
 
     if (el.parentId === parentId && (el.Locator || el.Root)) {
-      if (composites[el.Type]) {
+      if (composites[el.Type] && !isAutoFind) {
         result += simpleCode(
           locatorType(el.Locator),
           el.Locator,
@@ -198,7 +197,7 @@ function genCodeOfElements(parentId, arrOfElements, mainModel) {
           mainModel
         );
       }
-      if (complex[el.Type]) {
+      if (complex[el.Type] && !isAutoFind) {
         let fields = getFields(ruleBlockModel.elementFields[el.Type]);
         result += isSimple(el, fields)
           ? simpleCode(
@@ -315,7 +314,7 @@ export function siteCode(pack, domain, name, mainModel) {
   return siteTemplate;
 }
 
-export function pageCode(page, mainModel) {
+export function pageCode(page, mainModel, isAutoFind) {
   const pageName = getPageName(page.name);
   const template = mainModel.settingsModel.template;
 
@@ -327,7 +326,7 @@ export function pageCode(page, mainModel) {
   pageTemplate = pageTemplate.replace(/{{type}}/g, pageName);
   pageTemplate = pageTemplate.replace(
     /{{elements}}/,
-    genCodeOfElements(null, page.elements, mainModel)
+    genCodeOfElements(null, page.elements, mainModel, isAutoFind)
   );
 
   return pageTemplate;
@@ -344,8 +343,8 @@ export default class ConversionToCodeModel {
   }
 
   @action
-  genPageCode(page, mainModel) {
-    this.currentPageCode = pageCode(page, mainModel);
+  genPageCode(page, mainModel, isAutoFind) {
+    this.currentPageCode = pageCode(page, mainModel, isAutoFind);
     this.generatedPages.push(this.currentPageCode);
   }
 

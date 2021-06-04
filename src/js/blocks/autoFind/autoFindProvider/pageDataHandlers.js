@@ -72,7 +72,7 @@ export const generatePageObject = (elements, perception, mainModel) => {
   const onXpathGenerated = (xpathElements) => {
     const elToConvert = predictedToConvert(xpathElements, perception);
     const page = getPage(elToConvert);
-    mainModel.conversionModel.genPageCode(page, mainModel);
+    mainModel.conversionModel.genPageCode(page, mainModel, true);
     mainModel.conversionModel.downloadPageCode(page, ".java");
   };
 
