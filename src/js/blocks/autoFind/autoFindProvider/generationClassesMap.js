@@ -1,6 +1,6 @@
-const defaultClass = "Label";
+const defaultClass = "DefaultClass";
 
-export const JDIclasses = {
+const JDIclasses = {
   button: "Button",
   link: "Link",
   iframe: defaultClass,
@@ -22,3 +22,5 @@ export const JDIclasses = {
   radiobutton: "RadioButtons",
   table: "Table",
 };
+
+export const getJDILabel = (label) => JDIclasses[label] || label;
