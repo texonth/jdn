@@ -1,7 +1,6 @@
 import { observable, action } from "mobx";
 import GenerateBlockModel from "./GenerateBlockModel";
 import RulesBlockModel from "./RulesBlockModel";
-import GenerateBlock from "../blocks/generate/GenerateBlock";
 import ConversionToCodeModel from "./ConversionToCodeModel";
 import SettingsModel from "./SettingsModel";
 
@@ -10,7 +9,7 @@ export default class MainModel {
   @observable conversionModel;
   @observable settingsModel;
   @observable ruleBlockModel;
-  @observable tab = "settings";
+  @observable tab = "auto_find";
   @observable currentPageId;
   @observable generationId = 0;
   @observable applicationLog = [];

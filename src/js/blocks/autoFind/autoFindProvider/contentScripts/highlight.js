@@ -20,7 +20,13 @@ export const highlightOnPage = () => {
     port.postMessage({ message: "TOGGLE_ELEMENT", id });
   };
 
-  const drawRectangle = (element, { element_id, predicted_label }) => {
+  const camelCase = (string) => {
+    const regex = /(_|-)([a-z])/g;
+    const toCamelCase = string => string[1].toUpperCase();
+    return string.toLowerCase().replace(regex, toCamelCase);
+  };
+
+  const drawRectangle = (element, { element_id, predicted_label, predicted_probability }) => {
     const primaryColor = `rgba(74, 207, 237, 0.5)`;
     const secondaryColor = `rgba(250, 238, 197, 0.5)`;
 
@@ -54,7 +60,9 @@ export const highlightOnPage = () => {
 
     var div = document.createElement("div");
     div.id = element_id;
-    div.textContent = predicted_label;
+    div.textContent = `${predicted_label}: ${
+      Math.round(predicted_probability * 100) / 100
+    }`;
     Object.assign(div.style, divDefaultStyle(element.getBoundingClientRect()));
 
     div.onclick = () => {
@@ -69,10 +77,12 @@ export const highlightOnPage = () => {
 
   let nodes; // not to run querySelector() on every scroll/resize
   const findAndHighlight = () => {
-    const getElementToHighlight = (callback) => (storage) => {
+    const getElementToHighlight = (callback) => ({ JDN_elements }) => {
+      const predictedElements = JDN_elements.elements;
+      const perception = JDN_elements.perception;
       if (!nodes) {
         let query = "";
-        storage.JDN_elements.forEach(({ element_id }) => {
+        predictedElements.forEach(({ element_id }) => {
           query += `${!!query.length ? ", " : ""}[jdn-hash='${element_id}']`;
         });
         nodes = document.querySelectorAll(query);
@@ -80,12 +90,19 @@ export const highlightOnPage = () => {
       nodes.forEach((element) => {
         if (isInViewport(element)) {
           const hash = element.getAttribute("jdn-hash");
-          const isHighlighted = !!document.getElementById(hash);
-          if (!isHighlighted) {
-            const predicted = storage.JDN_elements.find(
+          const highlightElement = document.getElementById(hash);
+          const isAbovePerceptionTreshold = predictedElements.find((e) => {
+            return (
+              hash === e.element_id && e.predicted_probability >= perception
+            );
+          });
+          if (!!highlightElement && !isAbovePerceptionTreshold) {
+            highlightElement.remove();
+          } else if (!highlightElement && isAbovePerceptionTreshold) {
+            const predicted = predictedElements.find(
               (e) => e.element_id === hash
             );
-            callback(element, predicted);
+            callback(element, predicted, perception);
           }
         }
       });
@@ -107,7 +124,7 @@ export const highlightOnPage = () => {
 
   const removeHighlightElements = (callback) => {
     const f = ({ JDN_elements }) => {
-      JDN_elements.forEach(({ element_id: elementId }) => {
+      JDN_elements.elements.forEach(({ element_id: elementId }) => {
         const el = document.getElementById(elementId);
         if (el) el.remove();
       });
@@ -132,6 +149,8 @@ export const highlightOnPage = () => {
       let element = document.querySelector(
         `[jdn-hash='${predictedElement.element_id}']`
       );
+      predictedElement.attrId = element.id ? camelCase(element.id) : '';
+      predictedElement.tagName = element.tagName.toLowerCase();
 
       /*
       Software License Agreement (BSD License)

@@ -51,11 +51,12 @@ export const getElements = (callback) => {
 export const highlightElements = (
   elements,
   callback,
-  toggleListenerCallback
+  toggleListenerCallback,
+  perception,
 ) => {
   chrome.runtime.onConnect.addListener(setListeners(toggleListenerCallback));
   chrome.storage.local.set(
-    { JDN_elements: elements },
+    { JDN_elements: { elements, perception } },
     getPageId(runPageScript(highlightOnPage, callback))
   );
 };
@@ -67,15 +68,15 @@ export const removeHighlightFromPage = (callback) => {
   });
 };
 
-export const generatePageObject = (elements, mainModel) => {
+export const generatePageObject = (elements, perception, mainModel) => {
   const onXpathGenerated = (xpathElements) => {
-    const elToConvert = predictedToConvert(xpathElements);
+    const elToConvert = predictedToConvert(xpathElements, perception);
     const page = getPage(elToConvert);
-    mainModel.conversionModel.genPageCode(page, mainModel);
+    mainModel.conversionModel.genPageCode(page, mainModel, true);
     mainModel.conversionModel.downloadPageCode(page, ".java");
   };
 
-  port.postMessage({ message: "GENERATE_XPATHES", param: elements});
+  port.postMessage({ message: "GENERATE_XPATHES", param: elements });
   port.onMessage.addListener(({ message, param }) => {
     if (message === "XPATH_GENERATED") onXpathGenerated(param);
   });
