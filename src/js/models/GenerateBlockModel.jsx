@@ -774,6 +774,10 @@ export default class GenerateBlockModel {
     }
   }
 
+  clearExportUrlsList() {
+    this.exportUrlsList = [];
+  }
+
   @action
   generate(mainModel, callback) {
     this.page = {
