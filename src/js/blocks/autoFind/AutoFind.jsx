@@ -7,7 +7,7 @@ const AutoFind = () => {
       status,
       predictedElements,
       pageElements,
-      allowIdetifyElements,
+      allowIdentifyElements,
       allowRemoveElements,
     },
     { identifyElements, removeHighlighs, generateAndDownload },
@@ -27,8 +27,8 @@ const AutoFind = () => {
 
   return (
     <div>
-      <button disabled={!allowIdetifyElements} onClick={handleGetElements}>
-        Idetify
+      <button disabled={!allowIdentifyElements} onClick={handleGetElements}>
+        Identify
       </button>
       <button disabled={!allowRemoveElements} onClick={handleRemove}>
         Remove

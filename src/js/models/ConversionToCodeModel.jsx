@@ -49,6 +49,7 @@ const isSection = (type, mainModel) => {
 function complexCode(type, locator, name, mainModel) {
   const template = mainModel.settingsModel.template;
   let complexTemplate = template.pageElementComplex;
+  complexTemplate = complexTemplate.replace(/({{annotation}})/g, type);
   complexTemplate = complexTemplate.replace(/({{type}})/g, type);
   complexTemplate = complexTemplate.replace(/({{locators}})/, locator);
   complexTemplate = complexTemplate.replace(/({{name}})/, varName(name));
@@ -56,7 +57,7 @@ function complexCode(type, locator, name, mainModel) {
   return complexTemplate + "\n";
 }
 
-function simpleCode(locatorType, locator, elType, name, mainModel) {
+function simpleCode(locatorType, locator, elType, name, mainModel, isList) {
   const template = mainModel.settingsModel.template;
   let templatePath = "";
 
@@ -68,7 +69,7 @@ function simpleCode(locatorType, locator, elType, name, mainModel) {
         ? template.pageElementCss
         : template.pageElementXPath;
     templatePath = templatePath.replace(/({{locator}})/, locator);
-    templatePath = templatePath.replace(/({{type}})/, elType);
+    templatePath = templatePath.replace(/({{type}})/, isList ? `List<${elType}>` : elType);
     templatePath = templatePath.replace(/({{name}})/, varName(name));
   }
 
@@ -190,23 +191,28 @@ function genCodeOfElements(parentId, arrOfElements, mainModel) {
 
     if (el.parentId === parentId && (el.Locator || el.Root)) {
       if (composites[el.Type]) {
-        result += simpleCode(
+        const codeRow = simpleCode(
           locatorType(el.Locator),
           el.Locator,
           getClassName(el.Name),
           el.Name,
-          mainModel
+          mainModel,
+          el.isList
         );
+        if (!result.includes(codeRow)) {
+          result += codeRow;
+        }
       }
       if (complex[el.Type]) {
         let fields = getFields(ruleBlockModel.elementFields[el.Type]);
-        result += isSimple(el, fields)
+        const codeRow = isSimple(el, fields)
           ? simpleCode(
               locatorType(el.Root),
               el.Root,
               el.Type,
               el.Name,
-              mainModel
+              mainModel,
+              el.isList
             )
           : complexCode(
               el.Type,
@@ -214,15 +220,22 @@ function genCodeOfElements(parentId, arrOfElements, mainModel) {
               el.Name,
               mainModel
             );
+        if (!result.includes(codeRow)) {
+          result += codeRow;
+        }
       }
       if (simple[el.Type]) {
-        result += simpleCode(
+        const codeRow = simpleCode(
           locatorType(el.Locator),
           el.Locator,
           el.Type,
           el.Name,
-          mainModel
+          mainModel,
+          el.isList
         );
+        if (!result.includes(codeRow)) {
+          result += codeRow;
+        }
       }
     }
   }

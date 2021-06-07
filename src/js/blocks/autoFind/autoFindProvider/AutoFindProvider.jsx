@@ -23,7 +23,7 @@ const AutoFindProvider = inject("mainModel")(
     const [pageElements, setPageElements] = useState(null);
     const [predictedElements, setPredictedElements] = useState(null);
     const [status, setStatus] = useState(autoFindStatus.noStatus);
-    const [allowIdetifyElements, setAllowIdetifyElements] = useState(true);
+    const [allowIdentifyElements, setAllowIdentifyElements] = useState(true);
     const [allowRemoveElements, setAllowRemoveElements] = useState(false);
 
     const toggleElementGeneration = (id) => {
@@ -37,11 +37,11 @@ const AutoFindProvider = inject("mainModel")(
     };
 
     const identifyElements = () => {
-      setAllowIdetifyElements(!allowIdetifyElements);
+      setAllowIdentifyElements(!allowIdentifyElements);
       setStatus(autoFindStatus.loading);
 
       const callback = () => {
-        setStatus(autoFindStatus.success);        
+        setStatus(autoFindStatus.success);
       };
       const updateElements = ([predicted, page]) => {
         setPredictedElements(predicted);
@@ -54,7 +54,7 @@ const AutoFindProvider = inject("mainModel")(
     };
 
     const removeHighlighs = () => {
-      setAllowIdetifyElements(!allowIdetifyElements);
+      setAllowIdentifyElements(!allowIdentifyElements);
       const callback = () => {
         setStatus(autoFindStatus.removed);
         setAllowRemoveElements(!allowRemoveElements);
@@ -72,7 +72,7 @@ const AutoFindProvider = inject("mainModel")(
         pageElements,
         predictedElements,
         status,
-        allowIdetifyElements,
+        allowIdentifyElements,
         allowRemoveElements,
       },
       {
