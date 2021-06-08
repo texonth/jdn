@@ -10,6 +10,12 @@ import ReactFileReader from "react-file-reader";
 @observer
 export default class GenerateBlock extends React.Component {
 
+  constructor(props) {
+    super(props);
+    const { mainModel } = props;
+    mainModel.generateBlockModel.clearExportUrlsList();
+  }
+
   state = {
     checkboxState: {
       checked: true,
