@@ -1,23 +1,10 @@
+import { generateXpathes } from "./contentScripts/generationData";
 import { highlightOnPage } from "./contentScripts/highlight";
-import { getPageData } from "./pageData";
+import { getPageData } from "./contentScripts/pageData";
 import { getPage, predictedToConvert } from "./pageObject";
+import { getPageId, runConnectedScript, runContentScript } from "./pageScriptHandlers";
 
-const getPageId = (callback) => {
-  chrome.tabs.query({ active: true, currentWindow: true }, (res) => {
-    callback(res[0].id);
-  });
-};
-
-const runPageScript = (script, callback) => (tabId) => {
-  chrome.scripting.executeScript(
-    { target: { tabId }, function: script },
-    (invoked) => {
-      if (callback) {
-        callback(invoked || true);
-      }
-    }
-  );
-};
+let port;
 
 const uploadElements = (callback) => async ([{ result }]) => {
   const [payload, length] = result;
@@ -34,31 +21,44 @@ const uploadElements = (callback) => async ([{ result }]) => {
   }
 };
 
-let port;
-const setListeners = (toggleListenerCallback) => (p) => {
-  port = p;
+const setToggleListeners = (toggleCallback) => {
   port.onMessage.addListener(({ message, id }) => {
     if (message === "TOGGLE_ELEMENT") {
-      toggleListenerCallback(id);
+      toggleCallback(id);
     }
   });
 };
 
 export const getElements = (callback) => {
-  getPageId(runPageScript(getPageData, uploadElements(callback)));
+  runContentScript(getPageData, uploadElements(callback));
 };
 
 export const highlightElements = (
   elements,
-  callback,
-  toggleListenerCallback,
-  perception,
+  successCallback,
+  toggleCallback,
+  perception
 ) => {
-  chrome.runtime.onConnect.addListener(setListeners(toggleListenerCallback));
-  chrome.storage.local.set(
-    { JDN_elements: { elements, perception } },
-    getPageId(runPageScript(highlightOnPage, callback))
-  );
+  const setHighlight = () => {
+    port.postMessage({
+      message: "SET_HIGHLIGHT",
+      param: { elements, perception },
+    });
+    successCallback();
+    setToggleListeners(toggleCallback);
+  };
+
+  const onSetupScript = (p) => {
+    port = p;
+    setHighlight();
+  };
+
+  if (!port) {
+    runConnectedScript(highlightOnPage, onSetupScript);
+  } else {
+    setHighlight();
+  }
+  // pageUpdateListener();
 };
 
 export const removeHighlightFromPage = (callback) => {
@@ -76,8 +76,15 @@ export const generatePageObject = (elements, perception, mainModel) => {
     mainModel.conversionModel.downloadPageCode(page, ".java");
   };
 
-  port.postMessage({ message: "GENERATE_XPATHES", param: elements });
-  port.onMessage.addListener(({ message, param }) => {
-    if (message === "XPATH_GENERATED") onXpathGenerated(param);
-  });
+  const requestXpathes = () => {
+    getPageId((id) =>
+      chrome.tabs.sendMessage(
+        id,
+        { message: "GENERATE_XPATHES", param: elements },
+        onXpathGenerated
+      )
+    );
+  };
+  
+  runContentScript(generateXpathes, requestXpathes);
 };
