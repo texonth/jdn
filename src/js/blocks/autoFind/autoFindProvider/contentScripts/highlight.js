@@ -3,6 +3,10 @@
  */
 /*global chrome*/
 export const highlightOnPage = () => {
+
+  let highlightElements = [];
+  let isHighlightElementsReverse = false;
+
   const isInViewport = (element) => {
     const { top, right, bottom, left } = element.getBoundingClientRect();
 
@@ -73,6 +77,7 @@ export const highlightOnPage = () => {
     };
 
     document.body.appendChild(div);
+    highlightElements.push(element);
   };
 
   let nodes; // not to run querySelector() on every scroll/resize
@@ -259,6 +264,38 @@ export const highlightOnPage = () => {
 
   events.forEach((eventName) => {
     document.addEventListener(eventName, eventListenerCallback);
+  });
+
+  const selectAllElementOnClick = (event) => {
+    if (!isHighlightElementsReverse) {
+      highlightElements.reverse();
+      isHighlightElementsReverse = true;
+    }
+
+    let isCurrentElement = false;
+
+    highlightElements.forEach((element) => {
+
+      const { top, right, bottom, left } = element.getBoundingClientRect();
+
+      if (
+        (event.clientX > left && event.clientX  < right) && 
+        (event.clientY > top && event.clientY < bottom)
+      ) {
+        if (!isCurrentElement) {
+          isCurrentElement = true;
+          return;
+        } else {
+          document.getElementById(element.getAttribute('jdn-hash')).click();
+        }
+      }
+
+    });
+  };  
+
+  document.addEventListener('click', (event) => {
+    if (!event.clientX && !event.clientY) return;
+    selectAllElementOnClick(event);
   });
 
   const port = chrome.runtime.connect({ name: "JDN_connect" });
