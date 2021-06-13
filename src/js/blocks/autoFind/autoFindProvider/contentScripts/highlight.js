@@ -266,7 +266,7 @@ export const highlightOnPage = () => {
     document.addEventListener(eventName, eventListenerCallback);
   });
 
-  const selectAllElementOnClick = (event) => {
+  const selectAllElementsOnClick = (event) => {
     if (!isHighlightElementsReverse) {
       highlightElements.reverse();
       isHighlightElementsReverse = true;
@@ -295,7 +295,7 @@ export const highlightOnPage = () => {
 
   document.addEventListener('click', (event) => {
     if (!event.clientX && !event.clientY) return;
-    selectAllElementOnClick(event);
+    selectAllElementsOnClick(event);
   });
 
   const port = chrome.runtime.connect({ name: "JDN_connect" });
