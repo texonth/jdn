@@ -1,23 +1,19 @@
+import { generateXpathes } from "./contentScripts/generationData";
 import { highlightOnPage } from "./contentScripts/highlight";
-import { getPageData } from "./pageData";
+import { getPageData } from "./contentScripts/pageData";
+import { urlListener } from "./contentScripts/urlListener";
 import { getPage, predictedToConvert } from "./pageObject";
+import {
+  getPageId,
+  runConnectedScript,
+  runContentScript,
+} from "./pageScriptHandlers";
 
-const getPageId = (callback) => {
-  chrome.tabs.query({ active: true, currentWindow: true }, (res) => {
-    callback(res[0].id);
-  });
-};
+/*global chrome*/
 
-const runPageScript = (script, callback) => (tabId) => {
-  chrome.scripting.executeScript(
-    { target: { tabId }, function: script },
-    (invoked) => {
-      if (callback) {
-        callback(invoked || true);
-      }
-    }
-  );
-};
+let port;
+let urlListenerScriptExists;
+let generationScriptExists;
 
 const uploadElements = (callback) => async ([{ result }]) => {
   const [payload, length] = result;
@@ -34,38 +30,76 @@ const uploadElements = (callback) => async ([{ result }]) => {
   }
 };
 
-let port;
-const setListeners = (toggleListenerCallback) => (p) => {
-  port = p;
+const setToggleListeners = (toggleCallback) => {
   port.onMessage.addListener(({ message, id }) => {
     if (message === "TOGGLE_ELEMENT") {
-      toggleListenerCallback(id);
+      toggleCallback(id);
     }
   });
 };
 
 export const getElements = (callback) => {
-  getPageId(runPageScript(getPageData, uploadElements(callback)));
+  runContentScript(getPageData, uploadElements(callback));
 };
 
 export const highlightElements = (
   elements,
-  callback,
-  toggleListenerCallback,
-  perception,
+  successCallback,
+  toggleCallback,
+  perception
 ) => {
-  chrome.runtime.onConnect.addListener(setListeners(toggleListenerCallback));
-  chrome.storage.local.set(
-    { JDN_elements: { elements, perception } },
-    getPageId(runPageScript(highlightOnPage, callback))
+  const setHighlight = () => {
+    port.postMessage({
+      message: "SET_HIGHLIGHT",
+      param: { elements, perception },
+    });
+    successCallback();
+    setToggleListeners(toggleCallback);
+  };
+
+  const onSetupScript = (p) => {
+    port = p;
+    setHighlight();
+  };
+
+  if (!port) {
+    runConnectedScript(highlightOnPage, onSetupScript);
+  } else {
+    setHighlight();
+  }
+};
+
+export const setUrlListener = (onHighlightOff) => {
+  chrome.tabs.onUpdated.addListener((tabId, changeinfo, tab) => {
+    if (changeinfo && changeinfo.status === "complete") {
+      urlListenerScriptExists = false;
+      generationScriptExists = false;
+      port = null;
+      onHighlightOff();
+    }
+  });
+
+  if (!urlListenerScriptExists) {
+    runContentScript(urlListener, () => {
+      urlListenerScriptExists = true;
+    });
+  }
+
+  getPageId((tabId) =>
+    chrome.tabs.sendMessage(tabId, { message: "HIGHLIGHT_ON" })
   );
 };
 
 export const removeHighlightFromPage = (callback) => {
-  port.postMessage({ message: "KILL_HIGHLIGHT" });
   port.onMessage.addListener(({ message }) => {
-    if (message == "HIGHLIGHT_REMOVED") callback();
+    if (message == "HIGHLIGHT_REMOVED") {
+      getPageId((tabId) =>
+        chrome.tabs.sendMessage(tabId, { message: "HIGHLIGHT_OFF" })
+      );
+      callback();
+    }
   });
+  port.postMessage({ message: "KILL_HIGHLIGHT" });
 };
 
 export const generatePageObject = (elements, perception, mainModel) => {
@@ -76,8 +110,20 @@ export const generatePageObject = (elements, perception, mainModel) => {
     mainModel.conversionModel.downloadPageCode(page, ".java");
   };
 
-  port.postMessage({ message: "GENERATE_XPATHES", param: elements });
-  port.onMessage.addListener(({ message, param }) => {
-    if (message === "XPATH_GENERATED") onXpathGenerated(param);
-  });
+  const requestXpathes = () => {
+    getPageId((id) =>
+      chrome.tabs.sendMessage(
+        id,
+        { message: "GENERATE_XPATHES", param: elements },
+        onXpathGenerated
+      )
+    );
+  };
+
+  if (!generationScriptExists) {
+    runContentScript(generateXpathes, requestXpathes);
+    generationScriptExists = true;
+  } else {
+    requestXpathes();
+  }
 };
