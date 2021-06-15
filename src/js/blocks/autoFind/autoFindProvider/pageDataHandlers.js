@@ -9,6 +9,8 @@ import {
   runContentScript,
 } from "./pageScriptHandlers";
 
+/*global chrome*/
+
 let port;
 let urlListenerScriptExists;
 let generationScriptExists;
@@ -72,7 +74,7 @@ export const setUrlListener = (onHighlightOff) => {
     if (changeinfo && changeinfo.status === "complete") {
       urlListenerScriptExists = false;
       generationScriptExists = false;
-      port = undefined;
+      port = null;
       onHighlightOff();
     }
   });

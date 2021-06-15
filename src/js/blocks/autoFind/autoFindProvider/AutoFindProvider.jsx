@@ -28,14 +28,13 @@ const AutoFindProvider = inject("mainModel")(
     const [allowRemoveElements, setAllowRemoveElements] = useState(false);
     const [perception, setPerception] = useState(0.5);
 
-    
     const clearElementsState = () => {
       setPageElements(null);
       setPredictedElements(null);
       setStatus(autoFindStatus.noStatus);
       setAllowIdetifyElements(true);
       setAllowRemoveElements(false);
-    }
+    };
 
     const toggleElementGeneration = (id) => {
       setPredictedElements((previousValue) => {
@@ -62,7 +61,7 @@ const AutoFindProvider = inject("mainModel")(
           predicted,
           callback,
           toggleElementGeneration,
-          perception,
+          perception
         );
         setAllowRemoveElements(!allowRemoveElements);
       };
@@ -90,7 +89,7 @@ const AutoFindProvider = inject("mainModel")(
           predictedElements,
           () => {},
           toggleElementGeneration,
-          value,
+          value
         );
       }
     };

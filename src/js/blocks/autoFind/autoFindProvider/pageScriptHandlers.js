@@ -1,3 +1,5 @@
+/*global chrome*/
+
 export const getPageId = (callback) => {
   chrome.tabs.query({ active: true, currentWindow: true }, (res) => {
     callback(res[0].id);
