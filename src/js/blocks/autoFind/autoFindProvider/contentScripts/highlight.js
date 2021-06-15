@@ -3,6 +3,9 @@
  */
 /*global chrome*/
 export const highlightOnPage = () => {
+
+  let highlightElements = [];
+  let isHighlightElementsReverse = false;
   let port;
 
   const isInViewport = (element) => {
@@ -72,6 +75,7 @@ export const highlightOnPage = () => {
     };
 
     document.body.appendChild(div);
+    highlightElements.push(element);
   };
 
   let nodes; // not to run querySelector() on every scroll/resize
@@ -116,6 +120,33 @@ export const highlightOnPage = () => {
     }, 300);
   };
 
+  const selectAllElementsOnClick = (event) => {
+    if (!isHighlightElementsReverse) {
+      highlightElements.reverse();
+      isHighlightElementsReverse = true;
+    }
+
+    let isCurrentElement = false;
+
+    highlightElements.forEach((element) => {
+
+      const { top, right, bottom, left } = element.getBoundingClientRect();
+
+      if (
+        (event.clientX > left && event.clientX  < right) && 
+        (event.clientY > top && event.clientY < bottom)
+      ) {
+        if (!isCurrentElement) {
+          isCurrentElement = true;
+          return;
+        } else {
+          document.getElementById(element.getAttribute('jdn-hash')).click();
+        }
+      }
+
+    });
+  };
+
   const removeHighlightElements = (callback) => {
     if (predictedElements) {
       predictedElements.forEach(({ element_id: elementId }) => {
@@ -140,6 +171,11 @@ export const highlightOnPage = () => {
   const setDocumentListeners = () => {
     events.forEach((eventName) => {
       document.addEventListener(eventName, eventListenerCallback);
+    });
+  
+    document.addEventListener('click', (event) => {
+      if (!event.clientX && !event.clientY) return;
+      selectAllElementsOnClick(event);
     });
   };
 
