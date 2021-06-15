@@ -137,12 +137,20 @@ export const highlightOnPage = () => {
     removeEventListeners(removeHighlightElements(callback));
   };
 
+  const setDocumentListeners = () => {
+    events.forEach((eventName) => {
+      document.addEventListener(eventName, eventListenerCallback);
+    });
+  };
+
   const messageHandler = ({ message, param }) => {
-    const removedCallback = () =>
+    const removedCallback = () => {
       port.postMessage({ message: "HIGHLIGHT_REMOVED" });
+    };
 
     if (message === "SET_HIGHLIGHT") {
       findAndHighlight(param);
+      setDocumentListeners();
     }
 
     if (message === "KILL_HIGHLIGHT") {
@@ -154,15 +162,8 @@ export const highlightOnPage = () => {
     removeHighlight(() => console.log("JDN highlight has been killed"))();
   };
 
-  const setDocumentListeners = () => {
-    events.forEach((eventName) => {
-      document.addEventListener(eventName, eventListenerCallback);
-    });
-  };
-
   chrome.runtime.onConnect.addListener((p) => {
-    port = p;
-    setDocumentListeners();
+    port = p;    
     port.onDisconnect.addListener(disconnectHandler);
     port.onMessage.addListener(messageHandler);
   });

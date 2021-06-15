@@ -5,6 +5,7 @@ import {
   getElements,
   highlightElements,
   removeHighlightFromPage,
+  setUrlListener,
 } from "./pageDataHandlers";
 import { generatePageObject } from "./pageDataHandlers";
 
@@ -27,6 +28,15 @@ const AutoFindProvider = inject("mainModel")(
     const [allowRemoveElements, setAllowRemoveElements] = useState(false);
     const [perception, setPerception] = useState(0.5);
 
+    
+    const clearElementsState = () => {
+      setPageElements(null);
+      setPredictedElements(null);
+      setStatus(autoFindStatus.noStatus);
+      setAllowIdetifyElements(true);
+      setAllowRemoveElements(false);
+    }
+
     const toggleElementGeneration = (id) => {
       setPredictedElements((previousValue) => {
         const toggled = previousValue.map((el) => {
@@ -43,6 +53,7 @@ const AutoFindProvider = inject("mainModel")(
 
       const callback = () => {
         setStatus(autoFindStatus.success);
+        setUrlListener(clearElementsState);
       };
       const updateElements = ([predicted, page]) => {
         setPredictedElements(predicted);
@@ -60,10 +71,9 @@ const AutoFindProvider = inject("mainModel")(
     };
 
     const removeHighlighs = () => {
-      setAllowIdetifyElements(!allowIdetifyElements);
       const callback = () => {
+        clearElementsState();
         setStatus(autoFindStatus.removed);
-        setAllowRemoveElements(!allowRemoveElements);
       };
 
       removeHighlightFromPage(callback);

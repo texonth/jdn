@@ -1,10 +1,17 @@
 import { generateXpathes } from "./contentScripts/generationData";
 import { highlightOnPage } from "./contentScripts/highlight";
 import { getPageData } from "./contentScripts/pageData";
+import { urlListener } from "./contentScripts/urlListener";
 import { getPage, predictedToConvert } from "./pageObject";
-import { getPageId, runConnectedScript, runContentScript } from "./pageScriptHandlers";
+import {
+  getPageId,
+  runConnectedScript,
+  runContentScript,
+} from "./pageScriptHandlers";
 
 let port;
+let urlListenerScriptExists;
+let generationScriptExists;
 
 const uploadElements = (callback) => async ([{ result }]) => {
   const [payload, length] = result;
@@ -58,14 +65,39 @@ export const highlightElements = (
   } else {
     setHighlight();
   }
-  // pageUpdateListener();
+};
+
+export const setUrlListener = (onHighlightOff) => {
+  chrome.tabs.onUpdated.addListener((tabId, changeinfo, tab) => {
+    if (changeinfo && changeinfo.status === "complete") {
+      urlListenerScriptExists = false;
+      generationScriptExists = false;
+      port = undefined;
+      onHighlightOff();
+    }
+  });
+
+  if (!urlListenerScriptExists) {
+    runContentScript(urlListener, () => {
+      urlListenerScriptExists = true;
+    });
+  }
+
+  getPageId((tabId) =>
+    chrome.tabs.sendMessage(tabId, { message: "HIGHLIGHT_ON" })
+  );
 };
 
 export const removeHighlightFromPage = (callback) => {
-  port.postMessage({ message: "KILL_HIGHLIGHT" });
   port.onMessage.addListener(({ message }) => {
-    if (message == "HIGHLIGHT_REMOVED") callback();
+    if (message == "HIGHLIGHT_REMOVED") {
+      getPageId((tabId) =>
+        chrome.tabs.sendMessage(tabId, { message: "HIGHLIGHT_OFF" })
+      );
+      callback();
+    }
   });
+  port.postMessage({ message: "KILL_HIGHLIGHT" });
 };
 
 export const generatePageObject = (elements, perception, mainModel) => {
@@ -85,6 +117,11 @@ export const generatePageObject = (elements, perception, mainModel) => {
       )
     );
   };
-  
-  runContentScript(generateXpathes, requestXpathes);
+
+  if (!generationScriptExists) {
+    runContentScript(generateXpathes, requestXpathes);
+    generationScriptExists = true;
+  } else {
+    requestXpathes();
+  }
 };

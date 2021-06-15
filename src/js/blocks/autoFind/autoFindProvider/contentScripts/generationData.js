@@ -6,7 +6,6 @@ export const generateXpathes = () => {
   };
 
   const mapElements = (elements) => {
-    console.log(elements);
     return elements.map((predictedElement) => {
       let element = document.querySelector(
         `[jdn-hash='${predictedElement.element_id}']`
