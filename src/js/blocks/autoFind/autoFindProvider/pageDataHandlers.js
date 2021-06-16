@@ -70,14 +70,16 @@ export const highlightElements = (
 };
 
 export const setUrlListener = (onHighlightOff) => {
-  chrome.tabs.onUpdated.addListener((tabId, changeinfo, tab) => {
-    if (changeinfo && changeinfo.status === "complete") {
-      urlListenerScriptExists = false;
-      generationScriptExists = false;
-      port = null;
-      onHighlightOff();
-    }
-  });
+  getPageId((currentTabId) =>
+    chrome.tabs.onUpdated.addListener((tabId, changeinfo, tab) => {
+      if (changeinfo && changeinfo.status === "complete" && currentTabId === tabId) {
+        urlListenerScriptExists = false;
+        generationScriptExists = false;
+        port = null;
+        onHighlightOff();
+      }
+    })
+  );
 
   if (!urlListenerScriptExists) {
     runContentScript(urlListener, () => {
