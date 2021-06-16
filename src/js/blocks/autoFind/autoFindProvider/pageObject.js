@@ -14,7 +14,7 @@ export const predictedToConvert = (elements, perception) => {
 
     return {
       ...e,
-      Locator: elementTagId ? elementTagId : e.xpath,
+      Locator: elementTagId ? `#${elementTagId}` : e.xpath,
       Name: elementTagId ? elementTagId : elementName,
       Type: getJDILabel(e.predicted_label),
       parent: null,

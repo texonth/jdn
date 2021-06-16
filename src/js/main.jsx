@@ -75,6 +75,7 @@ class App extends React.Component {
             selectedKeys={[this.tab]}
             mode="horizontal"
           >
+            <Menu.Item key="auto_find">Auto Find Objects</Menu.Item>
             <Menu.Item key="settings">Settings</Menu.Item>
             <Menu.Item key="urls">URLs</Menu.Item>
             <Menu.Item key="results">Results</Menu.Item>
@@ -89,7 +90,6 @@ class App extends React.Component {
                 GENERATE
               </Button>
             </Menu.Item>
-            <Menu.Item key="auto_find">Auto Find Objects</Menu.Item>
             <Menu.Item key="warnings">Warnings</Menu.Item>
           </Menu>
 
