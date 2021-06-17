@@ -36,7 +36,7 @@ const AutoFindProvider = inject("mainModel")(
       setStatus(autoFindStatus.noStatus);
       setAllowIdetifyElements(true);
       setAllowRemoveElements(false);
-      setUnreachableNodes(0);
+      setUnreachableNodes([]);
     };
 
     const toggleElementGeneration = (id) => {
