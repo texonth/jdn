@@ -103,7 +103,7 @@ export const generateXpathes = () => {
     return {
       xpathElements,
       unreachableNodes,
-    }
+    };
   };
 
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
