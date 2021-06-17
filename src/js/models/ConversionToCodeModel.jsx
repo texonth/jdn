@@ -197,7 +197,7 @@ function genCodeOfElements(parentId, arrOfElements, mainModel, isAutoFind) {
           mainModel
         );
       }
-      if (complex[el.Type] && !isAutoFind) {
+      else if (complex[el.Type] && !isAutoFind) {
         let fields = getFields(ruleBlockModel.elementFields[el.Type]);
         result += isSimple(el, fields)
           ? simpleCode(
@@ -214,7 +214,7 @@ function genCodeOfElements(parentId, arrOfElements, mainModel, isAutoFind) {
               mainModel
             );
       }
-      if (simple[el.Type]) {
+      else if (simple[el.Type] || isAutoFind) {
         result += simpleCode(
           locatorType(el.Locator),
           el.Locator,
