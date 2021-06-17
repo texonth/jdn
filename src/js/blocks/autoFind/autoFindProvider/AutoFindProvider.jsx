@@ -27,6 +27,7 @@ const AutoFindProvider = inject("mainModel")(
     const [allowIdetifyElements, setAllowIdetifyElements] = useState(true);
     const [allowRemoveElements, setAllowRemoveElements] = useState(false);
     const [perception, setPerception] = useState(0.5);
+    const [unreachableNodes, setUnreachableNodes] = useState(0);
 
     const clearElementsState = () => {
       setPageElements(null);
@@ -34,6 +35,7 @@ const AutoFindProvider = inject("mainModel")(
       setStatus(autoFindStatus.noStatus);
       setAllowIdetifyElements(true);
       setAllowRemoveElements(false);
+      setUnreachableNodes(0);
     };
 
     const toggleElementGeneration = (id) => {
@@ -79,7 +81,9 @@ const AutoFindProvider = inject("mainModel")(
     };
 
     const generateAndDownload = (perception) => {
-      generatePageObject(predictedElements, perception, mainModel);
+      generatePageObject(predictedElements, perception, mainModel, (result) =>
+        setUnreachableNodes(result.unreachableNodes)
+      );
     };
 
     const onChangePerception = (value) => {
@@ -102,6 +106,7 @@ const AutoFindProvider = inject("mainModel")(
         allowIdetifyElements,
         allowRemoveElements,
         perception,
+        unreachableNodes,
       },
       {
         identifyElements,

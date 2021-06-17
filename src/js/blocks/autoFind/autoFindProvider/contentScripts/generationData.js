@@ -1,4 +1,6 @@
 export const generateXpathes = () => {
+  let unreachableNodes = 0;
+
   const camelCase = (string) => {
     const regex = /(_|-)([a-z])/g;
     const toCamelCase = (string) => string[1].toUpperCase();
@@ -6,10 +8,14 @@ export const generateXpathes = () => {
   };
 
   const mapElements = (elements) => {
-    return elements.map((predictedElement) => {
+    const xpathElements = elements.map((predictedElement) => {
       let element = document.querySelector(
         `[jdn-hash='${predictedElement.element_id}']`
       );
+      if (!element) {
+        unreachableNodes++;       
+        return;
+      }
       predictedElement.attrId = element.id ? camelCase(element.id) : "";
       predictedElement.tagName = element.tagName.toLowerCase();
 
@@ -94,6 +100,10 @@ export const generateXpathes = () => {
         xpath: getElementTreeXPath(),
       };
     });
+    return {
+      xpathElements,
+      unreachableNodes,
+    }
   };
 
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
