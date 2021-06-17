@@ -16,7 +16,8 @@ export const generateXpathes = () => {
         unreachableNodes.push(predictedElement.element_id);       
         return;
       }
-      predictedElement.attrId = element.id ? camelCase(element.id) : "";
+      predictedElement.attrId = element.id;
+      predictedElement.predictedAttrId = element.id ? camelCase(element.id) : "";
       predictedElement.tagName = element.tagName.toLowerCase();
 
       /*
