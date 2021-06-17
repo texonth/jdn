@@ -1,5 +1,5 @@
 export const generateXpathes = () => {
-  let unreachableNodes = 0;
+  const unreachableNodes = [];
 
   const camelCase = (string) => {
     const regex = /(_|-)([a-z])/g;
@@ -12,8 +12,8 @@ export const generateXpathes = () => {
       let element = document.querySelector(
         `[jdn-hash='${predictedElement.element_id}']`
       );
-      if (!element) {
-        unreachableNodes++;       
+      if (!element) {        
+        unreachableNodes.push(predictedElement.element_id);       
         return;
       }
       predictedElement.attrId = element.id ? camelCase(element.id) : "";

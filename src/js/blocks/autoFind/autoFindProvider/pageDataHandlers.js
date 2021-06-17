@@ -72,7 +72,11 @@ export const highlightElements = (
 export const setUrlListener = (onHighlightOff) => {
   getPageId((currentTabId) =>
     chrome.tabs.onUpdated.addListener((tabId, changeinfo, tab) => {
-      if (changeinfo && changeinfo.status === "complete" && currentTabId === tabId) {
+      if (
+        changeinfo &&
+        changeinfo.status === "complete" &&
+        currentTabId === tabId
+      ) {
         urlListenerScriptExists = false;
         generationScriptExists = false;
         port = null;
@@ -108,7 +112,7 @@ export const generatePageObject = (
   elements,
   perception,
   mainModel,
-  onGenerated,
+  onGenerated
 ) => {
   const onXpathGenerated = ({ xpathElements, unreachableNodes }) => {
     const elToConvert = predictedToConvert(xpathElements, perception);
@@ -134,4 +138,8 @@ export const generatePageObject = (
   } else {
     requestXpathes();
   }
+};
+
+export const highlightUnreached = (ids) => {
+  port.postMessage({ message: "HIGHLIGHT_ERRORS", param: ids });
 };

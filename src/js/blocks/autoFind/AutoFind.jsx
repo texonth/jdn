@@ -106,11 +106,11 @@ const AutoFind = ({ classes }) => {
         <div>{pageElements || 0} found on page.</div>
         <div>{getPredictedElements()} predicted.</div>
         <div>{getAvailableElements()} available for generation.</div>
-        {unreachableNodes ? (
+        {unreachableNodes && unreachableNodes.length ? (
           <Alert
             type="warning"
             showIcon
-            description={`${unreachableNodes} controls are unreachable due to DOM updates.`}
+            description={`${unreachableNodes.length} controls are unreachable due to DOM updates.`}
           />
         ) : null}
       </Content>

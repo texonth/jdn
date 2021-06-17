@@ -179,6 +179,16 @@ export const highlightOnPage = () => {
     });
   };
 
+  const highlightErrors = (ids) => {
+    const errorStyle = {
+      backgroundColor: "rgba(250, 0, 0, 0.5)",
+    };
+    ids.forEach((id) => {
+      const div = document.getElementById(id);
+      Object.assign(div.style, errorStyle);
+    });
+  };
+
   const messageHandler = ({ message, param }) => {
     const removedCallback = () => {
       port.postMessage({ message: "HIGHLIGHT_REMOVED" });
@@ -191,6 +201,10 @@ export const highlightOnPage = () => {
 
     if (message === "KILL_HIGHLIGHT") {
       removeHighlight(removedCallback)();
+    }
+
+    if (message === "HIGHLIGHT_ERRORS") {
+      highlightErrors(param);
     }
   };
 
