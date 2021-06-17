@@ -4,6 +4,7 @@ import { useContext } from "react";
 import {
   getElements,
   highlightElements,
+  highlightUnreached,
   removeHighlightFromPage,
   setUrlListener,
 } from "./pageDataHandlers";
@@ -27,6 +28,7 @@ const AutoFindProvider = inject("mainModel")(
     const [allowIdetifyElements, setAllowIdetifyElements] = useState(true);
     const [allowRemoveElements, setAllowRemoveElements] = useState(false);
     const [perception, setPerception] = useState(0.5);
+    const [unreachableNodes, setUnreachableNodes] = useState(null);
 
     const clearElementsState = () => {
       setPageElements(null);
@@ -34,6 +36,7 @@ const AutoFindProvider = inject("mainModel")(
       setStatus(autoFindStatus.noStatus);
       setAllowIdetifyElements(true);
       setAllowRemoveElements(false);
+      setUnreachableNodes([]);
     };
 
     const toggleElementGeneration = (id) => {
@@ -79,7 +82,10 @@ const AutoFindProvider = inject("mainModel")(
     };
 
     const generateAndDownload = (perception) => {
-      generatePageObject(predictedElements, perception, mainModel);
+      generatePageObject(predictedElements, perception, mainModel, (result) => {
+        setUnreachableNodes(result.unreachableNodes);
+        highlightUnreached(result.unreachableNodes);
+      });
     };
 
     const onChangePerception = (value) => {
@@ -102,6 +108,7 @@ const AutoFindProvider = inject("mainModel")(
         allowIdetifyElements,
         allowRemoveElements,
         perception,
+        unreachableNodes,
       },
       {
         identifyElements,

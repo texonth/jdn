@@ -1,7 +1,7 @@
 import { getJDILabel } from "./generationClassesMap";
 
 export const predictedToConvert = (elements, perception) => {
-  const f = elements.filter((el) => !el.skipGeneration && el.predicted_probability >= perception);
+  const f = elements.filter((el) => el && !el.skipGeneration && el.predicted_probability >= perception);
   const uniqueNames  = [];
 
   return f.map((e, i) => {

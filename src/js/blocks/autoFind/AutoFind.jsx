@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import injectSheet from "react-jss";
-import { Slider, Row } from "antd";
+import { Slider, Row, Alert } from "antd";
 import { useAutoFind } from "./autoFindProvider/AutoFindProvider";
 
 import "./slider.less";
@@ -19,6 +19,7 @@ const AutoFind = ({ classes }) => {
       allowIdetifyElements,
       allowRemoveElements,
       perception,
+      unreachableNodes,
     },
     {
       identifyElements,
@@ -105,6 +106,13 @@ const AutoFind = ({ classes }) => {
         <div>{pageElements || 0} found on page.</div>
         <div>{getPredictedElements()} predicted.</div>
         <div>{getAvailableElements()} available for generation.</div>
+        {unreachableNodes && unreachableNodes.length ? (
+          <Alert
+            type="warning"
+            showIcon
+            description={`${unreachableNodes.length} controls are unreachable due to DOM updates.`}
+          />
+        ) : null}
       </Content>
       <Footer className={classes.footer}>backend ver. {backendVer}</Footer>
     </Layout>
