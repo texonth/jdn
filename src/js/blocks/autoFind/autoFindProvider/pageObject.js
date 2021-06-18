@@ -5,9 +5,10 @@ export const predictedToConvert = (elements, perception) => {
   const uniqueNames  = [];
 
   const getElementName = (element) => {
-    return element.tagName === 'a' || getJDILabel(element.predicted_label).toLowerCase() === element.tagName.toLowerCase() ?
-      getJDILabel(element.predicted_label).toLowerCase() :
-      getJDILabel(element.predicted_label).toLowerCase() + element.tagName[0].toUpperCase() + element.tagName.slice(1);
+    const jdiLabel = getJDILabel(element.predicted_label).toLowerCase();
+    return element.tagName === 'a' || jdiLabel === element.tagName.toLowerCase() ?
+      jdiLabel :
+      jdiLabel + element.tagName[0].toUpperCase() + element.tagName.slice(1);
   };
 
   return f.map((e, i) => {
