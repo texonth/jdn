@@ -1,20 +1,8 @@
 export const urlListener = () => {
-  let highlightIsOn;
-
   window.onbeforeunload = () => {
-    if (highlightIsOn) {
+    const highlightExists = document.querySelector("[jdn-highlight]");
+    if (highlightExists) {
       return "";
     }
   };
-
-  const messageHandler = ({ message }) => {
-    if (message === "HIGHLIGHT_ON") {
-      highlightIsOn = true;
-    }
-    if (message === "HIGHLIGHT_OFF") {
-      highlightIsOn = false;
-    }
-  };
-
-  chrome.runtime.onMessage.addListener(messageHandler);
 };

@@ -105,7 +105,11 @@ const AutoFind = ({ classes }) => {
         <div>{status}</div>
         <div>{pageElements || 0} found on page.</div>
         <div>{getPredictedElements()} predicted.</div>
-        <div>{getAvailableElements()} available for generation.</div>
+        <div>
+          {getAvailableElements() -
+            (unreachableNodes ? unreachableNodes.length : 0)}{" "}
+          available for generation.
+        </div>
         {unreachableNodes && unreachableNodes.length ? (
           <Alert
             type="warning"

@@ -90,18 +90,11 @@ export const setUrlListener = (onHighlightOff) => {
       urlListenerScriptExists = true;
     });
   }
-
-  getPageId((tabId) =>
-    chrome.tabs.sendMessage(tabId, { message: "HIGHLIGHT_ON" })
-  );
 };
 
 export const removeHighlightFromPage = (callback) => {
   port.onMessage.addListener(({ message }) => {
     if (message == "HIGHLIGHT_REMOVED") {
-      getPageId((tabId) =>
-        chrome.tabs.sendMessage(tabId, { message: "HIGHLIGHT_OFF" })
-      );
       callback();
     }
   });

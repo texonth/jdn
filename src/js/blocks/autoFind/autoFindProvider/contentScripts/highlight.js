@@ -62,6 +62,7 @@ export const highlightOnPage = () => {
 
     var div = document.createElement("div");
     div.id = element_id;
+    div.setAttribute('jdn-highlight', true);
     div.textContent = `${predicted_label}: ${
       Math.round(predicted_probability * 100) / 100
     }`;
@@ -185,6 +186,7 @@ export const highlightOnPage = () => {
     };
     ids.forEach((id) => {
       const div = document.getElementById(id);
+      div.onclick = () => {};
       Object.assign(div.style, errorStyle);
     });
   };
