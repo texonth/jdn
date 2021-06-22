@@ -109,10 +109,11 @@ export const generatePageObject = (
 ) => {
   const onXpathGenerated = ({ xpathElements, unreachableNodes }) => {
     const elToConvert = predictedToConvert(xpathElements, perception);
-    const page = getPage(elToConvert);
-    mainModel.conversionModel.genPageCode(page, mainModel, true);
-    mainModel.conversionModel.downloadPageCode(page, ".java");
-    onGenerated({ unreachableNodes });
+    getPage(elToConvert, (page) => {
+      mainModel.conversionModel.genPageCode(page, mainModel, true);
+      mainModel.conversionModel.downloadPageCode(page, ".java");
+      onGenerated({ unreachableNodes });
+    });
   };
 
   const requestXpathes = () => {
