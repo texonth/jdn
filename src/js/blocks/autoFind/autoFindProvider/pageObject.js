@@ -1,4 +1,14 @@
+import { camelCase } from "../../../models/GenerateBlockModel";
 import { getJDILabel } from "./generationClassesMap";
+
+const getPackage = (url) => {
+  const urlObject = new URL(url);
+  return urlObject.hostname
+    .split(".")
+    .reverse()
+    .map((e) => e.replace(/[^a-zA-Z0-9]+/g, ""))
+    .join(".");
+};
 
 export const predictedToConvert = (elements, perception) => {
   const f = elements.filter((el) => el && !el.skipGeneration && el.predicted_probability >= perception);
@@ -24,9 +34,12 @@ export const predictedToConvert = (elements, perception) => {
   });
 };
 
-export const getPage = (elToConvert) => {
-  return {
-    elements: elToConvert,
-    name: "AnyPage",
-  };
+export const getPage = (elToConvert, callback) => {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    callback({
+      elements: elToConvert,
+      name: camelCase(tabs[0].title),
+      package: getPackage(tabs[0].url),
+    });
+  });
 };

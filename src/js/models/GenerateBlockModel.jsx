@@ -73,7 +73,7 @@ function searchByWithoutValue({ log }, dom, locator, uniqueness) {
   return getElements({ log }, dom, locatorType);
 }
 
-function camelCase(n) {
+export function camelCase(n) {
   let name = "";
   if (n) {
     let arrayName = n.split(/[^a-zA-Zа-яёА-ЯЁ0-9]/);
