@@ -3,7 +3,6 @@
  */
 /*global chrome*/
 export const highlightOnPage = () => {
-
   let highlightElements = [];
   let isHighlightElementsReverse = false;
   let port;
@@ -23,6 +22,13 @@ export const highlightOnPage = () => {
 
   const toggleElement = (id) => {
     port.postMessage({ message: "TOGGLE_ELEMENT", id });
+  };
+
+  const removeContextMenu = (event) => {
+    if (!event || event.target.id !== "jdn-context") {
+      const contextMenuDiv = document.getElementById("jdn-context");
+      contextMenuDiv && contextMenuDiv.remove();
+    };
   };
 
   const drawRectangle = (
@@ -62,7 +68,7 @@ export const highlightOnPage = () => {
 
     var div = document.createElement("div");
     div.id = element_id;
-    div.setAttribute('jdn-highlight', true);
+    div.setAttribute("jdn-highlight", true);
     div.textContent = `${predicted_label}: ${
       Math.round(predicted_probability * 100) / 100
     }`;
@@ -73,6 +79,25 @@ export const highlightOnPage = () => {
       element.skipGeneration = !element.skipGeneration;
       if (element.skipGeneration) Object.assign(div.style, divSecondaryStyle);
       else Object.assign(div.style, divPrimaryStyle);
+    };
+
+    div.oncontextmenu = (e) => {
+      e.preventDefault();
+      removeContextMenu(e);
+      console.log(e);
+      const contextMenuDiv = document.createElement("div");
+      contextMenuDiv.id = "jdn-context";
+      const menuStyles = {
+        backgroundColor: "lightgray",
+        position: "absolute",
+        left: `${e.pageX}px`,
+        top: `${e.pageY}px`,
+        height: "50px",
+        width: "50px",
+        zIndex: 5500,
+      };
+      Object.assign(contextMenuDiv.style, menuStyles);
+      document.body.appendChild(contextMenuDiv);
     };
 
     document.body.appendChild(div);
@@ -114,11 +139,13 @@ export const highlightOnPage = () => {
   };
 
   let timer;
-  const eventListenerCallback = () => {
+  const scrollListenerCallback = () => {
     if (timer) clearTimeout(timer);
     timer = setTimeout(() => {
       findAndHighlight();
     }, 300);
+
+    removeContextMenu();
   };
 
   const selectAllElementsOnClick = (event) => {
@@ -130,21 +157,21 @@ export const highlightOnPage = () => {
     let isCurrentElement = false;
 
     highlightElements.forEach((element) => {
-
       const { top, right, bottom, left } = element.getBoundingClientRect();
 
       if (
-        (event.clientX > left && event.clientX  < right) && 
-        (event.clientY > top && event.clientY < bottom)
+        event.clientX > left &&
+        event.clientX < right &&
+        event.clientY > top &&
+        event.clientY < bottom
       ) {
         if (!isCurrentElement) {
           isCurrentElement = true;
           return;
         } else {
-          document.getElementById(element.getAttribute('jdn-hash')).click();
+          document.getElementById(element.getAttribute("jdn-hash")).click();
         }
       }
-
     });
   };
 
@@ -161,7 +188,7 @@ export const highlightOnPage = () => {
   const events = ["scroll", "resize"];
   const removeEventListeners = () => {
     events.forEach((eventName) => {
-      document.removeEventListener(eventName, eventListenerCallback);
+      document.removeEventListener(eventName, scrollListenerCallback);
     });
   };
 
@@ -171,12 +198,13 @@ export const highlightOnPage = () => {
 
   const setDocumentListeners = () => {
     events.forEach((eventName) => {
-      document.addEventListener(eventName, eventListenerCallback);
+      document.addEventListener(eventName, scrollListenerCallback);
     });
-  
-    document.addEventListener('click', (event) => {
+
+    document.addEventListener("click", (event) => {
       if (!event.clientX && !event.clientY) return;
       selectAllElementsOnClick(event);
+      removeContextMenu(event);
     });
   };
 
@@ -215,7 +243,7 @@ export const highlightOnPage = () => {
   };
 
   chrome.runtime.onConnect.addListener((p) => {
-    port = p;    
+    port = p;
     port.onDisconnect.addListener(disconnectHandler);
     port.onMessage.addListener(messageHandler);
   });
