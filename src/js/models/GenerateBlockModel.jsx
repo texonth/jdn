@@ -100,7 +100,7 @@ function nameElement(locator, uniqueness, value, content) {
   }
   if (uniqueness === "class") {
     let className = content.classList.value.split(" ");
-    return camelCase(className.length > 1 ? className[0] : className);
+    return camelCase(className[0]);
   }
   return camelCase(content.getAttribute(uniqueness));
 }
