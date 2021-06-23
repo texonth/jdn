@@ -19,10 +19,10 @@ export const generateXpathes = () => {
   const mapElements = (elements) => {
     const xpathElements = elements.map((predictedElement) => {
       let element = document.querySelector(
-          `[jdn-hash='${predictedElement.element_id}']`
+        `[jdn-hash='${predictedElement.element_id}']`
       );
-      if (!element) {
-        unreachableNodes.push(predictedElement.element_id);
+      if (!element) {        
+        unreachableNodes.push(predictedElement.element_id);       
         return;
       }
       predictedElement.attrId = element.id;
@@ -31,27 +31,27 @@ export const generateXpathes = () => {
 
       /*
         Software License Agreement (BSD License)
-
+  
         Copyright (c) 2009, Mozilla Foundation
         All rights reserved.
-
+  
         Redistribution and use of this software in source and binary forms, with or without modification,
         are permitted provided that the following conditions are met:
-
+  
         * Redistributions of source code must retain the above
           copyright notice, this list of conditions and the
           following disclaimer.
-
+  
         * Redistributions in binary form must reproduce the above
           copyright notice, this list of conditions and the
           following disclaimer in the documentation and/or other
           materials provided with the distribution.
-
+  
         * Neither the name of Mozilla Foundation nor the names of its
           contributors may be used to endorse or promote products
           derived from this software without specific prior
           written permission of Mozilla Foundation.
-
+  
         THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
         IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
         FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
@@ -63,7 +63,7 @@ export const generateXpathes = () => {
         -->
         */
       const getElementTreeXPath = () => {
-        const paths = [];
+        var paths = [];
 
         // Use nodeName (instead of localName) so namespace prefix is included (if any).
         for (
@@ -71,10 +71,10 @@ export const generateXpathes = () => {
           element && element.nodeType == Node.ELEMENT_NODE;
           element = element.parentNode
         ) {
-          let index = 0;
-          let hasFollowingSiblings = false;
+          var index = 0;
+          var hasFollowingSiblings = false;
           for (
-            let sibling = element.previousSibling;
+            var sibling = element.previousSibling;
             sibling;
             sibling = sibling.previousSibling
           ) {
@@ -85,18 +85,17 @@ export const generateXpathes = () => {
           }
 
           for (
-            let sibling = element.nextSibling;
+            var sibling = element.nextSibling;
             sibling && !hasFollowingSiblings;
             sibling = sibling.nextSibling
           ) {
-            if (sibling.nodeName == element.nodeName) {
+            if (sibling.nodeName == element.nodeName)
               hasFollowingSiblings = true;
-            }
           }
 
-          const tagName =
+          var tagName =
             (element.prefix ? element.prefix + ":" : "") + element.localName;
-          const pathIndex =
+          var pathIndex =
             index || hasFollowingSiblings ? "[" + (index + 1) + "]" : "";
           paths.splice(0, 0, tagName + pathIndex);
         }

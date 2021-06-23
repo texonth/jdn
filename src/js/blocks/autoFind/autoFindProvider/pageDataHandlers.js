@@ -63,13 +63,8 @@ export const highlightElements = (
     setHighlight();
   };
 
-  const onError = (error) => {
-    console.warn(error);
-    if (typeof errorCallback === "function") errorCallback();
-  };
-
   if (!port) {
-    runConnectedScript(highlightOnPage, onSetupScript, onError);
+    runConnectedScript(highlightOnPage, onSetupScript, errorCallback);
   } else {
     setHighlight();
   }
