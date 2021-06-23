@@ -99,7 +99,8 @@ function nameElement(locator, uniqueness, value, content) {
     return camelCase(locator.replace(/[\.\/\*\[\]@]/g, ""));
   }
   if (uniqueness === "class") {
-    return camelCase(content.classList.value);
+    let className = content.classList.value.split(" ");
+    return camelCase(className.length > 1 ? className[0] : className);
   }
   return camelCase(content.getAttribute(uniqueness));
 }
