@@ -57,6 +57,10 @@ const AutoFindProvider = inject("mainModel")(
         setStatus(autoFindStatus.success);
         setUrlListener(clearElementsState);
       };
+      const onerror = () => {
+        setStatus(autoFindStatus.error);
+        setUrlListener(clearElementsState);
+      }
       const updateElements = ([predicted, page]) => {
         setPredictedElements(predicted);
         setPageElements(page);
@@ -64,7 +68,8 @@ const AutoFindProvider = inject("mainModel")(
           predicted,
           callback,
           toggleElementGeneration,
-          perception
+          perception,
+          onerror
         );
         setAllowRemoveElements(!allowRemoveElements);
       };

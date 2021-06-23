@@ -1,33 +1,36 @@
 /*global chrome*/
 
-export const getPageId = (callback) => {
-  chrome.tabs.query({ active: true, currentWindow: true }, (res) => {
-    callback(res[0].id);
+export const getPageId = (callback, onerror) => {
+  chrome.tabs.query({active: true, currentWindow: true}, (res) => {
+    if (res && res[0] && typeof callback === "function") callback(res[0].id);
+    else if (typeof onerror === "function") onerror(new Error("Active page is not available"));
   });
 };
 
-export const runContentScript = (script, callback) => {
+export const runContentScript = (script, callback, onerror) => {
   const onRunScript = (tabId) =>
     chrome.scripting.executeScript(
-      { target: { tabId }, function: script },
-      (invoked) => {
-        if (callback) {
-          callback(invoked || true);
+        { target: { tabId }, function: script },
+        (invoked) => {
+          if (callback) {
+            callback(invoked || true);
+          }
         }
-      }
     );
-  getPageId(onRunScript);
+  getPageId(onRunScript, onerror);
 };
 
-export const runConnectedScript = (script, callback) => {
-  const onRunScript = () => {
-    getPageId((id) => {
-      const port = chrome.tabs.connect(id, {
-        name: `JDN_connect_${Date.now()}`,
-      });
-      callback(port);
+export const runConnectedScript = (script, callback, onerror) => {
+  const onRunScript = (tabId) => {
+    const port = chrome.tabs.connect(tabId, {
+      name: `JDN_connect_${Date.now()}`,
     });
+    callback(port);
   };
 
-  runContentScript(script, onRunScript);
+  const afterContentScriptCallback = () => {
+    getPageId(onRunScript, onerror);
+  };
+
+  runContentScript(script, afterContentScriptCallback, onerror);
 };

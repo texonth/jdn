@@ -1,10 +1,9 @@
 /*
     avoid using any outer scope variables inside this function
  */
-/*global chrome*/
+/* global chrome */
 export const highlightOnPage = () => {
-
-  let highlightElements = [];
+  const highlightElements = [];
   let isHighlightElementsReverse = false;
   let port;
 
@@ -26,8 +25,8 @@ export const highlightOnPage = () => {
   };
 
   const drawRectangle = (
-    element,
-    { element_id, predicted_label, predicted_probability }
+      element,
+      { element_id, predicted_label, predicted_probability }
   ) => {
     const primaryColor = `rgba(74, 207, 237, 0.5)`;
     const secondaryColor = `rgba(250, 238, 197, 0.5)`;
@@ -44,11 +43,11 @@ export const highlightOnPage = () => {
       const { top, left, height, width } = rect || {};
       const coords = rect
         ? {
-            left: `${left + window.pageXOffset}px`,
-            top: `${top + window.pageYOffset}px`,
-            height: `${height}px`,
-            width: `${width}px`,
-          }
+          left: `${left + window.pageXOffset}px`,
+          top: `${top + window.pageYOffset}px`,
+          height: `${height}px`,
+          width: `${width}px`,
+        }
         : {};
       return {
         ...coords,
@@ -60,7 +59,7 @@ export const highlightOnPage = () => {
       };
     };
 
-    var div = document.createElement("div");
+    const div = document.createElement("div");
     div.id = element_id;
     div.setAttribute('jdn-highlight', true);
     div.textContent = `${predicted_label}: ${
@@ -105,7 +104,7 @@ export const highlightOnPage = () => {
           highlightElement.remove();
         } else if (!highlightElement && isAbovePerceptionTreshold) {
           const predicted = predictedElements.find(
-            (e) => e.element_id === hash
+              (e) => e.element_id === hash
           );
           drawRectangle(element, predicted, perception);
         }
@@ -130,11 +129,10 @@ export const highlightOnPage = () => {
     let isCurrentElement = false;
 
     highlightElements.forEach((element) => {
-
       const { top, right, bottom, left } = element.getBoundingClientRect();
 
       if (
-        (event.clientX > left && event.clientX  < right) && 
+        (event.clientX > left && event.clientX < right) &&
         (event.clientY > top && event.clientY < bottom)
       ) {
         if (!isCurrentElement) {
@@ -144,7 +142,6 @@ export const highlightOnPage = () => {
           document.getElementById(element.getAttribute('jdn-hash')).click();
         }
       }
-
     });
   };
 
@@ -173,7 +170,7 @@ export const highlightOnPage = () => {
     events.forEach((eventName) => {
       document.addEventListener(eventName, eventListenerCallback);
     });
-  
+
     document.addEventListener('click', (event) => {
       if (!event.clientX && !event.clientY) return;
       selectAllElementsOnClick(event);
@@ -215,7 +212,7 @@ export const highlightOnPage = () => {
   };
 
   chrome.runtime.onConnect.addListener((p) => {
-    port = p;    
+    port = p;
     port.onDisconnect.addListener(disconnectHandler);
     port.onMessage.addListener(messageHandler);
   });
