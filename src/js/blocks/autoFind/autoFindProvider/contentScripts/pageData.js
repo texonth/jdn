@@ -19,7 +19,7 @@ export const getPageData = () => {
   }
 
   function collect_attributes(el) {
-    var items = {};
+    const items = {};
     for (let index = 0; index < el.attributes.length; ++index) {
       items[el.attributes[index].name] = el.attributes[index].value;
     }

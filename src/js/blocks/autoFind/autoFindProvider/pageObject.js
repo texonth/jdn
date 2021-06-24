@@ -4,15 +4,15 @@ import { getJDILabel } from "./generationClassesMap";
 const getPackage = (url) => {
   const urlObject = new URL(url);
   return urlObject.hostname
-    .split(".")
-    .reverse()
-    .map((e) => e.replace(/[^a-zA-Z0-9]+/g, ""))
-    .join(".");
+      .split(".")
+      .reverse()
+      .map((e) => e.replace(/[^a-zA-Z0-9]+/g, ""))
+      .join(".");
 };
 
 export const predictedToConvert = (elements, perception) => {
   const f = elements.filter((el) => el && !el.skipGeneration && el.predicted_probability >= perception);
-  const uniqueNames  = [];
+  const uniqueNames = [];
 
   const getElementName = (element) => {
     const jdiLabel = getJDILabel(element.predicted_label).toLowerCase();
