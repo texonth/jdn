@@ -7,6 +7,17 @@ export const highlightOnPage = () => {
   let isHighlightElementsReverse = false;
   let port;
 
+  const primaryColor = `rgba(74, 207, 237, 0.5)`;
+  const secondaryColor = `rgba(250, 238, 197, 0.5)`;
+
+  const divPrimaryStyle = {
+    backgroundColor: primaryColor,
+  };
+
+  const divSecondaryStyle = {
+    backgroundColor: secondaryColor,
+  };
+
   const isInViewport = (element) => {
     const { top, right, bottom, left } = element.getBoundingClientRect();
 
@@ -20,32 +31,25 @@ export const highlightOnPage = () => {
     return val;
   };
 
-  const toggleElement = (id) => {
-    port.postMessage({ message: "TOGGLE_ELEMENT", id });
+  const toggleElement = (element) => {
+    const div = document.getElementById(element.element_id);
+    if (element.skipGeneration) Object.assign(div.style, divSecondaryStyle);
+    else Object.assign(div.style, divPrimaryStyle);
   };
 
-  const removeContextMenu = (event) => {
-    if (!event || event.target.id !== "jdn-context") {
-      const contextMenuDiv = document.getElementById("jdn-context");
-      contextMenuDiv && contextMenuDiv.remove();
-    };
+  const removeElement = (element) => {
+    predictedElements.find((e) => {
+      if (e.element_id === element.element_id) e.hidden = element.hidden;
+    });
+
+    const div = document.getElementById(element.element_id);
+    div.remove();
   };
 
   const drawRectangle = (
     element,
     { element_id, predicted_label, predicted_probability }
   ) => {
-    const primaryColor = `rgba(74, 207, 237, 0.5)`;
-    const secondaryColor = `rgba(250, 238, 197, 0.5)`;
-
-    const divPrimaryStyle = {
-      backgroundColor: primaryColor,
-    };
-
-    const divSecondaryStyle = {
-      backgroundColor: secondaryColor,
-    };
-
     const divDefaultStyle = (rect) => {
       const { top, left, height, width } = rect || {};
       const coords = rect
@@ -75,29 +79,10 @@ export const highlightOnPage = () => {
     Object.assign(div.style, divDefaultStyle(element.getBoundingClientRect()));
 
     div.onclick = () => {
-      toggleElement(element_id);
-      element.skipGeneration = !element.skipGeneration;
-      if (element.skipGeneration) Object.assign(div.style, divSecondaryStyle);
-      else Object.assign(div.style, divPrimaryStyle);
-    };
-
-    div.oncontextmenu = (e) => {
-      e.preventDefault();
-      removeContextMenu(e);
-      console.log(e);
-      const contextMenuDiv = document.createElement("div");
-      contextMenuDiv.id = "jdn-context";
-      const menuStyles = {
-        backgroundColor: "lightgray",
-        position: "absolute",
-        left: `${e.pageX}px`,
-        top: `${e.pageY}px`,
-        height: "50px",
-        width: "50px",
-        zIndex: 5500,
-      };
-      Object.assign(contextMenuDiv.style, menuStyles);
-      document.body.appendChild(contextMenuDiv);
+      chrome.runtime.sendMessage({
+        message: "TOGGLE_ELEMENT",
+        param: element_id,
+      });
     };
 
     document.body.appendChild(div);
@@ -112,13 +97,12 @@ export const highlightOnPage = () => {
       predictedElements = param.elements;
       perception = param.perception;
     }
-    if (!nodes) {
-      let query = "";
-      predictedElements.forEach(({ element_id }) => {
-        query += `${!!query.length ? ", " : ""}[jdn-hash='${element_id}']`;
-      });
-      nodes = document.querySelectorAll(query);
-    }
+    let query = "";
+    predictedElements.forEach(({ element_id, hidden }) => {
+      if (hidden) return;
+      query += `${!!query.length ? ", " : ""}[jdn-hash='${element_id}']`;
+    });
+    nodes = document.querySelectorAll(query);
     nodes.forEach((element) => {
       if (isInViewport(element)) {
         const hash = element.getAttribute("jdn-hash");
@@ -144,8 +128,6 @@ export const highlightOnPage = () => {
     timer = setTimeout(() => {
       findAndHighlight();
     }, 300);
-
-    removeContextMenu();
   };
 
   const selectAllElementsOnClick = (event) => {
@@ -204,7 +186,6 @@ export const highlightOnPage = () => {
     document.addEventListener("click", (event) => {
       if (!event.clientX && !event.clientY) return;
       selectAllElementsOnClick(event);
-      removeContextMenu(event);
     });
   };
 
@@ -220,8 +201,10 @@ export const highlightOnPage = () => {
   };
 
   const messageHandler = ({ message, param }) => {
+    console.log(message);
+
     const removedCallback = () => {
-      port.postMessage({ message: "HIGHLIGHT_REMOVED" });
+      chrome.runtime.sendMessage({ message: "HIGHLIGHT_REMOVED" });
     };
 
     if (message === "SET_HIGHLIGHT") {
@@ -236,6 +219,14 @@ export const highlightOnPage = () => {
     if (message === "HIGHLIGHT_ERRORS") {
       highlightErrors(param);
     }
+
+    if (message === "HIGHLIGHT_TOGGLED") {
+      toggleElement(param);
+    }
+
+    if (message === "HIDE_ELEMENT") {
+      removeElement(param);
+    }
   };
 
   const disconnectHandler = () => {
@@ -245,6 +236,6 @@ export const highlightOnPage = () => {
   chrome.runtime.onConnect.addListener((p) => {
     port = p;
     port.onDisconnect.addListener(disconnectHandler);
-    port.onMessage.addListener(messageHandler);
+    chrome.runtime.onMessage.addListener(messageHandler);
   });
 };

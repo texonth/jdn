@@ -1,3 +1,4 @@
+import { contextMenu } from "./contentScripts/contextMenu";
 import { generateXpathes } from "./contentScripts/generationData";
 import { highlightOnPage } from "./contentScripts/highlight";
 import { getPageData } from "./contentScripts/pageData";
@@ -12,8 +13,14 @@ import {
 /*global chrome*/
 
 let port;
-let urlListenerScriptExists;
 let generationScriptExists;
+let documentListenersStarted;
+
+const clearState = () => {
+  port = null;
+  generationScriptExists = false;
+  documentListenersStarted = false;
+};
 
 const uploadElements = (callback) => async ([{ result }]) => {
   const [payload, length] = result;
@@ -30,11 +37,26 @@ const uploadElements = (callback) => async ([{ result }]) => {
   }
 };
 
-const setToggleListeners = (toggleCallback) => {
-  port.onMessage.addListener(({ message, id }) => {
-    if (message === "TOGGLE_ELEMENT") {
-      toggleCallback(id);
-    }
+const setUrlListener = (onHighlightOff) => {
+  getPageId((currentTabId) =>
+    chrome.tabs.onUpdated.addListener((tabId, changeinfo, tab) => {
+      if (
+        changeinfo &&
+        changeinfo.status === "complete" &&
+        currentTabId === tabId
+      ) {
+        clearState();
+        onHighlightOff();
+      }
+    })
+  );
+
+  runContentScript(urlListener);
+};
+
+const setActionListeners = (actions) => {
+  chrome.runtime.onMessage.addListener(({ message, param }) => {
+    actions[message](param);
   });
 };
 
@@ -42,19 +64,15 @@ export const getElements = (callback) => {
   runContentScript(getPageData, uploadElements(callback));
 };
 
-export const highlightElements = (
-  elements,
-  successCallback,
-  toggleCallback,
-  perception
-) => {
+export const highlightElements = (elements, successCallback, perception) => {
   const setHighlight = () => {
-    port.postMessage({
-      message: "SET_HIGHLIGHT",
-      param: { elements, perception },
-    });
+    getPageId((tabId) =>
+      chrome.tabs.sendMessage(tabId, {
+        message: "SET_HIGHLIGHT",
+        param: { elements, perception },
+      })
+    );
     successCallback();
-    setToggleListeners(toggleCallback);
   };
 
   const onSetupScript = (p) => {
@@ -69,36 +87,23 @@ export const highlightElements = (
   }
 };
 
-export const setUrlListener = (onHighlightOff) => {
-  getPageId((currentTabId) =>
-    chrome.tabs.onUpdated.addListener((tabId, changeinfo, tab) => {
-      if (
-        changeinfo &&
-        changeinfo.status === "complete" &&
-        currentTabId === tabId
-      ) {
-        urlListenerScriptExists = false;
-        generationScriptExists = false;
-        port = null;
-        onHighlightOff();
-      }
-    })
-  );
-
-  if (!urlListenerScriptExists) {
-    runContentScript(urlListener, () => {
-      urlListenerScriptExists = true;
+export const runDocumentListeners = (actions) => {
+  if (!documentListenersStarted) {
+    setUrlListener(actions["HIGHLIGHT_OFF"]);
+    runContentScript(contextMenu, () => {
+      setActionListeners(actions);
     });
+    documentListenersStarted = true;
   }
 };
 
 export const removeHighlightFromPage = (callback) => {
-  port.onMessage.addListener(({ message }) => {
+  chrome.runtime.onMessage.addListener(({ message }) => {
     if (message == "HIGHLIGHT_REMOVED") {
       callback();
     }
   });
-  port.postMessage({ message: "KILL_HIGHLIGHT" });
+  getPageId((tabId) => chrome.tabs.sendMessage(tabId, { message: "KILL_HIGHLIGHT" }));
 };
 
 export const generatePageObject = (
