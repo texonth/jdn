@@ -1,4 +1,4 @@
-import { contextMenu } from "./contentScripts/contextMenu";
+import { runContextMenu } from "./contentScripts/contextMenu/contextmenu1";
 import { generateXpathes } from "./contentScripts/generationData";
 import { highlightOnPage } from "./contentScripts/highlight";
 import { getPageData } from "./contentScripts/pageData";
@@ -6,6 +6,7 @@ import { urlListener } from "./contentScripts/urlListener";
 import { getPage, predictedToConvert } from "./pageObject";
 import {
   getPageId,
+  insertCSS,
   runConnectedScript,
   runContentScript,
 } from "./pageScriptHandlers";
@@ -90,8 +91,9 @@ export const highlightElements = (elements, successCallback, perception) => {
 export const runDocumentListeners = (actions) => {
   if (!documentListenersStarted) {
     setUrlListener(actions["HIGHLIGHT_OFF"]);
-    runContentScript(contextMenu, () => {
+    runContentScript(runContextMenu, () => {
       setActionListeners(actions);
+      insertCSS("contextmenu.css");
     });
     documentListenersStarted = true;
   }

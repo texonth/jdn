@@ -31,3 +31,12 @@ export const runConnectedScript = (script, callback) => {
 
   runContentScript(script, onRunScript);
 };
+
+export const insertCSS = (file) => {
+  getPageId((tabId) => {
+    chrome.scripting.insertCSS({
+      target: { tabId },
+      files: [file],
+    });
+  });
+};

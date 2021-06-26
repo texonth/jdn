@@ -9,8 +9,8 @@ import {
   runDocumentListeners,
 } from "./pageDataHandlers";
 import { generatePageObject } from "./pageDataHandlers";
-import { getPageData } from "./contentScripts/pageData";
 import { getPageId } from "./pageScriptHandlers";
+import { JDIclasses } from "./generationClassesMap";
 
 const autoFindStatus = {
   noStatus: "",
@@ -75,7 +75,25 @@ const AutoFindProvider = inject("mainModel")(
         });
         return hidden;
       });
-    }
+    };
+
+    const changeType = ({id, newType}) => {
+      setPredictedElements((previousValue) => {
+        const changed = previousValue.map((el) => {
+          if (el.element_id === id) {
+            el.predicted_label = newType;
+            getPageId((id) =>
+              chrome.tabs.sendMessage(id, {
+                message: "ASSIGN_TYPE",
+                param: el,
+              })
+            );
+          }
+          return el;
+        });
+        return changed;
+      });
+    };
 
     const identifyElements = () => {
       setAllowIdetifyElements(!allowIdetifyElements);
@@ -113,7 +131,10 @@ const AutoFindProvider = inject("mainModel")(
     const getPredictedElement = (id) => {
       const element = predictedElements.find((e) => e.element_id === id);
       getPageId((id) =>
-        chrome.tabs.sendMessage(id, { message: "ELEMENT_DATA", param: element })
+        chrome.tabs.sendMessage(id, {
+          message: "ELEMENT_DATA",
+          param: { element, types: Object.keys(JDIclasses) },
+        })
       );
     };
 
@@ -138,9 +159,7 @@ const AutoFindProvider = inject("mainModel")(
       TOGGLE_ELEMENT: toggleElementGeneration,
       HIGHLIGHT_OFF: clearElementsState,
       REMOVE_ELEMENT: hideElement,
-      CHANGE_TYPE: () => {
-        console.log("change type handler");
-      },
+      CHANGE_TYPE: changeType,
     };
 
     const data = [

@@ -46,6 +46,11 @@ export const highlightOnPage = () => {
     div.remove();
   };
 
+  const assignType = (element) => {
+    const div = document.getElementById(element.element_id);
+    div.querySelector('.jdn-label').textContent = element.predicted_label;
+  }
+
   const drawRectangle = (
     element,
     { element_id, predicted_label, predicted_probability }
@@ -73,7 +78,7 @@ export const highlightOnPage = () => {
     var div = document.createElement("div");
     div.id = element_id;
     div.setAttribute("jdn-highlight", true);
-    div.textContent = `${predicted_label}: ${
+    div.innerHTML = `<span class="jdn-label">${predicted_label}</span>: ${
       Math.round(predicted_probability * 100) / 100
     }`;
     Object.assign(div.style, divDefaultStyle(element.getBoundingClientRect()));
@@ -201,8 +206,6 @@ export const highlightOnPage = () => {
   };
 
   const messageHandler = ({ message, param }) => {
-    console.log(message);
-
     const removedCallback = () => {
       chrome.runtime.sendMessage({ message: "HIGHLIGHT_REMOVED" });
     };
@@ -226,6 +229,10 @@ export const highlightOnPage = () => {
 
     if (message === "HIDE_ELEMENT") {
       removeElement(param);
+    }
+
+    if (message === "ASSIGN_TYPE") {
+      assignType(param);
     }
   };
 
