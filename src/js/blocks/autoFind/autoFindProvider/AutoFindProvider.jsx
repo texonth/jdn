@@ -99,9 +99,24 @@ const AutoFindProvider = inject("mainModel")(
       setAllowIdetifyElements(!allowIdetifyElements);
       setStatus(autoFindStatus.loading);
 
+      const callback = () => {
+        setStatus(autoFindStatus.success);
+        setUrlListener(clearElementsState);
+      };
+      const errorCallback = () => {
+        setStatus(autoFindStatus.error);
+        setUrlListener(clearElementsState);
+      };
       const updateElements = ([predicted, page]) => {
         setPredictedElements(predicted);
         setPageElements(page);
+        highlightElements(
+          predicted,
+          callback,
+          toggleElementGeneration,
+          perception,
+          errorCallback,
+        );
         setAllowRemoveElements(!allowRemoveElements);
       };
 

@@ -65,7 +65,12 @@ export const getElements = (callback) => {
   runContentScript(getPageData, uploadElements(callback));
 };
 
-export const highlightElements = (elements, successCallback, perception) => {
+export const highlightElements = (
+    elements,
+    successCallback,
+    perception,
+    errorCallback,
+) => {
   const setHighlight = () => {
     getPageId((tabId) =>
       chrome.tabs.sendMessage(tabId, {
@@ -82,7 +87,7 @@ export const highlightElements = (elements, successCallback, perception) => {
   };
 
   if (!port) {
-    runConnectedScript(highlightOnPage, onSetupScript);
+    runConnectedScript(highlightOnPage, onSetupScript, errorCallback);
   } else {
     setHighlight();
   }
@@ -109,10 +114,10 @@ export const removeHighlightFromPage = (callback) => {
 };
 
 export const generatePageObject = (
-  elements,
-  perception,
-  mainModel,
-  onGenerated
+    elements,
+    perception,
+    mainModel,
+    onGenerated
 ) => {
   const onXpathGenerated = ({ xpathElements, unreachableNodes }) => {
     const elToConvert = predictedToConvert(xpathElements, perception);
@@ -126,9 +131,9 @@ export const generatePageObject = (
   const requestXpathes = () => {
     getPageId((id) =>
       chrome.tabs.sendMessage(
-        id,
-        { message: "GENERATE_XPATHES", param: elements },
-        onXpathGenerated
+          id,
+          { message: "GENERATE_XPATHES", param: elements },
+          onXpathGenerated
       )
     );
   };

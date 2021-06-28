@@ -4,10 +4,10 @@ import { getJDILabel } from "./generationClassesMap";
 const getPackage = (url) => {
   const urlObject = new URL(url);
   return urlObject.hostname
-    .split(".")
-    .reverse()
-    .map((e) => e.replace(/[^a-zA-Z0-9]+/g, ""))
-    .join(".");
+      .split(".")
+      .reverse()
+      .map((e) => e.replace(/[^a-zA-Z0-9]+/g, ""))
+      .join(".");
 };
 
 export const predictedToConvert = (elements, perception) => {
