@@ -28,8 +28,8 @@ export const getPageData = () => {
 
   function getTreeDataset() {
     return [...document.querySelectorAll("*")].map((el) => {
-      const _x = el.getBoundingClientRect()["x"];
-      const _y = el.getBoundingClientRect()["y"];
+      const _x = pageXOffset + el.getBoundingClientRect()["x"];
+      const _y = pageYOffset + el.getBoundingClientRect()["y"];
       const _width = el.getBoundingClientRect()["width"];
       const _height = el.getBoundingClientRect()["height"];
       const _displayed = (_x < 0) | (_y < 0) | (_width <= 1) | (_height <= 1);
