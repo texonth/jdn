@@ -99,24 +99,9 @@ const AutoFindProvider = inject("mainModel")(
       setAllowIdetifyElements(!allowIdetifyElements);
       setStatus(autoFindStatus.loading);
 
-      const callback = () => {
-        setStatus(autoFindStatus.success);
-        setUrlListener(clearElementsState);
-      };
-      const errorCallback = () => {
-        setStatus(autoFindStatus.error);
-        setUrlListener(clearElementsState);
-      };
       const updateElements = ([predicted, page]) => {
         setPredictedElements(predicted);
-        setPageElements(page);
-        highlightElements(
-          predicted,
-          callback,
-          toggleElementGeneration,
-          perception,
-          errorCallback,
-        );
+        setPageElements(page);        
         setAllowRemoveElements(!allowRemoveElements);
       };
 
@@ -158,7 +143,8 @@ const AutoFindProvider = inject("mainModel")(
         highlightElements(
           predictedElements,
           () => setStatus(autoFindStatus.success),
-          perception
+          perception,
+          () => setStatus(autoFindStatus.error)
         );
       }
     }, [predictedElements, perception]);

@@ -57,7 +57,9 @@ const setUrlListener = (onHighlightOff) => {
 
 const setActionListeners = (actions) => {
   chrome.runtime.onMessage.addListener(({ message, param }) => {
-    actions[message](param);
+    if (actions[message]) {
+      actions[message](param);
+    }
   });
 };
 
@@ -66,10 +68,10 @@ export const getElements = (callback) => {
 };
 
 export const highlightElements = (
-    elements,
-    successCallback,
-    perception,
-    errorCallback,
+  elements,
+  successCallback,
+  perception,
+  errorCallback
 ) => {
   const setHighlight = () => {
     getPageId((tabId) =>
@@ -110,14 +112,16 @@ export const removeHighlightFromPage = (callback) => {
       callback();
     }
   });
-  getPageId((tabId) => chrome.tabs.sendMessage(tabId, { message: "KILL_HIGHLIGHT" }));
+  getPageId((tabId) =>
+    chrome.tabs.sendMessage(tabId, { message: "KILL_HIGHLIGHT" })
+  );
 };
 
 export const generatePageObject = (
-    elements,
-    perception,
-    mainModel,
-    onGenerated
+  elements,
+  perception,
+  mainModel,
+  onGenerated
 ) => {
   const onXpathGenerated = ({ xpathElements, unreachableNodes }) => {
     const elToConvert = predictedToConvert(xpathElements, perception);
@@ -131,9 +135,9 @@ export const generatePageObject = (
   const requestXpathes = () => {
     getPageId((id) =>
       chrome.tabs.sendMessage(
-          id,
-          { message: "GENERATE_XPATHES", param: elements },
-          onXpathGenerated
+        id,
+        { message: "GENERATE_XPATHES", param: elements },
+        onXpathGenerated
       )
     );
   };
