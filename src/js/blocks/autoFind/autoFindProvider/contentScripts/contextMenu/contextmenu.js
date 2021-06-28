@@ -285,6 +285,8 @@ export const runContextMenu = () => {
 
   // <-----
 
+  /*global chrome*/
+
   let elementMenu;
   let contextEvent;
   let predictedElement;

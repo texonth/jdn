@@ -48,22 +48,22 @@ export const highlightOnPage = () => {
 
   const assignType = (element) => {
     const div = document.getElementById(element.element_id);
-    div.querySelector('.jdn-label').textContent = element.predicted_label;
-  }
+    div.querySelector(".jdn-label").textContent = element.predicted_label;
+  };
 
   const drawRectangle = (
-      element,
-      { element_id, predicted_label, predicted_probability }
+    element,
+    { element_id, predicted_label, predicted_probability }
   ) => {
     const divDefaultStyle = (rect) => {
       const { top, left, height, width } = rect || {};
       const coords = rect
         ? {
-          left: `${left + window.pageXOffset}px`,
-          top: `${top + window.pageYOffset}px`,
-          height: `${height}px`,
-          width: `${width}px`,
-        }
+            left: `${left + window.pageXOffset}px`,
+            top: `${top + window.pageYOffset}px`,
+            height: `${height}px`,
+            width: `${width}px`,
+          }
         : {};
       return {
         ...coords,
@@ -119,7 +119,7 @@ export const highlightOnPage = () => {
           highlightElement.remove();
         } else if (!highlightElement && isAbovePerceptionTreshold) {
           const predicted = predictedElements.find(
-              (e) => e.element_id === hash
+            (e) => e.element_id === hash
           );
           drawRectangle(element, predicted, perception);
         }
@@ -147,8 +147,10 @@ export const highlightOnPage = () => {
       const { top, right, bottom, left } = element.getBoundingClientRect();
 
       if (
-        (event.clientX > left && event.clientX < right) &&
-        (event.clientY > top && event.clientY < bottom)
+        event.clientX > left &&
+        event.clientX < right &&
+        event.clientY > top &&
+        event.clientY < bottom
       ) {
         if (!isCurrentElement) {
           isCurrentElement = true;
@@ -186,7 +188,7 @@ export const highlightOnPage = () => {
       document.addEventListener(eventName, scrollListenerCallback);
     });
 
-    document.addEventListener('click', (event) => {
+    document.addEventListener("click", (event) => {
       if (!event.clientX && !event.clientY) return;
       selectAllElementsOnClick(event);
     });

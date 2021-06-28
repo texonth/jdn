@@ -12,6 +12,8 @@ import { generatePageObject } from "./pageDataHandlers";
 import { getPageId } from "./pageScriptHandlers";
 import { JDIclasses } from "./generationClassesMap";
 
+/*global chrome*/
+
 const autoFindStatus = {
   noStatus: "",
   loading: "Loading...",
@@ -138,6 +140,14 @@ const AutoFindProvider = inject("mainModel")(
       );
     };
 
+    const actions = {
+      GET_ELEMENT: getPredictedElement,
+      TOGGLE_ELEMENT: toggleElementGeneration,
+      HIGHLIGHT_OFF: clearElementsState,
+      REMOVE_ELEMENT: hideElement,
+      CHANGE_TYPE: changeType,
+    };
+
     useEffect(() => {
       if (predictedElements && !allowRemoveElements) {
         highlightElements(
@@ -154,14 +164,6 @@ const AutoFindProvider = inject("mainModel")(
         runDocumentListeners(actions);
       }
     }, [status]);
-
-    const actions = {
-      GET_ELEMENT: getPredictedElement,
-      TOGGLE_ELEMENT: toggleElementGeneration,
-      HIGHLIGHT_OFF: clearElementsState,
-      REMOVE_ELEMENT: hideElement,
-      CHANGE_TYPE: changeType,
-    };
 
     const data = [
       {

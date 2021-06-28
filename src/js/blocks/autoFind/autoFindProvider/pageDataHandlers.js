@@ -1,4 +1,4 @@
-import { runContextMenu } from "./contentScripts/contextMenu/contextmenu1";
+import { runContextMenu } from "./contentScripts/contextMenu/contextmenu";
 import { generateXpathes } from "./contentScripts/generationData";
 import { highlightOnPage } from "./contentScripts/highlight";
 import { getPageData } from "./contentScripts/pageData";
