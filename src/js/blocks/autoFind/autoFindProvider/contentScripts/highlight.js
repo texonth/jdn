@@ -78,9 +78,7 @@ export const highlightOnPage = () => {
     const div = document.createElement("div");
     div.id = element_id;
     div.setAttribute("jdn-highlight", true);
-    div.innerHTML = `<span class="jdn-label">${predicted_label}</span>: ${
-      Math.round(predicted_probability * 100) / 100
-    }`;
+    div.innerHTML = `<span class="jdn-label">${predicted_label}</span>: ${predicted_probability}`;
     Object.assign(div.style, divDefaultStyle(element.getBoundingClientRect()));
 
     div.onclick = () => {

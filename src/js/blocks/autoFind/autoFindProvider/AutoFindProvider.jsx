@@ -102,7 +102,12 @@ const AutoFindProvider = inject("mainModel")(
       setStatus(autoFindStatus.loading);
 
       const updateElements = ([predicted, page]) => {
-        setPredictedElements(predicted);
+        const rounded = predicted.map((el) => ({
+          ...el,
+          predicted_probability:
+            Math.round(el.predicted_probability * 100) / 100,
+        }));
+        setPredictedElements(rounded);
         setPageElements(page);        
         setAllowRemoveElements(!allowRemoveElements);
       };
