@@ -120,7 +120,7 @@ const mainConfig = {
 };
 
 const indexConfig = {
-  entry: './src/loadPanel.js',
+  entry: "./src/loadPanel.js",
   mode: "production",
   output: {
     path: path.join(__dirname, "dist"),
@@ -129,4 +129,27 @@ const indexConfig = {
   },
 };
 
-module.exports = [mainConfig, indexConfig];
+const contextMenuCssConfig = {
+  entry:
+    "./src/js/blocks/autoFind/autoFindProvider/contentScripts/contextMenu/contextmenu.css",
+  mode: "production",
+  plugins: [new MiniCssExtractPlugin({ filename: "contextmenu.css" })],
+  module: {
+    rules: [
+      {
+        test: /contextmenu.css$/i,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: "./",
+            },
+          },
+          "css-loader",
+        ],
+      },
+    ],
+  },
+};
+
+module.exports = [mainConfig, indexConfig, contextMenuCssConfig];

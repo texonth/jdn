@@ -11,8 +11,8 @@ const getPackage = (url) => {
 };
 
 export const predictedToConvert = (elements, perception) => {
-  const f = elements.filter((el) => el && !el.skipGeneration && el.predicted_probability >= perception);
-  const uniqueNames = [];
+  const f = elements.filter((el) => el && !el.skipGeneration && !el.hidden && el.predicted_probability >= perception);
+  const uniqueNames  = [];
 
   const getElementName = (element) => {
     const jdiLabel = getJDILabel(element.predicted_label).toLowerCase();

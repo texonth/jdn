@@ -43,3 +43,12 @@ export const runConnectedScript = (script, callback, errorCallback) => {
 
   runContentScript(script, afterContentScriptCallback, errorCallback);
 };
+
+export const insertCSS = (file) => {
+  getPageId((tabId) => {
+    chrome.scripting.insertCSS({
+      target: { tabId },
+      files: [file],
+    });
+  });
+};

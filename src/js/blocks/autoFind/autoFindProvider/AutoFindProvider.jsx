@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { inject, observer } from "mobx-react";
 import { useContext } from "react";
 import {
@@ -6,9 +6,13 @@ import {
   highlightElements,
   highlightUnreached,
   removeHighlightFromPage,
-  setUrlListener,
+  runDocumentListeners,
 } from "./pageDataHandlers";
 import { generatePageObject } from "./pageDataHandlers";
+import { getPageId } from "./pageScriptHandlers";
+import { JDIclasses } from "./generationClassesMap";
+
+/*global chrome*/
 
 const autoFindStatus = {
   noStatus: "",
@@ -42,10 +46,54 @@ const AutoFindProvider = inject("mainModel")(
     const toggleElementGeneration = (id) => {
       setPredictedElements((previousValue) => {
         const toggled = previousValue.map((el) => {
-          if (el.element_id === id) el.skipGeneration = !el.skipGeneration;
+          if (el.element_id === id) {
+            el.skipGeneration = !el.skipGeneration;
+            getPageId((id) =>
+              chrome.tabs.sendMessage(id, {
+                message: "HIGHLIGHT_TOGGLED",
+                param: el,
+              })
+            );
+          }
           return el;
         });
         return toggled;
+      });
+    };
+
+    const hideElement = (id) => {
+      setPredictedElements((previousValue) => {
+        const hidden = previousValue.map((el) => {
+          if (el.element_id === id) {
+            el.hidden = true;
+            getPageId((id) =>
+              chrome.tabs.sendMessage(id, {
+                message: "HIDE_ELEMENT",
+                param: el,
+              })
+            );
+          }
+          return el;
+        });
+        return hidden;
+      });
+    };
+
+    const changeType = ({id, newType}) => {
+      setPredictedElements((previousValue) => {
+        const changed = previousValue.map((el) => {
+          if (el.element_id === id) {
+            el.predicted_label = newType;
+            getPageId((id) =>
+              chrome.tabs.sendMessage(id, {
+                message: "ASSIGN_TYPE",
+                param: el,
+              })
+            );
+          }
+          return el;
+        });
+        return changed;
       });
     };
 
@@ -53,24 +101,9 @@ const AutoFindProvider = inject("mainModel")(
       setAllowIdetifyElements(!allowIdetifyElements);
       setStatus(autoFindStatus.loading);
 
-      const callback = () => {
-        setStatus(autoFindStatus.success);
-        setUrlListener(clearElementsState);
-      };
-      const errorCallback = () => {
-        setStatus(autoFindStatus.error);
-        setUrlListener(clearElementsState);
-      };
       const updateElements = ([predicted, page]) => {
         setPredictedElements(predicted);
-        setPageElements(page);
-        highlightElements(
-          predicted,
-          callback,
-          toggleElementGeneration,
-          perception,
-          errorCallback,
-        );
+        setPageElements(page);        
         setAllowRemoveElements(!allowRemoveElements);
       };
 
@@ -95,15 +128,42 @@ const AutoFindProvider = inject("mainModel")(
 
     const onChangePerception = (value) => {
       setPerception(value);
-      if (predictedElements && allowRemoveElements) {
+    };
+
+    const getPredictedElement = (id) => {
+      const element = predictedElements.find((e) => e.element_id === id);
+      getPageId((id) =>
+        chrome.tabs.sendMessage(id, {
+          message: "ELEMENT_DATA",
+          param: { element, types: Object.keys(JDIclasses) },
+        })
+      );
+    };
+
+    const actions = {
+      GET_ELEMENT: getPredictedElement,
+      TOGGLE_ELEMENT: toggleElementGeneration,
+      HIGHLIGHT_OFF: clearElementsState,
+      REMOVE_ELEMENT: hideElement,
+      CHANGE_TYPE: changeType,
+    };
+
+    useEffect(() => {
+      if (predictedElements && !allowRemoveElements) {
         highlightElements(
           predictedElements,
-          () => {},
-          toggleElementGeneration,
-          value
+          () => setStatus(autoFindStatus.success),
+          perception,
+          () => setStatus(autoFindStatus.error)
         );
       }
-    };
+    }, [predictedElements, perception]);
+
+    useEffect(() => {
+      if (status === autoFindStatus.success) {
+        runDocumentListeners(actions);
+      }
+    }, [status]);
 
     const data = [
       {
