@@ -1,6 +1,7 @@
 import { observable, action } from "mobx";
 import { saveAs } from "file-saver";
 import JSZip from "jszip";
+import CyrillicToTranslit from "cyrillic-to-translit-js";
 // TODO: Export function
 
 function varName(name) {
@@ -8,8 +9,16 @@ function varName(name) {
 }
 
 function getClassName(name) {
-  let words = name.split(/\W/);
+  if (isCyrillic(name)) {
+    name = CyrillicToTranslit().transform(name, " ");
+  }
+  const words = name.split(new RegExp(" "));
   return words.map((word) => word[0].toUpperCase() + word.slice(1)).join("");
+}
+
+function isCyrillic(term) {
+  const cyrillicPattern = /^\p{Script=Cyrillic}+$/u;
+  return cyrillicPattern.test(term);
 }
 
 function poName(name, poName) {
@@ -196,8 +205,7 @@ function genCodeOfElements(parentId, arrOfElements, mainModel, isAutoFind) {
           el.Name,
           mainModel
         );
-      }
-      else if (complex[el.Type] && !isAutoFind) {
+      } else if (complex[el.Type] && !isAutoFind) {
         let fields = getFields(ruleBlockModel.elementFields[el.Type]);
         result += isSimple(el, fields)
           ? simpleCode(
@@ -213,8 +221,7 @@ function genCodeOfElements(parentId, arrOfElements, mainModel, isAutoFind) {
               el.Name,
               mainModel
             );
-      }
-      else if (simple[el.Type] || isAutoFind) {
+      } else if (simple[el.Type] || isAutoFind) {
         result += simpleCode(
           locatorType(el.Locator),
           el.Locator,
