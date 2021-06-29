@@ -1,6 +1,6 @@
 const defaultClass = "DefaultClass";
 
-const JDIclasses = {
+export const JDIclasses = {
   button: "Button",
   link: "Link",
   iframe: defaultClass,

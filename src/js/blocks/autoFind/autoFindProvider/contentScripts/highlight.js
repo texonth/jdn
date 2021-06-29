@@ -7,6 +7,17 @@ export const highlightOnPage = () => {
   let isHighlightElementsReverse = false;
   let port;
 
+  const primaryColor = `rgba(74, 207, 237, 0.5)`;
+  const secondaryColor = `rgba(250, 238, 197, 0.5)`;
+
+  const divPrimaryStyle = {
+    backgroundColor: primaryColor,
+  };
+
+  const divSecondaryStyle = {
+    backgroundColor: secondaryColor,
+  };
+
   const isInViewport = (element) => {
     const { top, right, bottom, left } = element.getBoundingClientRect();
 
@@ -20,34 +31,39 @@ export const highlightOnPage = () => {
     return val;
   };
 
-  const toggleElement = (id) => {
-    port.postMessage({ message: "TOGGLE_ELEMENT", id });
+  const toggleElement = (element) => {
+    const div = document.getElementById(element.element_id);
+    if (element.skipGeneration) Object.assign(div.style, divSecondaryStyle);
+    else Object.assign(div.style, divPrimaryStyle);
+  };
+
+  const removeElement = (element) => {
+    predictedElements.find((e) => {
+      if (e.element_id === element.element_id) e.hidden = element.hidden;
+    });
+
+    const div = document.getElementById(element.element_id);
+    div.remove();
+  };
+
+  const assignType = (element) => {
+    const div = document.getElementById(element.element_id);
+    div.querySelector(".jdn-label").textContent = element.predicted_label;
   };
 
   const drawRectangle = (
-      element,
-      { element_id, predicted_label, predicted_probability }
+    element,
+    { element_id, predicted_label, predicted_probability }
   ) => {
-    const primaryColor = `rgba(74, 207, 237, 0.5)`;
-    const secondaryColor = `rgba(250, 238, 197, 0.5)`;
-
-    const divPrimaryStyle = {
-      backgroundColor: primaryColor,
-    };
-
-    const divSecondaryStyle = {
-      backgroundColor: secondaryColor,
-    };
-
     const divDefaultStyle = (rect) => {
       const { top, left, height, width } = rect || {};
       const coords = rect
         ? {
-          left: `${left + window.pageXOffset}px`,
-          top: `${top + window.pageYOffset}px`,
-          height: `${height}px`,
-          width: `${width}px`,
-        }
+            left: `${left + window.pageXOffset}px`,
+            top: `${top + window.pageYOffset}px`,
+            height: `${height}px`,
+            width: `${width}px`,
+          }
         : {};
       return {
         ...coords,
@@ -61,15 +77,15 @@ export const highlightOnPage = () => {
 
     const div = document.createElement("div");
     div.id = element_id;
-    div.setAttribute('jdn-highlight', true);
-    div.textContent = `${predicted_label}: ${predicted_probability}`;
+    div.setAttribute("jdn-highlight", true);
+    div.innerHTML = `<span class="jdn-label">${predicted_label}</span>: ${predicted_probability}`;
     Object.assign(div.style, divDefaultStyle(element.getBoundingClientRect()));
 
     div.onclick = () => {
-      toggleElement(element_id);
-      element.skipGeneration = !element.skipGeneration;
-      if (element.skipGeneration) Object.assign(div.style, divSecondaryStyle);
-      else Object.assign(div.style, divPrimaryStyle);
+      chrome.runtime.sendMessage({
+        message: "TOGGLE_ELEMENT",
+        param: element_id,
+      });
     };
 
     document.body.appendChild(div);
@@ -84,13 +100,12 @@ export const highlightOnPage = () => {
       predictedElements = param.elements;
       perception = param.perception;
     }
-    if (!nodes) {
-      let query = "";
-      predictedElements.forEach(({ element_id }) => {
-        query += `${!!query.length ? ", " : ""}[jdn-hash='${element_id}']`;
-      });
-      nodes = document.querySelectorAll(query);
-    }
+    let query = "";
+    predictedElements.forEach(({ element_id, hidden }) => {
+      if (hidden) return;
+      query += `${!!query.length ? ", " : ""}[jdn-hash='${element_id}']`;
+    });
+    nodes = document.querySelectorAll(query);
     nodes.forEach((element) => {
       if (isInViewport(element)) {
         const hash = element.getAttribute("jdn-hash");
@@ -102,7 +117,7 @@ export const highlightOnPage = () => {
           highlightElement.remove();
         } else if (!highlightElement && isAbovePerceptionTreshold) {
           const predicted = predictedElements.find(
-              (e) => e.element_id === hash
+            (e) => e.element_id === hash
           );
           drawRectangle(element, predicted, perception);
         }
@@ -111,7 +126,7 @@ export const highlightOnPage = () => {
   };
 
   let timer;
-  const eventListenerCallback = () => {
+  const scrollListenerCallback = () => {
     if (timer) clearTimeout(timer);
     timer = setTimeout(() => {
       findAndHighlight();
@@ -130,14 +145,16 @@ export const highlightOnPage = () => {
       const { top, right, bottom, left } = element.getBoundingClientRect();
 
       if (
-        (event.clientX > left && event.clientX < right) &&
-        (event.clientY > top && event.clientY < bottom)
+        event.clientX > left &&
+        event.clientX < right &&
+        event.clientY > top &&
+        event.clientY < bottom
       ) {
         if (!isCurrentElement) {
           isCurrentElement = true;
           return;
         } else {
-          document.getElementById(element.getAttribute('jdn-hash')).click();
+          document.getElementById(element.getAttribute("jdn-hash")).click();
         }
       }
     });
@@ -156,7 +173,7 @@ export const highlightOnPage = () => {
   const events = ["scroll", "resize"];
   const removeEventListeners = () => {
     events.forEach((eventName) => {
-      document.removeEventListener(eventName, eventListenerCallback);
+      document.removeEventListener(eventName, scrollListenerCallback);
     });
   };
 
@@ -166,10 +183,10 @@ export const highlightOnPage = () => {
 
   const setDocumentListeners = () => {
     events.forEach((eventName) => {
-      document.addEventListener(eventName, eventListenerCallback);
+      document.addEventListener(eventName, scrollListenerCallback);
     });
 
-    document.addEventListener('click', (event) => {
+    document.addEventListener("click", (event) => {
       if (!event.clientX && !event.clientY) return;
       selectAllElementsOnClick(event);
     });
@@ -188,7 +205,7 @@ export const highlightOnPage = () => {
 
   const messageHandler = ({ message, param }) => {
     const removedCallback = () => {
-      port.postMessage({ message: "HIGHLIGHT_REMOVED" });
+      chrome.runtime.sendMessage({ message: "HIGHLIGHT_REMOVED" });
     };
 
     if (message === "SET_HIGHLIGHT") {
@@ -203,6 +220,18 @@ export const highlightOnPage = () => {
     if (message === "HIGHLIGHT_ERRORS") {
       highlightErrors(param);
     }
+
+    if (message === "HIGHLIGHT_TOGGLED") {
+      toggleElement(param);
+    }
+
+    if (message === "HIDE_ELEMENT") {
+      removeElement(param);
+    }
+
+    if (message === "ASSIGN_TYPE") {
+      assignType(param);
+    }
   };
 
   const disconnectHandler = () => {
@@ -212,6 +241,6 @@ export const highlightOnPage = () => {
   chrome.runtime.onConnect.addListener((p) => {
     port = p;
     port.onDisconnect.addListener(disconnectHandler);
-    port.onMessage.addListener(messageHandler);
+    chrome.runtime.onMessage.addListener(messageHandler);
   });
 };
