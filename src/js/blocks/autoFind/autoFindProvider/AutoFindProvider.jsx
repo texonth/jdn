@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import React, { useState, useEffect } from "react";
 import { inject, observer } from "mobx-react";
 import { useContext } from "react";
@@ -7,9 +8,9 @@ import {
   highlightUnreached,
   removeHighlightFromPage,
   runDocumentListeners,
+  generatePageObject
 } from "./pageDataHandlers";
-import { generatePageObject } from "./pageDataHandlers";
-import { getPageId } from "./pageScriptHandlers";
+import { getPageId, sendMessageToTab } from "./pageScriptHandlers";
 import { JDIclasses } from "./generationClassesMap";
 
 /*global chrome*/
@@ -29,31 +30,31 @@ const AutoFindProvider = inject("mainModel")(
     const [pageElements, setPageElements] = useState(null);
     const [predictedElements, setPredictedElements] = useState(null);
     const [status, setStatus] = useState(autoFindStatus.noStatus);
-    const [allowIdetifyElements, setAllowIdetifyElements] = useState(true);
+    const [allowIdentifyElements, setAllowIdentifyElements] = useState(true);
     const [allowRemoveElements, setAllowRemoveElements] = useState(false);
     const [perception, setPerception] = useState(0.5);
     const [unreachableNodes, setUnreachableNodes] = useState(null);
+    const [currentTabId, setCurrentTabId] = useState(null);
 
+    if (!currentTabId) getPageId((id) => setCurrentTabId(id));
+
+    console.log(currentTabId);
     const clearElementsState = () => {
       setPageElements(null);
       setPredictedElements(null);
       setStatus(autoFindStatus.noStatus);
-      setAllowIdetifyElements(true);
+      setAllowIdentifyElements(true);
       setAllowRemoveElements(false);
       setUnreachableNodes([]);
     };
 
-    const toggleElementGeneration = (id) => {
+    const toggleElementGeneration = (id, sender) => {
+      console.log("toggleInvoked");
       setPredictedElements((previousValue) => {
         const toggled = previousValue.map((el) => {
           if (el.element_id === id) {
             el.skipGeneration = !el.skipGeneration;
-            getPageId((id) =>
-              chrome.tabs.sendMessage(id, {
-                message: "HIGHLIGHT_TOGGLED",
-                param: el,
-              })
-            );
+            sendMessageToTab(sender.tab.id, "HIGHLIGHT_TOGGLED", el);
           }
           return el;
         });
@@ -61,17 +62,12 @@ const AutoFindProvider = inject("mainModel")(
       });
     };
 
-    const hideElement = (id) => {
+    const hideElement = (id, sender) => {
       setPredictedElements((previousValue) => {
         const hidden = previousValue.map((el) => {
           if (el.element_id === id) {
             el.hidden = true;
-            getPageId((id) =>
-              chrome.tabs.sendMessage(id, {
-                message: "HIDE_ELEMENT",
-                param: el,
-              })
-            );
+            sendMessageToTab(sender.tab.id, "HIDE_ELEMENT", el);
           }
           return el;
         });
@@ -79,17 +75,12 @@ const AutoFindProvider = inject("mainModel")(
       });
     };
 
-    const changeType = ({id, newType}) => {
+    const changeType = ({id, newType}, sender) => {
       setPredictedElements((previousValue) => {
         const changed = previousValue.map((el) => {
           if (el.element_id === id) {
             el.predicted_label = newType;
-            getPageId((id) =>
-              chrome.tabs.sendMessage(id, {
-                message: "ASSIGN_TYPE",
-                param: el,
-              })
-            );
+            sendMessageToTab(sender.tab.id, "ASSIGN_TYPE", el);
           }
           return el;
         });
@@ -98,9 +89,8 @@ const AutoFindProvider = inject("mainModel")(
     };
 
     const identifyElements = () => {
-      setAllowIdetifyElements(!allowIdetifyElements);
+      setAllowIdentifyElements(!allowIdentifyElements);
       setStatus(autoFindStatus.loading);
-
       const updateElements = ([predicted, page]) => {
         const rounded = predicted.map((el) => ({
           ...el,
@@ -108,11 +98,11 @@ const AutoFindProvider = inject("mainModel")(
             Math.round(el.predicted_probability * 100) / 100,
         }));
         setPredictedElements(rounded);
-        setPageElements(page);        
+        setPageElements(page);
         setAllowRemoveElements(!allowRemoveElements);
       };
 
-      getElements(updateElements);
+      getElements(updateElements, currentTabId);
     };
 
     const removeHighlighs = () => {
@@ -121,11 +111,11 @@ const AutoFindProvider = inject("mainModel")(
         setStatus(autoFindStatus.removed);
       };
 
-      removeHighlightFromPage(callback);
+      removeHighlightFromPage(currentTabId, callback);
     };
 
     const generateAndDownload = (perception) => {
-      generatePageObject(predictedElements, perception, mainModel, (result) => {
+      generatePageObject(predictedElements, perception, mainModel, currentTabId, (result) => {
         setUnreachableNodes(result.unreachableNodes);
         highlightUnreached(result.unreachableNodes);
       });
@@ -135,20 +125,16 @@ const AutoFindProvider = inject("mainModel")(
       setPerception(value);
     };
 
-    const getPredictedElement = (id) => {
+    const getPredictedElement = (id, sender) => {
       const element = predictedElements.find((e) => e.element_id === id);
-      getPageId((id) =>
-        chrome.tabs.sendMessage(id, {
-          message: "ELEMENT_DATA",
-          param: { element, types: Object.keys(JDIclasses) },
-        })
-      );
+      sendMessageToTab(sender.tab.id, "ELEMENT_DATA", { element, types: Object.keys(JDIclasses) });
     };
 
     const actions = {
+      // TODO: check is functions used somewere else
       GET_ELEMENT: getPredictedElement,
       TOGGLE_ELEMENT: toggleElementGeneration,
-      HIGHLIGHT_OFF: clearElementsState,
+      HIGHLIGHT_OFF: clearElementsState, // ? no sender
       REMOVE_ELEMENT: hideElement,
       CHANGE_TYPE: changeType,
     };
@@ -156,6 +142,7 @@ const AutoFindProvider = inject("mainModel")(
     useEffect(() => {
       if (predictedElements && !allowRemoveElements) {
         highlightElements(
+          currentTabId,
           predictedElements,
           () => setStatus(autoFindStatus.success),
           perception,
@@ -166,7 +153,7 @@ const AutoFindProvider = inject("mainModel")(
 
     useEffect(() => {
       if (status === autoFindStatus.success) {
-        runDocumentListeners(actions);
+        runDocumentListeners(actions, currentTabId);
       }
     }, [status]);
 
@@ -175,7 +162,7 @@ const AutoFindProvider = inject("mainModel")(
         pageElements,
         predictedElements,
         status,
-        allowIdetifyElements,
+        allowIdentifyElements,
         allowRemoveElements,
         perception,
         unreachableNodes,

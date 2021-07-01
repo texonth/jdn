@@ -5,6 +5,14 @@ export const errorHandler = (error, errorCallback) => {
   if (typeof errorCallback === "function") errorCallback();
 };
 
+export const sendMessageToTab = (id, action, payload, onResponse) => {
+  console.log(action, "sended");
+  chrome.tabs.sendMessage(id, {
+    message: action,
+    param: payload,
+  },
+  onResponse);
+};
 
 export const getPageId = (callback, errorCallback) => {
   chrome.tabs.query({active: true, currentWindow: true}, (res) => {
@@ -16,39 +24,32 @@ export const getPageId = (callback, errorCallback) => {
   });
 };
 
-export const runContentScript = (script, callback, errorCallback) => {
-  const onRunScript = (tabId) =>
-    chrome.scripting.executeScript(
-        { target: { tabId }, function: script },
-        (invoked) => {
-          if (callback) {
-            callback(invoked || true);
-          }
+export const runContentScript = (tabId, script, callback) => {
+  chrome.scripting.executeScript(
+      { target: { tabId }, function: script },
+      (invoked) => {
+        if (callback) {
+          callback(invoked || true);
         }
-    );
-  getPageId(onRunScript, errorCallback);
+      }
+  );
 };
 
-export const runConnectedScript = (script, callback, errorCallback) => {
-  const onRunScript = (tabId) => {
+export const runConnectedScript = (tabId, script, callback) => {
+  console.log("runConnectedScript");
+  const onRunScript = () => {
     const port = chrome.tabs.connect(tabId, {
       name: `JDN_connect_${Date.now()}`,
     });
     callback(port);
   };
 
-  const afterContentScriptCallback = () => {
-    getPageId(onRunScript, errorCallback);
-  };
-
-  runContentScript(script, afterContentScriptCallback, errorCallback);
+  runContentScript(tabId, script, onRunScript);
 };
 
-export const insertCSS = (file) => {
-  getPageId((tabId) => {
-    chrome.scripting.insertCSS({
-      target: { tabId },
-      files: [file],
-    });
+export const insertCSS = (file, tabId) => {
+  chrome.scripting.insertCSS({
+    target: { tabId },
+    files: [file],
   });
 };
