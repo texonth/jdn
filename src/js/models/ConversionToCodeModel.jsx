@@ -17,7 +17,7 @@ function getClassName(name) {
 }
 
 function isCyrillic(term) {
-  const cyrillicPattern = /^\p{Script=Cyrillic}+$/u;
+  const cyrillicPattern = /[а-яА-ЯЁё]/;
   return cyrillicPattern.test(term);
 }
 
