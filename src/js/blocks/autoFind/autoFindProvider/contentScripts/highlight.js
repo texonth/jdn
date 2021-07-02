@@ -3,7 +3,7 @@
  */
 /* global chrome */
 export const highlightOnPage = () => {
-  const highlightElements = [];
+  let highlightElements = [];
   let isHighlightElementsReverse = false;
   let port;
 
@@ -166,6 +166,7 @@ export const highlightOnPage = () => {
         const el = document.getElementById(elementId);
         if (el) el.remove();
       });
+      highlightElements = [];
       callback();
     }
   };
@@ -176,7 +177,6 @@ export const highlightOnPage = () => {
       document.removeEventListener(eventName, scrollListenerCallback);
     });
     document.removeEventListener("click", clickListener);
-    console.log('removed');
   };
 
   const removeHighlight = (callback) => () => {
@@ -213,6 +213,7 @@ export const highlightOnPage = () => {
     };
 
     if (message === "SET_HIGHLIGHT") {
+      if (!highlightElements.length) setDocumentListeners();
       findAndHighlight(param);      
     }
 
@@ -239,12 +240,12 @@ export const highlightOnPage = () => {
 
   const disconnectHandler = () => {
     removeHighlight(() => console.log("JDN highlight has been killed"))();
+    chrome.runtime.onMessage.removeListener(messageHandler);
   };
 
   chrome.runtime.onConnect.addListener((p) => {
     port = p;
     port.onDisconnect.addListener(disconnectHandler);
     chrome.runtime.onMessage.addListener(messageHandler);
-    setDocumentListeners();
   });
 };

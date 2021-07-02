@@ -91,7 +91,6 @@ export const highlightElements = (
 
 const messageHandler = ({ message, param }) => {
   if (actions[message]) {
-    console.log(message);
     actions[message](param);
   }
 };
