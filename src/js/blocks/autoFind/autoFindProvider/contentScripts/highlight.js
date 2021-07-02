@@ -175,10 +175,17 @@ export const highlightOnPage = () => {
     events.forEach((eventName) => {
       document.removeEventListener(eventName, scrollListenerCallback);
     });
+    document.removeEventListener("click", clickListener);
+    console.log('removed');
   };
 
   const removeHighlight = (callback) => () => {
     removeEventListeners(removeHighlightElements(callback));
+  };
+
+  const clickListener = (event) => {
+    if (!event.clientX && !event.clientY) return;
+    selectAllElementsOnClick(event);
   };
 
   const setDocumentListeners = () => {
@@ -186,10 +193,7 @@ export const highlightOnPage = () => {
       document.addEventListener(eventName, scrollListenerCallback);
     });
 
-    document.addEventListener("click", (event) => {
-      if (!event.clientX && !event.clientY) return;
-      selectAllElementsOnClick(event);
-    });
+    document.addEventListener("click", clickListener);
   };
 
   const highlightErrors = (ids) => {
@@ -203,14 +207,13 @@ export const highlightOnPage = () => {
     });
   };
 
-  const messageHandler = ({ message, param }) => {
+  const messageHandler = ({ message, param }, options, responseCallback) => {
     const removedCallback = () => {
       chrome.runtime.sendMessage({ message: "HIGHLIGHT_REMOVED" });
     };
 
     if (message === "SET_HIGHLIGHT") {
-      findAndHighlight(param);
-      setDocumentListeners();
+      findAndHighlight(param);      
     }
 
     if (message === "KILL_HIGHLIGHT") {
@@ -242,5 +245,6 @@ export const highlightOnPage = () => {
     port = p;
     port.onDisconnect.addListener(disconnectHandler);
     chrome.runtime.onMessage.addListener(messageHandler);
+    setDocumentListeners();
   });
 };
