@@ -19,7 +19,7 @@ let documentListenersStarted;
 let actionListenersStarted;
 let actions;
 
-export const clearState = () => {
+const clearState = () => {
   port = null;
   generationScriptExists = false;
   documentListenersStarted = false;
