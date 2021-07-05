@@ -16,6 +16,8 @@ import {
 let port;
 let generationScriptExists;
 let documentListenersStarted;
+let actionListenersStarted;
+let actions;
 
 const clearState = () => {
   port = null;
@@ -55,14 +57,6 @@ const setUrlListener = (onHighlightOff) => {
   runContentScript(urlListener);
 };
 
-const setActionListeners = (actions) => {
-  chrome.runtime.onMessage.addListener(({ message, param }) => {
-    if (actions[message]) {
-      actions[message](param);
-    }
-  });
-};
-
 export const getElements = (callback) => {
   runContentScript(getPageData, uploadElements(callback));
 };
@@ -95,11 +89,25 @@ export const highlightElements = (
   }
 };
 
-export const runDocumentListeners = (actions) => {
+const messageHandler = ({ message, param }) => {
+  if (actions[message]) {
+    actions[message](param);
+  }
+};
+
+export const runDocumentListeners = (_actions) => {
+  actions = _actions;
+
+  if (actionListenersStarted) {
+    // we neeed to remove old one to kill all ghosty references to old data
+    chrome.runtime.onMessage.removeListener(messageHandler);
+  }
+  chrome.runtime.onMessage.addListener(messageHandler);
+  actionListenersStarted = true;
+
   if (!documentListenersStarted) {
     setUrlListener(actions["HIGHLIGHT_OFF"]);
     runContentScript(runContextMenu, () => {
-      setActionListeners(actions);
       insertCSS("contextmenu.css");
     });
     documentListenersStarted = true;
