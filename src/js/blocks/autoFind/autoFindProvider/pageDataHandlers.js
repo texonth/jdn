@@ -16,6 +16,8 @@ import {
 let port;
 let generationScriptExists;
 let documentListenersStarted;
+let actionListenersStarted;
+let actions;
 
 const clearState = () => {
   port = null;
@@ -53,18 +55,8 @@ const setUrlListener = (onHighlightOff, currentTabId) => {
   runContentScript(currentTabId, urlListener);
 };
 
-const setActionListeners = (actions) => {
-  console.log("setActionListeners");
-  chrome.runtime.onMessage.addListener(({ message, param }, sender) => {
-    console.log("receiveMesssage", message);
-    if (actions[message]) {
-      actions[message](param, sender);
-    }
-  });
-};
-
-export const getElements = (callback, currentTabId) => {
-  runContentScript(currentTabId, getPageData, uploadElements(callback));
+export const getElements = (callback) => {
+  runContentScript(getPageData, uploadElements(callback));
 };
 
 export const highlightElements = (
@@ -90,13 +82,26 @@ export const highlightElements = (
   }
 };
 
-export const runDocumentListeners = (actions, currentTabId) => {
-  console.log("runDocumentListeners");
+const messageHandler = ({ message, param }) => {
+  if (actions[message]) {
+    actions[message](param);
+  }
+};
+
+export const runDocumentListeners = (_actions) => {
+  actions = _actions;
+
+  if (actionListenersStarted) {
+    // we neeed to remove old one to kill all ghosty references to old data
+    chrome.runtime.onMessage.removeListener(messageHandler);
+  }
+  chrome.runtime.onMessage.addListener(messageHandler);
+  actionListenersStarted = true;
+
   if (!documentListenersStarted) {
-    setUrlListener(actions["HIGHLIGHT_OFF"], currentTabId);
-    runContentScript(currentTabId, runContextMenu, () => {
-      setActionListeners(actions);
-      insertCSS("contextmenu.css", currentTabId);
+    setUrlListener(actions["HIGHLIGHT_OFF"]);
+    runContentScript(runContextMenu, () => {
+      insertCSS("contextmenu.css");
     });
     documentListenersStarted = true;
   }

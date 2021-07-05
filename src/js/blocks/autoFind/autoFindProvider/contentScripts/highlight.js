@@ -3,7 +3,7 @@
  */
 /* global chrome */
 export const highlightOnPage = () => {
-  const highlightElements = [];
+  let highlightElements = [];
   let isHighlightElementsReverse = false;
   let port;
 
@@ -166,6 +166,7 @@ export const highlightOnPage = () => {
         const el = document.getElementById(elementId);
         if (el) el.remove();
       });
+      highlightElements = [];
       callback();
     }
   };
@@ -175,10 +176,16 @@ export const highlightOnPage = () => {
     events.forEach((eventName) => {
       document.removeEventListener(eventName, scrollListenerCallback);
     });
+    document.removeEventListener("click", clickListener);
   };
 
   const removeHighlight = (callback) => () => {
     removeEventListeners(removeHighlightElements(callback));
+  };
+
+  const clickListener = (event) => {
+    if (!event.clientX && !event.clientY) return;
+    selectAllElementsOnClick(event);
   };
 
   const setDocumentListeners = () => {
@@ -186,10 +193,7 @@ export const highlightOnPage = () => {
       document.addEventListener(eventName, scrollListenerCallback);
     });
 
-    document.addEventListener("click", (event) => {
-      if (!event.clientX && !event.clientY) return;
-      selectAllElementsOnClick(event);
-    });
+    document.addEventListener("click", clickListener);
   };
 
   const highlightErrors = (ids) => {
@@ -203,14 +207,14 @@ export const highlightOnPage = () => {
     });
   };
 
-  const messageHandler = ({ message, param }) => {
+  const messageHandler = ({ message, param }, options, responseCallback) => {
     const removedCallback = () => {
       chrome.runtime.sendMessage({ message: "HIGHLIGHT_REMOVED" });
     };
 
     if (message === "SET_HIGHLIGHT") {
-      findAndHighlight(param);
-      setDocumentListeners();
+      if (!highlightElements.length) setDocumentListeners();
+      findAndHighlight(param);      
     }
 
     if (message === "KILL_HIGHLIGHT") {
@@ -236,6 +240,7 @@ export const highlightOnPage = () => {
 
   const disconnectHandler = () => {
     removeHighlight(() => console.log("JDN highlight has been killed"))();
+    chrome.runtime.onMessage.removeListener(messageHandler);
   };
 
   chrome.runtime.onConnect.addListener((p) => {
