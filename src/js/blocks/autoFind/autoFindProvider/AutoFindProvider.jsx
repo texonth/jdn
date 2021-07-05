@@ -9,10 +9,14 @@ import {
   runDocumentListeners,
 } from "./pageDataHandlers";
 import { generatePageObject } from "./pageDataHandlers";
-import { getPageId } from "./pageScriptHandlers";
+import { getPageId, runContentScript } from "./pageScriptHandlers";
 import { JDIclasses } from "./generationClassesMap";
+import { saveScreenSite } from './contentScripts/saveScreenSite';
+import { saveJson } from './contentScripts/saveJson';
 
 /*global chrome*/
+
+let predictedElementsJSON;
 
 const autoFindStatus = {
   noStatus: "",
@@ -97,12 +101,17 @@ const AutoFindProvider = inject("mainModel")(
       });
     };
 
+    const getScreenAndJson = () => {
+      runContentScript(saveScreenSite);
+      runContentScript(saveJson(JSON.stringify(predictedElementsJSON)));
+    };
+
     const identifyElements = () => {
       setAllowIdetifyElements(!allowIdetifyElements);
       setStatus(autoFindStatus.loading);
 
       const updateElements = ([predicted, page]) => {
-        const rounded = predicted.map((el) => ({
+        const rounded = predictedElementsJSON = predicted.map((el) => ({
           ...el,
           predicted_probability:
             Math.round(el.predicted_probability * 100) / 100,
@@ -185,6 +194,7 @@ const AutoFindProvider = inject("mainModel")(
         removeHighlighs,
         generateAndDownload,
         onChangePerception,
+        getScreenAndJson
       },
     ];
 
