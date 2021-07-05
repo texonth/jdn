@@ -9,7 +9,7 @@ Current version of JDN plugin is client-server application with to independent p
 
 **Setup server part**
 * Account on GitLab is essential: https://gitlab.com/users/sign_in. Register new account if it’s necessary or use existing one
-* Send the email of account project data scientist Vyacheslav Fuga to get access
+* Send the email of account project data scientist Vyacheslav Fuga (skype: live:.cid.ffcd60dc4c98309 ) to get access
 * Setup Docker https://www.docker.com/products/docker-desktop
 * Create container using the command 
 _docker login registry.gitlab.com
