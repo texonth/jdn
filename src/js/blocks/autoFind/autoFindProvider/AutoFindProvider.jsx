@@ -140,7 +140,7 @@ const AutoFindProvider = inject("mainModel")(
     };
 
     useEffect(() => {
-      if (predictedElements && !allowRemoveElements) {
+      if (predictedElements) {
         highlightElements(
           currentTabId,
           predictedElements,

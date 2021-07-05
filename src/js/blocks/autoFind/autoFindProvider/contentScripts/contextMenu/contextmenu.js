@@ -174,16 +174,18 @@ export const runContextMenu = () => {
       );
 
       if (windowWidth - clickCoordsX < menuWidth) {
-        menu.style.left = windowWidth - menuWidth + "px";
+        menu.style.left = windowWidth - menuWidth + pageXOffset + "px";
       } else {
-        menu.style.left = clickCoordsX + mouseOffset + "px";
+        menu.style.left = clickCoordsX + mouseOffset + pageXOffset + "px";
       }
 
       if (windowHeight - clickCoordsY < menuHeight) {
-        menu.style.top = windowHeight - menuHeight + "px";
+        menu.style.top = windowHeight - menuHeight + pageYOffset + "px";
       } else {
-        menu.style.top = clickCoordsY + mouseOffset + "px";
+        menu.style.top = clickCoordsY + mouseOffset + pageYOffset + "px";
       }
+
+      menu.style.position = "absolute";
 
       var sizes = ContextUtil.getSizes(menu);
 
@@ -296,7 +298,8 @@ export const runContextMenu = () => {
     types
   ) => [
     {
-      text: predicted_label,
+      text: `<b>Block type: ${predicted_label}</b>`,
+      sub: typesMenu(types),
     },
     {
       text: "Remove",
@@ -318,10 +321,6 @@ export const runContextMenu = () => {
           }),
       },
     },
-    {
-      text: "Change type",
-      sub: typesMenu(types),
-    },
   ];
 
   const typesMenu = (types) => {
@@ -342,9 +341,9 @@ export const runContextMenu = () => {
   };
 
   document.oncontextmenu = (event) => {
-    event.preventDefault();
     const highlightTarget = event.target.closest("[jdn-highlight=true]");
     if (highlightTarget) {
+      event.preventDefault();
       contextEvent = event;
       chrome.runtime.sendMessage({
         message: "GET_ELEMENT",
@@ -353,8 +352,15 @@ export const runContextMenu = () => {
     }
   };
 
+  document.addEventListener(
+    "mouseleave",
+    () => elementMenu && elementMenu.hide()
+  );
+
   chrome.runtime.onMessage.addListener(({ message, param }) => {
     if (message === "ELEMENT_DATA") {
+      // element can be undefined in case of outdated event listener (after refresh, for example). better solution is to kill listener, but I can't implement it for now
+      if (!param.element) return;
       predictedElement = param.element;
       types = param.types;
       elementMenu && elementMenu.remove();
