@@ -6,12 +6,12 @@ import {
   getElements,
   highlightElements,
   highlightUnreached,
-  removeHighlightFromPage,
   runDocumentListeners,
   generatePageObject
 } from "./pageDataHandlers";
-import { getPageId, sendMessageToTab } from "./pageScriptHandlers";
+
 import { JDIclasses } from "./generationClassesMap";
+import { connector, sendMessage } from "./connector";
 
 /*global chrome*/
 
@@ -34,11 +34,11 @@ const AutoFindProvider = inject("mainModel")(
     const [allowRemoveElements, setAllowRemoveElements] = useState(false);
     const [perception, setPerception] = useState(0.5);
     const [unreachableNodes, setUnreachableNodes] = useState(null);
-    const [currentTabId, setCurrentTabId] = useState(null);
 
-    if (!currentTabId) getPageId((id) => setCurrentTabId(id));
+    connector.onerror = () => {
+      setStatus(autoFindStatus.error);
+    };
 
-    console.log(currentTabId);
     const clearElementsState = () => {
       setPageElements(null);
       setPredictedElements(null);
@@ -48,13 +48,12 @@ const AutoFindProvider = inject("mainModel")(
       setUnreachableNodes([]);
     };
 
-    const toggleElementGeneration = (id, sender) => {
-      console.log("toggleInvoked");
+    const toggleElementGeneration = (id) => {
       setPredictedElements((previousValue) => {
         const toggled = previousValue.map((el) => {
           if (el.element_id === id) {
             el.skipGeneration = !el.skipGeneration;
-            sendMessageToTab(sender.tab.id, "HIGHLIGHT_TOGGLED", el);
+            sendMessage.toggle(el);
           }
           return el;
         });
@@ -62,12 +61,12 @@ const AutoFindProvider = inject("mainModel")(
       });
     };
 
-    const hideElement = (id, sender) => {
+    const hideElement = (id) => {
       setPredictedElements((previousValue) => {
         const hidden = previousValue.map((el) => {
           if (el.element_id === id) {
             el.hidden = true;
-            sendMessageToTab(sender.tab.id, "HIDE_ELEMENT", el);
+            sendMessage.hide(el);
           }
           return el;
         });
@@ -75,12 +74,12 @@ const AutoFindProvider = inject("mainModel")(
       });
     };
 
-    const changeType = ({id, newType}, sender) => {
+    const changeType = ({id, newType}) => {
       setPredictedElements((previousValue) => {
         const changed = previousValue.map((el) => {
           if (el.element_id === id) {
             el.predicted_label = newType;
-            sendMessageToTab(sender.tab.id, "ASSIGN_TYPE", el);
+            sendMessage.changeType(el);
           }
           return el;
         });
@@ -88,21 +87,21 @@ const AutoFindProvider = inject("mainModel")(
       });
     };
 
+    const updateElements = ([predicted, page]) => {
+      const rounded = predicted.map((el) => ({
+        ...el,
+        predicted_probability:
+          Math.round(el.predicted_probability * 100) / 100,
+      }));
+      setPredictedElements(rounded);
+      setPageElements(page);
+      setAllowRemoveElements(!allowRemoveElements);
+    };
+
     const identifyElements = () => {
       setAllowIdentifyElements(!allowIdentifyElements);
       setStatus(autoFindStatus.loading);
-      const updateElements = ([predicted, page]) => {
-        const rounded = predicted.map((el) => ({
-          ...el,
-          predicted_probability:
-            Math.round(el.predicted_probability * 100) / 100,
-        }));
-        setPredictedElements(rounded);
-        setPageElements(page);
-        setAllowRemoveElements(!allowRemoveElements);
-      };
-
-      getElements(updateElements, currentTabId);
+      getElements(updateElements);
     };
 
     const removeHighlighs = () => {
@@ -111,11 +110,11 @@ const AutoFindProvider = inject("mainModel")(
         setStatus(autoFindStatus.removed);
       };
 
-      removeHighlightFromPage(currentTabId, callback);
+      sendMessage.killHighlight(null, callback);
     };
 
     const generateAndDownload = (perception) => {
-      generatePageObject(predictedElements, perception, mainModel, currentTabId, (result) => {
+      generatePageObject(predictedElements, perception, mainModel, (result) => {
         setUnreachableNodes(result.unreachableNodes);
         highlightUnreached(result.unreachableNodes);
       });
@@ -125,16 +124,15 @@ const AutoFindProvider = inject("mainModel")(
       setPerception(value);
     };
 
-    const getPredictedElement = (id, sender) => {
+    const getPredictedElement = (id) => {
       const element = predictedElements.find((e) => e.element_id === id);
-      sendMessageToTab(sender.tab.id, "ELEMENT_DATA", { element, types: Object.keys(JDIclasses) });
+      sendMessage.elementData({ element, types: Object.keys(JDIclasses) });
     };
 
     const actions = {
-      // TODO: check is functions used somewere else
       GET_ELEMENT: getPredictedElement,
       TOGGLE_ELEMENT: toggleElementGeneration,
-      HIGHLIGHT_OFF: clearElementsState, // ? no sender
+      HIGHLIGHT_OFF: clearElementsState,
       REMOVE_ELEMENT: hideElement,
       CHANGE_TYPE: changeType,
     };
@@ -142,18 +140,16 @@ const AutoFindProvider = inject("mainModel")(
     useEffect(() => {
       if (predictedElements) {
         highlightElements(
-          currentTabId,
           predictedElements,
           () => setStatus(autoFindStatus.success),
           perception,
-          () => setStatus(autoFindStatus.error)
         );
       }
     }, [predictedElements, perception]);
 
     useEffect(() => {
       if (status === autoFindStatus.success) {
-        runDocumentListeners(actions, currentTabId);
+        runDocumentListeners(actions);
       }
     }, [status]);
 

@@ -1,31 +1,20 @@
+import { connector, sendMessage } from "./connector";
 import { runContextMenu } from "./contentScripts/contextMenu/contextmenu";
 import { generateXpathes } from "./contentScripts/generationData";
 import { highlightOnPage } from "./contentScripts/highlight";
 import { getPageData } from "./contentScripts/pageData";
 import { urlListener } from "./contentScripts/urlListener";
 import { getPage, predictedToConvert } from "./pageObject";
-import {
-  insertCSS,
-  runConnectedScript,
-  runContentScript,
-  sendMessageToTab,
-} from "./pageScriptHandlers";
 
-/*global chrome*/
+/* global chrome*/
 
-let port;
-let generationScriptExists;
 let documentListenersStarted;
-let actionListenersStarted;
-let actions;
 
 const clearState = () => {
-  port = null;
-  generationScriptExists = false;
   documentListenersStarted = false;
 };
 
-const uploadElements = (callback) => async ([{ result }]) => {
+const uploadElements = async ([{ result }]) => {
   const [payload, length] = result;
   const response = await fetch("http:localhost:5000/predict", {
     method: "POST",
@@ -34,97 +23,67 @@ const uploadElements = (callback) => async ([{ result }]) => {
 
   if (response.ok) {
     const r = await response.json();
-    callback([r, length]);
+    return [r, length];
   } else {
     throw new Error(response);
   }
 };
 
-const setUrlListener = (onHighlightOff, currentTabId) => {
-  chrome.tabs.onUpdated.addListener((tabId, changeinfo, tab) => {
-    if (
-      changeinfo &&
-      changeinfo.status === "complete" &&
-      currentTabId === tabId
-    ) {
-      clearState();
-      onHighlightOff();
-    }
+const setUrlListener = (onHighlightOff) => {
+  connector.onTabUpdate(() => {
+    clearState();
+    onHighlightOff();
   });
 
-  runContentScript(currentTabId, urlListener);
+  connector.attachContentScript(urlListener);
 };
 
 export const getElements = (callback) => {
-  runContentScript(getPageData, uploadElements(callback));
+  connector.scripts.delete(getPageData);
+  return connector.attachContentScript(getPageData)
+      .then(uploadElements)
+      .then(callback);
 };
 
 export const highlightElements = (
-  currentTabId,
-  elements,
-  successCallback,
-  perception,
+    elements,
+    successCallback,
+    perception,
 ) => {
   const setHighlight = () => {
-    sendMessageToTab(currentTabId, "SET_HIGHLIGHT", { elements, perception });
+    sendMessage.setHighlight({ elements, perception });
     successCallback();
   };
 
-  const onSetupScript = (p) => {
-    port = p;
-    setHighlight();
-  };
-
-  if (!port) {
-    runConnectedScript(currentTabId, highlightOnPage, onSetupScript);
-  } else {
-    setHighlight();
-  }
+  connector.attachContentScript(highlightOnPage).then(
+      connector.createPort().then(setHighlight)
+  );
 };
 
-const messageHandler = ({ message, param }) => {
+const messageHandler = ({ message, param }, actions) => {
   if (actions[message]) {
     actions[message](param);
   }
 };
 
-export const runDocumentListeners = (_actions) => {
-  actions = _actions;
-
-  if (actionListenersStarted) {
-    // we neeed to remove old one to kill all ghosty references to old data
-    chrome.runtime.onMessage.removeListener(messageHandler);
-  }
-  chrome.runtime.onMessage.addListener(messageHandler);
-  actionListenersStarted = true;
+export const runDocumentListeners = (actions) => {
+  connector.updateMessageListener((payload) => messageHandler(payload, actions));
 
   if (!documentListenersStarted) {
     setUrlListener(actions["HIGHLIGHT_OFF"]);
-    runContentScript(runContextMenu, () => {
-      insertCSS("contextmenu.css");
-    });
+    connector.attachContentScript(runContextMenu);
+    connector.attachCSS("contextmenu.css");
     documentListenersStarted = true;
   }
 };
 
-export const removeHighlightFromPage = (currentTabId, callback) => {
-  chrome.runtime.onMessage.addListener(({ message }) => { // TODO - надо? может посмотреть в сторону response?
-    if (message == "HIGHLIGHT_REMOVED") {
-      callback();
-    }
-  });
-  sendMessageToTab(currentTabId, "KILL_HIGHLIGHT");
-};
-
 export const generatePageObject = (
-  elements,
-  perception,
-  mainModel,
-  onGenerated,
-  currentTabId,
+    elements,
+    perception,
+    mainModel,
+    onGenerated,
 ) => {
   const onXpathGenerated = ({ xpathElements, unreachableNodes }) => {
-    console.log("onXpathGen");
     const elToConvert = predictedToConvert(xpathElements, perception);
     getPage(elToConvert, (page) => {
       mainModel.conversionModel.genPageCode(page, mainModel, true);
@@ -134,17 +93,15 @@ export const generatePageObject = (
   };
 
   const requestXpathes = () => {
-    sendMessageToTab(currentTabId, "GENERATE_XPATHES", elements, onXpathGenerated);
+    sendMessage.generateXpathes(elements, onXpathGenerated);
   };
 
-  if (!generationScriptExists) {
-    runContentScript(currentTabId, generateXpathes, requestXpathes);
-    generationScriptExists = true;
-  } else {
-    requestXpathes();
-  }
+  connector.attachContentScript(generateXpathes).then(requestXpathes);
 };
 
 export const highlightUnreached = (ids) => {
-  port.postMessage({ message: "HIGHLIGHT_ERRORS", param: ids }); // Единственное для чего используется порт????????????
+  connector.port.postMessage({
+    message: "HIGHLIGHT_ERRORS",
+    param: ids
+  });
 };
