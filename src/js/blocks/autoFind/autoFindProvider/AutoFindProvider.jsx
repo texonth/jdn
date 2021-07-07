@@ -12,6 +12,7 @@ import {
 
 import { JDIclasses } from "./generationClassesMap";
 import { connector, sendMessage } from "./connector";
+import { getJdiClassName } from "./pageObject";
 
 /*global chrome*/
 
@@ -79,6 +80,7 @@ const AutoFindProvider = inject("mainModel")(
         const changed = previousValue.map((el) => {
           if (el.element_id === id) {
             el.predicted_label = newType;
+            el.jdi_class_name = getJdiClassName(newType);
             sendMessage.changeType(el);
           }
           return el;
@@ -90,6 +92,7 @@ const AutoFindProvider = inject("mainModel")(
     const updateElements = ([predicted, page]) => {
       const rounded = predicted.map((el) => ({
         ...el,
+        jdi_class_name: getJdiClassName(el.predicted_label),
         predicted_probability:
           Math.round(el.predicted_probability * 100) / 100,
       }));
@@ -126,7 +129,7 @@ const AutoFindProvider = inject("mainModel")(
 
     const getPredictedElement = (id) => {
       const element = predictedElements.find((e) => e.element_id === id);
-      sendMessage.elementData({ element, types: Object.keys(JDIclasses) });
+      sendMessage.elementData({ element, types: Object.keys(JDIclasses).map(getJdiClassName) });
     };
 
     const actions = {

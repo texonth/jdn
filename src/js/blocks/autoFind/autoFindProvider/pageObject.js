@@ -1,5 +1,5 @@
 import { camelCase } from "../../../models/GenerateBlockModel";
-import { getJDILabel } from "./generationClassesMap";
+import { defaultClass, getJDILabel } from "./generationClassesMap";
 import { connector } from "./connector";
 
 const getPackage = (url) => {
@@ -9,6 +9,12 @@ const getPackage = (url) => {
       .reverse()
       .map((e) => e.replace(/[^a-zA-Z0-9]+/g, ""))
       .join(".");
+};
+
+export const getJdiClassName = (label) => {
+  let jdiClass = getJDILabel(label);
+  if (jdiClass === defaultClass) jdiClass += ` (${label})`;
+  return jdiClass ? jdiClass : label;
 };
 
 export const predictedToConvert = (elements, perception) => {

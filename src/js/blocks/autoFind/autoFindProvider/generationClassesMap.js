@@ -1,4 +1,4 @@
-const defaultClass = "DefaultClass";
+export const defaultClass = "UIElement";
 
 export const JDIclasses = {
   button: "Button",
