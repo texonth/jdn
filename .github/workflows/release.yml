@@ -1,7 +1,7 @@
 name: Release version
 
 on:
-  pull_request:
+  push:
     branches: [master]
 
 jobs:
@@ -11,7 +11,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-  
+
+    # TODO: try to use .lock file, npm ci and cache for speedup
     - name: npm install, build
       run: |
         npm install
