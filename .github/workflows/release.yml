@@ -1,0 +1,42 @@
+name: Release version
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+  
+    - name: Use Node.js 16.x
+      uses: actions/setup-node@v2
+      with:
+        node-version: 16.x
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
+
+
+    - name: get-npm-version
+      id: package-version
+      uses: martinbeentjes/npm-get-version-action@master
+
+    - name: Archive production artifacts
+      uses: thedoctor0/zip-release@master
+      with:
+        filename: "${{ steps.package-version.outputs.current-version}}.zip"
+        path: dist
+
+    - name: Release version
+      uses: ncipollo/release-action@v1
+      with:
+        draft: true
+        tag: ${{ steps.package-version.outputs.current-version}}
+        prerelease: true
+        artifacts: "${{ steps.package-version.outputs.current-version}}.zip"
+        replacesArtifacts: false
+        token: ${{ secrets.GITHUB_TOKEN }}
