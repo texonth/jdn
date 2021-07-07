@@ -1,5 +1,6 @@
 import { camelCase } from "../../../models/GenerateBlockModel";
 import { getJDILabel } from "./generationClassesMap";
+import { connector } from "./connector";
 
 const getPackage = (url) => {
   const urlObject = new URL(url);
@@ -12,7 +13,7 @@ const getPackage = (url) => {
 
 export const predictedToConvert = (elements, perception) => {
   const f = elements.filter((el) => el && !el.skipGeneration && !el.hidden && el.predicted_probability >= perception);
-  const uniqueNames  = [];
+  const uniqueNames = [];
 
   const getElementName = (element) => {
     const jdiLabel = getJDILabel(element.predicted_label).toLowerCase();
@@ -42,11 +43,9 @@ export const predictedToConvert = (elements, perception) => {
 };
 
 export const getPage = (elToConvert, callback) => {
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    callback({
-      elements: elToConvert,
-      name: camelCase(tabs[0].title),
-      package: getPackage(tabs[0].url),
-    });
+  callback({
+    elements: elToConvert,
+    name: camelCase(connector.tab.title),
+    package: getPackage(connector.tab.url),
   });
 };

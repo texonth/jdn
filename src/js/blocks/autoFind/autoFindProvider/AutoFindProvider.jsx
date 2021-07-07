@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import React, { useState, useEffect } from "react";
 import { inject, observer } from "mobx-react";
 import { useContext } from "react";
@@ -5,12 +6,12 @@ import {
   getElements,
   highlightElements,
   highlightUnreached,
-  removeHighlightFromPage,
   runDocumentListeners,
+  generatePageObject
 } from "./pageDataHandlers";
-import { generatePageObject } from "./pageDataHandlers";
-import { getPageId } from "./pageScriptHandlers";
+
 import { JDIclasses } from "./generationClassesMap";
+import { connector, sendMessage } from "./connector";
 
 /*global chrome*/
 
@@ -29,16 +30,20 @@ const AutoFindProvider = inject("mainModel")(
     const [pageElements, setPageElements] = useState(null);
     const [predictedElements, setPredictedElements] = useState(null);
     const [status, setStatus] = useState(autoFindStatus.noStatus);
-    const [allowIdetifyElements, setAllowIdetifyElements] = useState(true);
+    const [allowIdentifyElements, setAllowIdentifyElements] = useState(true);
     const [allowRemoveElements, setAllowRemoveElements] = useState(false);
     const [perception, setPerception] = useState(0.5);
     const [unreachableNodes, setUnreachableNodes] = useState(null);
+
+    connector.onerror = () => {
+      setStatus(autoFindStatus.error);
+    };
 
     const clearElementsState = () => {
       setPageElements(null);
       setPredictedElements(null);
       setStatus(autoFindStatus.noStatus);
-      setAllowIdetifyElements(true);
+      setAllowIdentifyElements(true);
       setAllowRemoveElements(false);
       setUnreachableNodes([]);
     };
@@ -48,12 +53,7 @@ const AutoFindProvider = inject("mainModel")(
         const toggled = previousValue.map((el) => {
           if (el.element_id === id) {
             el.skipGeneration = !el.skipGeneration;
-            getPageId((id) =>
-              chrome.tabs.sendMessage(id, {
-                message: "HIGHLIGHT_TOGGLED",
-                param: el,
-              })
-            );
+            sendMessage.toggle(el);
           }
           return el;
         });
@@ -66,12 +66,7 @@ const AutoFindProvider = inject("mainModel")(
         const hidden = previousValue.map((el) => {
           if (el.element_id === id) {
             el.hidden = true;
-            getPageId((id) =>
-              chrome.tabs.sendMessage(id, {
-                message: "HIDE_ELEMENT",
-                param: el,
-              })
-            );
+            sendMessage.hide(el);
           }
           return el;
         });
@@ -84,12 +79,7 @@ const AutoFindProvider = inject("mainModel")(
         const changed = previousValue.map((el) => {
           if (el.element_id === id) {
             el.predicted_label = newType;
-            getPageId((id) =>
-              chrome.tabs.sendMessage(id, {
-                message: "ASSIGN_TYPE",
-                param: el,
-              })
-            );
+            sendMessage.changeType(el);
           }
           return el;
         });
@@ -97,21 +87,20 @@ const AutoFindProvider = inject("mainModel")(
       });
     };
 
+    const updateElements = ([predicted, page]) => {
+      const rounded = predicted.map((el) => ({
+        ...el,
+        predicted_probability:
+          Math.round(el.predicted_probability * 100) / 100,
+      }));
+      setPredictedElements(rounded);
+      setPageElements(page);
+      setAllowRemoveElements(!allowRemoveElements);
+    };
+
     const identifyElements = () => {
-      setAllowIdetifyElements(!allowIdetifyElements);
+      setAllowIdentifyElements(!allowIdentifyElements);
       setStatus(autoFindStatus.loading);
-
-      const updateElements = ([predicted, page]) => {
-        const rounded = predicted.map((el) => ({
-          ...el,
-          predicted_probability:
-            Math.round(el.predicted_probability * 100) / 100,
-        }));
-        setPredictedElements(rounded);
-        setPageElements(page);        
-        setAllowRemoveElements(!allowRemoveElements);
-      };
-
       getElements(updateElements);
     };
 
@@ -121,7 +110,7 @@ const AutoFindProvider = inject("mainModel")(
         setStatus(autoFindStatus.removed);
       };
 
-      removeHighlightFromPage(callback);
+      sendMessage.killHighlight(null, callback);
     };
 
     const generateAndDownload = (perception) => {
@@ -137,12 +126,7 @@ const AutoFindProvider = inject("mainModel")(
 
     const getPredictedElement = (id) => {
       const element = predictedElements.find((e) => e.element_id === id);
-      getPageId((id) =>
-        chrome.tabs.sendMessage(id, {
-          message: "ELEMENT_DATA",
-          param: { element, types: Object.keys(JDIclasses) },
-        })
-      );
+      sendMessage.elementData({ element, types: Object.keys(JDIclasses) });
     };
 
     const actions = {
@@ -159,7 +143,6 @@ const AutoFindProvider = inject("mainModel")(
           predictedElements,
           () => setStatus(autoFindStatus.success),
           perception,
-          () => setStatus(autoFindStatus.error)
         );
       }
     }, [predictedElements, perception]);
@@ -175,7 +158,7 @@ const AutoFindProvider = inject("mainModel")(
         pageElements,
         predictedElements,
         status,
-        allowIdetifyElements,
+        allowIdentifyElements,
         allowRemoveElements,
         perception,
         unreachableNodes,

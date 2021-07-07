@@ -207,18 +207,14 @@ export const highlightOnPage = () => {
     });
   };
 
-  const messageHandler = ({ message, param }, options, responseCallback) => {
-    const removedCallback = () => {
-      chrome.runtime.sendMessage({ message: "HIGHLIGHT_REMOVED" });
-    };
-
+  const messageHandler = ({ message, param }, sender, sendResponse) => {
     if (message === "SET_HIGHLIGHT") {
       if (!highlightElements.length) setDocumentListeners();
-      findAndHighlight(param);      
+      findAndHighlight(param);
     }
 
     if (message === "KILL_HIGHLIGHT") {
-      removeHighlight(removedCallback)();
+      removeHighlight(sendResponse)();
     }
 
     if (message === "HIGHLIGHT_ERRORS") {
